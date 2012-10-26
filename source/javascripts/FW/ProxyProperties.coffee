@@ -1,15 +1,15 @@
 FW = @FW ||= {}
 
 ProxyProperties = (proxy, original, properties) ->
-  if properties instanceof String
+  if typeof properties == "string"
     property = properties
-    Object.defineProperty proxy, properties
+    Object.defineProperty proxy, property,
       get: ->
         original[property]
       set: (value) ->
         original[property] = value
   else
     for property in properties
-      arguments.callee ProxyProperties(proxy, original, property)
+      ProxyProperties(proxy, original, property)
 
 FW.ProxyProperties = ProxyProperties
