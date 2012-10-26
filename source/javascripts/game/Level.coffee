@@ -1,37 +1,5 @@
-class @Level
-  constructor: ->
-    container = new createjs.Container()
-
-    parent = undefined
-    Object.defineProperty @, 'parent'
-      get: ->
-        parent
-      set: (value) ->
-        if parent
-          parent.removeChild(container)
-        parent = value
-        if parent
-          parent.addChild(container)
-
-    FW.ProxyProperties(@, container, [ 'regX', 'regY' ])
-
-    @_container = container
-
-  addChild: (child) ->
-    @_container.addChild(child)
-
-  removeChild: (child) ->
-    @_container.removeChild(child)
-
-  isVisible: ->
-    @_container.isVisible()
-
-  updateContext: (context) ->
-
-  draw: (context) ->
-
+class @Level extends FW.ContainerProxy
   tick: ->
-
 
   # joinSegments = (segments) ->
   #   joiner = new Maze.SegmentJoiner segments

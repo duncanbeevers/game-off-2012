@@ -10,6 +10,7 @@
 //= require FW/Math
 //= require FW/SortedArray
 //= require FW/SortedSet
+//= require FW/ContainerProxy
 //= require FW/ParticleGenerator
 //= require FW/ProxyProperties
 

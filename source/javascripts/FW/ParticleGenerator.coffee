@@ -1,8 +1,9 @@
 FW = @FW ||= {}
 
-class FW.ParticleGenerator
+class FW.ParticleGenerator extends FW.ContainerProxy
   constructor: (options) ->
-    container = new createjs.Container()
+    super()
+
     @x = 0
     @y = 0
     @maxParticles = options.maxParticles
@@ -10,27 +11,7 @@ class FW.ParticleGenerator
     @generateParticle = options.generateParticle
     @updateParticle = options.updateParticle
     @isParticleCullable = options.isParticleCullable
-
-    parent = undefined
-    Object.defineProperty @, 'parent'
-      get: ->
-        parent
-      set: (value) ->
-        if parent
-          parent.removeChild(container)
-        parent = value
-        if parent
-          parent.addChild(container)
-
     @_particles = []
-    @_container = container
-
-  isVisible: ->
-    @_container.isVisible()
-
-  updateContext: (context) ->
-
-  draw: (context) ->
 
   tick: ->
     @_container.x = @x
