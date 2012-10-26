@@ -29,8 +29,7 @@ class FW.ParticleGenerator
     @_container.isVisible()
 
   updateContext: (context) ->
-    # debugger
-    # @_container.updateContext(context)
+
   draw: (context) ->
 
   tick: ->
