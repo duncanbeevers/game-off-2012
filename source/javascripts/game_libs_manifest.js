@@ -10,5 +10,6 @@
 //= require FW/Math
 //= require FW/SortedArray
 //= require FW/SortedSet
+//= require FW/ParticleGenerator
 
 //= require Maze/Maze_manifest
