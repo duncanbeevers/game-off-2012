@@ -21,6 +21,9 @@ random = (args...) ->
 
   return (Math.random() * range) + min
 
+rand = (args...) ->
+  Math.floor(random.apply(@, args))
+
 # Locks a value within a range.
 # If the value is less than min, returns min
 # If the value is greater than max, returns max
@@ -53,6 +56,7 @@ FW.Math =
   RAD_TO_DEG: 180 / PI
   DEG_TO_RAD: PI / 180
   random: random
+  rand: rand
   clamp: clamp
   normalizeToCircle: normalizeToCircle
   linearInterpolate: linearInterpolate
