@@ -50,6 +50,9 @@ linearInterpolate = (targetMin, targetMax, sourceMin, sourceMax, sourceProgress)
   progress = (sourceProgress - sourceMin) / sourceRange
   progress * targetRange + targetMin
 
+sample = (collection) ->
+  collection[rand(collection.length)]
+
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
   TWO_PI: TWO_PI
@@ -60,3 +63,4 @@ FW.Math =
   clamp: clamp
   normalizeToCircle: normalizeToCircle
   linearInterpolate: linearInterpolate
+  sample: sample
