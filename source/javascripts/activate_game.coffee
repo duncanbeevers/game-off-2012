@@ -4,7 +4,7 @@ $ ->
   halfCanvasWidth = stage.canvas.width / 2
   halfCanvasHeight = stage.canvas.height / 2
 
-  level = new createjs.Container()
+  level = new Level()
   level.regX = -halfCanvasWidth
   level.regY = -halfCanvasHeight
 
@@ -16,6 +16,7 @@ $ ->
 
   updater =
     tick: ->
+      level.tick()
       player.tick()
       stage.update()
 
