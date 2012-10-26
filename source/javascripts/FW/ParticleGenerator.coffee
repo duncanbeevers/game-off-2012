@@ -6,12 +6,13 @@ class FW.ParticleGenerator extends FW.ContainerProxy
 
     @x = 0
     @y = 0
-    @maxParticles = options.maxParticles
-    @numberOfParticlesToGenerate = options.numberOfParticlesToGenerate
-    @generateParticle = options.generateParticle
-    @updateParticle = options.updateParticle
-    @isParticleCullable = options.isParticleCullable
     @_particles = []
+
+    @maxParticles                = options.maxParticles
+    @numberOfParticlesToGenerate = options.numberOfParticlesToGenerate
+    @generateParticle            = options.generateParticle
+    @updateParticle              = options.updateParticle
+    @isParticleCullable          = options.isParticleCullable
 
   tick: ->
     @_container.x = @x

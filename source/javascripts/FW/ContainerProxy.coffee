@@ -26,7 +26,6 @@ class FW.ContainerProxy
   removeChild: (child) ->
     @_container?.removeChild(child)
 
-
   updateContext: ->
 
   draw: ->
