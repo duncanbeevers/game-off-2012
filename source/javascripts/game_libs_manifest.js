@@ -7,6 +7,7 @@
 //= require lib/box2dweb
 
 //= require require_shim
+//= require FW/Math
 //= require FW/SortedArray
 //= require FW/SortedSet
 
