@@ -132,43 +132,6 @@ class @Level extends FW.ContainerProxy
     if @mazeGenerated
       @world.Step(1 / 10, 10, 10)
 
-  # joinSegments = (segments) ->
-  #   joiner = new Maze.SegmentJoiner segments
-
-  #   draw = (segments) ->
-  #     mazeGraphics.clear()
-  #     scaler.speed = 1
-  #     scaler.updateFreq = 1
-  #     drawSegments segments, 0, (next) ->
-  #       setTimeout next, 20
-
-  #   solveAndDraw = ->
-  #     collectedSegments = joiner.solve(draw)
-
-  #   setTimeout solveAndDraw
-
-  # drawSegments = (segments, i, next) ->
-  #   segment = segments[i]
-
-  #   [x1, y1, x2, y2] = segment
-
-  #   solutionGraphics.setStrokeStyle(0.05, "square", "bevel")
-  #   solutionGraphics.beginStroke("rgba(0, 64, 192, 1)")
-  #   solutionGraphics.moveTo(x1, y1)
-  #   solutionGraphics.lineTo(x2, y2)
-  #   solutionGraphics.endStroke()
-  #   stage.update()
-
-  #   if i < segments.length - 1
-  #     next ->
-  #       drawSegments(segments, i + 1, next)
-
-
-
-  #   width: 6
-  #   height: 6
-
-  # window.maze = Maze.createInteractive(options)
       # Update player graphic to follow physics entity
       if @player.fixture
         player = @player
