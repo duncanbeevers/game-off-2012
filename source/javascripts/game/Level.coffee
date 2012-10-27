@@ -1,18 +1,34 @@
+pixelsPerMeter = 120
+
 class @Level extends FW.ContainerProxy
   constructor: ->
     super()
 
-    @_container.scaleX = 120
+    @_container.scaleX = pixelsPerMeter
     @_container.scaleY = @_container.scaleX
     @setupPhysics()
     @setupMaze()
 
   setupPhysics: ->
-    @world = new Box2D.Dynamics.b2World(
+    world = new Box2D.Dynamics.b2World(
       # new Box2D.Common.Math.b2Vec2(0, 0),  # gravity
       new Box2D.Common.Math.b2Vec2(0, 10),  # gravity
       true                                  # allow sleep
     )
+    @world = world
+
+    # TODO: Remove debug canvas stuff
+    debugCanvas = document.getElementById('debugCanvas')
+    debugContext = debugCanvas.getContext("2d")
+    b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+    debugDraw = new b2DebugDraw()
+    debugDraw.SetSprite(debugContext)
+    debugDraw.SetFillAlpha(0.7)
+    debugDraw.SetLineThickness(1.0)
+    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
+    debugDraw.SetDrawScale(pixelsPerMeter)
+    world.SetDebugDraw(debugDraw)
+
 
   addChild: (player) ->
     super(player)
@@ -21,22 +37,52 @@ class @Level extends FW.ContainerProxy
   setupMaze: ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
-    # mazeShape.scaleX = 10
-    # mazeShape.scaleY = mazeShape.scaleX
 
     @_container.addChild(mazeShape)
 
     world = @world
+    level = @
+    getPlayer = (fn) ->
+      # TODO: Deal with this race condition,
+      fn(level.player)
+
+    onMazeGenerated = (maze) ->
+      joinSegments(maze.projectedSegments)
+      positionPlayerAtBeginning(maze)
 
     joinSegments = (segments) ->
       joiner = new Maze.SegmentJoiner(segments)
       joiner.solve(onSegmentsJoined)
 
+    positionPlayer = (maze, player) ->
+      walls = maze.project.call(maze, maze.initialIndex(), true)
+      [x, y] = FW.Math.centroidOfSegments(walls)
+      player.x = x
+      player.y = y
+
+      # Create physics entity
+    createPhysicsPlayer = (player) ->
+      fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+      fixtureDef.density = 1
+      fixtureDef.friction = 0.6
+      fixtureDef.restitution = 0.1
+      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.3)
+      bodyDef = new Box2D.Dynamics.b2BodyDef()
+      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+      bodyDef.position.x = player.x
+      bodyDef.position.y = player.y
+      player.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+
+    positionPlayerAtBeginning = (maze) ->
+      getPlayer (player) ->
+        positionPlayer(maze, player)
+        createPhysicsPlayer(player)
+
     onSegmentsJoined = (segments) ->
-      craftWalls(segments)
+      craftPhysicsWalls(segments)
       @walls = segments
 
-    craftWalls = (segments) ->
+    craftPhysicsWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
       fixtureDef.density     = 1
       fixtureDef.friction    = 0.5
@@ -63,16 +109,23 @@ class @Level extends FW.ContainerProxy
       project: new Maze.Projections.FoldedHexagonCell()
       draw: (segments) ->
         drawSegments(mazeGraphics, segments)
-      done: (maze) ->
-        joinSegments(maze.projectedSegments)
+      done: onMazeGenerated
 
     @maze = Maze.createInteractive(options)
 
   tick: ->
+    @world.Step(1 / 10, 10, 10)
     @_container.regX = @player.x
     @_container.regY = @player.y
     @_container.x = 250
     @_container.y = 200
+
+    # Update player graphic to follow physics entity
+    if @player.fixture
+      player = @player
+      position = player.fixture.GetBody().GetPosition()
+      player.x = position.x
+      player.y = position.y
 
   # joinSegments = (segments) ->
   #   joiner = new Maze.SegmentJoiner segments
