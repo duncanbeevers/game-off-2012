@@ -91,13 +91,9 @@ pickDirection = (maze, currentIndex) ->
   return directions[Math.floor(Math.random() * directions.length)]
 
 projectAndDrawMazeCell = (maze, i) ->
-  cell = for direction in maze.directions(i)
-    destination = translateDirection(maze, i, direction)
-    [ destination, hasTunnel(maze, i, destination) ]
-
   if maze.project
     projectedSegments = maze.projectedSegments || []
-    cellSegments = maze.project.call(maze, i, cell)
+    cellSegments = maze.project.call(maze, i)
     if maze.draw
       maze.draw(cellSegments)
 
@@ -126,6 +122,14 @@ class @Maze
       @initialize()
 
     undefined
+
+  cell: (i, forceEnclose = false) ->
+    for direction in @.directions(i)
+      destination = translateDirection(@, i, direction)
+      if !forceEnclose
+        tunnel = hasTunnel(@, i, destination)
+
+      [ destination, tunnel ]
 
 Maze.createInteractive = (options) ->
   extendedOptions = $.extend({}, options)
