@@ -58,6 +58,7 @@ class @Level extends FW.ContainerProxy
     onMazeGenerated = (maze) ->
       joinSegments(maze.projectedSegments)
       positionPlayerAtBeginning(maze)
+      level.mazeGenerated = true
 
     joinSegments = (segments) ->
       joiner = new Maze.SegmentJoiner(segments)
@@ -123,18 +124,13 @@ class @Level extends FW.ContainerProxy
     @maze = Maze.createInteractive(options)
 
   tick: ->
-    @world.Step(1 / 10, 10, 10)
     @_container.regX = @player.x
     @_container.regY = @player.y
     @_container.x = 250
     @_container.y = 200
 
-    # Update player graphic to follow physics entity
-    if @player.fixture
-      player = @player
-      position = player.fixture.GetBody().GetPosition()
-      player.x = position.x
-      player.y = position.y
+    if @mazeGenerated
+      @world.Step(1 / 10, 10, 10)
 
   # joinSegments = (segments) ->
   #   joiner = new Maze.SegmentJoiner segments
@@ -173,6 +169,13 @@ class @Level extends FW.ContainerProxy
   #   height: 6
 
   # window.maze = Maze.createInteractive(options)
+      # Update player graphic to follow physics entity
+      if @player.fixture
+        player = @player
+        position = player.fixture.GetBody().GetPosition()
+        # console.log "graphic: %o,%o body: %o,%o", player.x, player.y, position.x, position.y
+        # player.x = position.x
+        # player.y = position.y
 
 drawSegments = (graphics, segments) ->
   graphics.setStrokeStyle(0.35, "round", "bevel")
