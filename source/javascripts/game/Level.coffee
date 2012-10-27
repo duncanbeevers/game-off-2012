@@ -2,6 +2,8 @@ class @Level extends FW.ContainerProxy
   constructor: ->
     super()
 
+    @_container.scaleX = 120
+    @_container.scaleY = @_container.scaleX
     @setupPhysics()
     @setupMaze()
 
@@ -12,17 +14,27 @@ class @Level extends FW.ContainerProxy
       true                                  # allow sleep
     )
 
+  addChild: (player) ->
+    super(player)
+    @player = player
+
   setupMaze: ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
-    @addChild(mazeShape)
+    # mazeShape.scaleX = 10
+    # mazeShape.scaleY = mazeShape.scaleX
+
+    @_container.addChild(mazeShape)
 
     world = @world
 
-    joinMazeSegments = (maze) ->
-      segments = maze.projectedSegments
+    joinSegments = (segments) ->
       joiner = new Maze.SegmentJoiner(segments)
-      joiner.solve(craftWalls)
+      joiner.solve(onSegmentsJoined)
+
+    onSegmentsJoined = (segments) ->
+      craftWalls(segments)
+      @walls = segments
 
     craftWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
@@ -34,8 +46,8 @@ class @Level extends FW.ContainerProxy
 
       bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
       fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape()
-      passageSize = 15
-      wallThickness = 0.2
+      passageSize = 1
+      wallThickness = passageSize / 10
       for [x1, y1, x2, y2] in segments
         x1 = x1 * passageSize
         y1 = y1 * passageSize
@@ -49,12 +61,18 @@ class @Level extends FW.ContainerProxy
 
     options = $.extend {}, Maze.Structures.FoldedHexagon,
       project: new Maze.Projections.FoldedHexagonCell()
-      done:    joinMazeSegments
+      draw: (segments) ->
+        drawSegments(mazeGraphics, segments)
+      done: (maze) ->
+        joinSegments(maze.projectedSegments)
 
     @maze = Maze.createInteractive(options)
 
-
   tick: ->
+    @_container.regX = @player.x
+    @_container.regY = @player.y
+    @_container.x = 250
+    @_container.y = 200
 
   # joinSegments = (segments) ->
   #   joiner = new Maze.SegmentJoiner segments
@@ -94,10 +112,10 @@ class @Level extends FW.ContainerProxy
 
   # window.maze = Maze.createInteractive(options)
 
-# drawSegments = (graphics, segments) ->
-#   graphics.setStrokeStyle(0.35, "round", "bevel")
-#   graphics.beginStroke("rgba(0, 192, 192, 1)")
+drawSegments = (graphics, segments) ->
+  graphics.setStrokeStyle(0.35, "round", "bevel")
+  graphics.beginStroke("rgba(0, 192, 192, 1)")
 
-#   for [x1, y1, x2, y2] in segments
-#     graphics.moveTo(x1, y1)
-#     graphics.lineTo(x2, y2)
+  for [x1, y1, x2, y2] in segments
+    graphics.moveTo(x1, y1)
+    graphics.lineTo(x2, y2)
