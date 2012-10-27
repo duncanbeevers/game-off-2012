@@ -53,6 +53,14 @@ linearInterpolate = (targetMin, targetMax, sourceMin, sourceMax, sourceProgress)
 sample = (collection) ->
   collection[rand(collection.length)]
 
+centroidOfSegments = (segments) ->
+  xSum = 0
+  ySum = 0
+  for [x1, y1, x2, y2] in segments
+    xSum += x1 + x2
+    ySum += y1 + y2
+  [ xSum / 2 / segments.length, ySum / 2/ segments.length ]
+
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
   TWO_PI: TWO_PI
@@ -64,3 +72,4 @@ FW.Math =
   normalizeToCircle: normalizeToCircle
   linearInterpolate: linearInterpolate
   sample: sample
+  centroidOfSegments: centroidOfSegments
