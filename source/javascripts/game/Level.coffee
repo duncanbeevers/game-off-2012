@@ -18,15 +18,24 @@ class @Level extends FW.ContainerProxy
     @world = world
 
     # TODO: Remove debug canvas stuff
-    debugCanvas = document.getElementById('debugCanvas')
+    debugCanvas = document.getElementById("debugCanvas")
     debugContext = debugCanvas.getContext("2d")
     b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     debugDraw = new b2DebugDraw()
     debugDraw.SetSprite(debugContext)
     debugDraw.SetFillAlpha(0.7)
     debugDraw.SetLineThickness(1.0)
-    debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit)
-    debugDraw.SetDrawScale(pixelsPerMeter)
+    debugDraw.SetFlags(
+      b2DebugDraw.e_shapeBit        |
+      b2DebugDraw.e_jointBit        |
+      b2DebugDraw.e_aabbBit         |
+      b2DebugDraw.e_centerOfMassBit |
+      b2DebugDraw.e_coreShapeBit    |
+      b2DebugDraw.e_jointBit        |
+      b2DebugDraw.e_obbBit          |
+      b2DebugDraw.e_pairBit
+    )
+    debugDraw.SetDrawScale(1)
     world.SetDebugDraw(debugDraw)
 
 
