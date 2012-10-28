@@ -4,8 +4,15 @@ class @Level extends FW.ContainerProxy
   constructor: ->
     super()
 
+    mazeContainer = new createjs.Container()
+    player = new Player()
     goal = new Goal()
-    @_container.addChild(goal)
+    mazeContainer.addChild(player)
+    mazeContainer.addChild(goal)
+    @_container.addChild(mazeContainer)
+
+    @_player = player
+    @_mazeContainer = mazeContainer
     @_goal = goal
 
     @setupPhysics()
@@ -50,24 +57,20 @@ class @Level extends FW.ContainerProxy
 
 
   onAddedAsChild: (parent) ->
-    @harness = FW.MouseHarness.outfit(@_container)
-
-  addChild: (player) ->
-    super(player)
-    @player = player
+    @harness = FW.MouseHarness.outfit(@_mazeContainer)
 
   setupMaze: ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
     @mazeShape = mazeShape
 
-    @_container.addChild(mazeShape)
+    @_mazeContainer.addChild(mazeShape)
 
     world = @world
     level = @
     getPlayer = (fn) ->
       # TODO: Deal with this race condition,
-      fn(level.player)
+      fn(level._player)
 
     onMazeGenerated = (maze) ->
       joinSegments(maze.projectedSegments)
@@ -166,16 +169,20 @@ class @Level extends FW.ContainerProxy
     @maze = Maze.createInteractive(options)
 
   tick: ->
-    container = @_container
+    player = @_player
+    goal = @_goal
+
+    player.tick()
+    goal.tick()
+
+    container = @_mazeContainer
     harness = @harness()
 
     if @mazeGenerated
-      @_goal.tick()
       @world.Step(1 / 20, 10, 10)
 
       # Update player graphic to follow physics entity
-      if @player.fixture
-        player = @player
+      if player.fixture
         canvas = container.getStage().canvas
         canvasWidth = canvas.width
         canvasHeight = canvas.height
@@ -242,8 +249,8 @@ class @Level extends FW.ContainerProxy
           graphics.setStrokeStyle(0.02, "round", "bevel")
           graphics.beginStroke("rgba(192, 255, 64, 0.2)")
           graphics.moveTo(player.x, player.y)
-          graphics.drawCircle(player.x, player.y, 0.01)
-          # graphics.lineTo(lastDot.x, lastDot.y)
+          # graphics.drawCircle(player.x, player.y, 0.01)
+          graphics.lineTo(lastDot.x, lastDot.y)
           graphics.endStroke()
           @_lastPlayerDot.Set(player.x, player.y)
 
