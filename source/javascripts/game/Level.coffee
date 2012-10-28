@@ -39,8 +39,6 @@ class @Level extends FW.ContainerProxy
     world.SetDebugDraw(debugDraw)
 
   onAddedAsChild: (parent) ->
-    # @harness = FW.MouseHarness.outfit(parent.getStage())
-    # @harness = FW.MouseHarness.outfit(parent)
     @harness = FW.MouseHarness.outfit(@_container)
 
   addChild: (player) ->
@@ -79,7 +77,6 @@ class @Level extends FW.ContainerProxy
       fixtureDef.density = 1
       fixtureDef.friction = 0.6
       fixtureDef.restitution = 0.1
-      # fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(50)
       fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
       bodyDef = new Box2D.Dynamics.b2BodyDef()
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
@@ -93,6 +90,8 @@ class @Level extends FW.ContainerProxy
         createPhysicsPlayer(player)
 
     onSegmentsJoined = (segments) ->
+      drawSegments(mazeGraphics, segments)
+
       craftPhysicsWalls(segments)
       level.walls = segments
       level.mazeGenerated = true
@@ -118,8 +117,8 @@ class @Level extends FW.ContainerProxy
 
     options = $.extend {}, Maze.Structures.FoldedHexagon,
       project: new Maze.Projections.FoldedHexagonCell()
-      draw: (segments) ->
-        drawSegments(mazeGraphics, segments)
+      width: 4
+      height: 4
       done: onMazeGenerated
 
     @maze = Maze.createInteractive(options)
@@ -143,21 +142,40 @@ class @Level extends FW.ContainerProxy
         @debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
         body = player.fixture.GetBody()
         position = body.GetPosition()
-        angle = body.GetAngle()
 
-        player.x = position.x
-        player.y = position.y
+        player.x += (position.x - player.x) / 5
+        player.y += (position.y - player.y) / 5
 
-        @_container.rotation = angle * FW.Math.RAD_TO_DEG
+        bodyAngle = body.GetAngle()
+        currentRotation = FW.Math.normalizeToCircle(@_container.rotation * FW.Math.DEG_TO_RAD)
+        diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
+        diff /= 10
+        @_container.rotation += diff * FW.Math.RAD_TO_DEG
+
         angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
-        player.setThrustAngle(angleToMouse * FW.Math.RAD_TO_DEG)
+        player.setThrustAngle(angleToMouse)
 
-      @world.DrawDebugData()
+        forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) / 2, -Math.sin(angleToMouse) / 2)
+        body.ClearForces()
+        body.m_angularVelocity /= 10
+        body.ApplyForce(forceVector, body.GetWorldCenter())
+
+      # @world.DrawDebugData()
 
 drawSegments = (graphics, segments) ->
-  graphics.setStrokeStyle(0.35, "round", "bevel")
-  graphics.beginStroke("rgba(0, 192, 192, 1)")
+  graphics.setStrokeStyle(0.25, "round", "bevel")
+  graphics.beginStroke("rgba(0, 192, 192, 0.3)")
 
+  minX = Infinity
+  minY = Infinity
+  maxX = -Infinity
+  maxY = -Infinity
   for [x1, y1, x2, y2] in segments
     graphics.moveTo(x1, y1)
     graphics.lineTo(x2, y2)
+    minX = Math.min(minX, x1, x2)
+    minY = Math.min(minY, y1, y2)
+    maxX = Math.max(maxX, x1, x2)
+    maxY = Math.max(maxY, y1, y2)
+
+  [ minX, minY, maxX, maxY ]

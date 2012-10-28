@@ -31,17 +31,17 @@ FW.MouseHarness =
       renderHarness(harness_activated)
 
     renderHarness = (activated) ->
-      if activated
-        color = "193, 255, 33"
-      else
-        color = "0, 0, 255"
+      # if activated
+      #   color = "193, 255, 33"
+      # else
+      #   color = "0, 0, 255"
 
-      graphics.clear()
-      scalar = 1 / displayObject.scaleX
-      graphics.setStrokeStyle(4 * scalar)
-      graphics.beginStroke("rgba(#{color}, 0.6)")
-      graphics.beginFill("rgba(#{color}, 0.45)")
-      graphics.drawCircle(0, 0, 15 * scalar)
+      # graphics.clear()
+      # scalar = 1 / displayObject.scaleX
+      # graphics.setStrokeStyle(4 * scalar)
+      # graphics.beginStroke("rgba(#{color}, 0.6)")
+      # graphics.beginFill("rgba(#{color}, 0.45)")
+      # graphics.drawCircle(0, 0, 15 * scalar)
 
     renderHarness(false)
 

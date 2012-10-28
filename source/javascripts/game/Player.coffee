@@ -53,12 +53,12 @@ class @Player extends FW.ParticleGenerator
     halfArrowWidth = arrowWidth / 2
     arrowHeight = halfArrowWidth
 
-    graphics.beginStroke("rgba(192, 0, 192, 0.8)")
-    graphics.setStrokeStyle(0.05, "round", "bevel")
-    graphics.drawCircle(0, 0, radius)
-    graphics.endStroke()
-    graphics.beginStroke("rgba(192, 0, 192, 0.8)")
-    graphics.beginFill("rgba(192, 0, 192, 0.8)")
+    # graphics.beginStroke("rgba(192, 0, 192, 0.5)")
+    # graphics.setStrokeStyle(0.05, "round", "bevel")
+    # graphics.drawCircle(0, 0, radius)
+    # graphics.endStroke()
+    graphics.beginStroke("rgba(192, 0, 192, 0.5)")
+    graphics.beginFill("rgba(192, 0, 192, 0.5)")
     graphics.setStrokeStyle(0.01, "round", "bevel")
     graphics.moveTo(-radius, -halfArrowWidth)
     graphics.lineTo(-radius - arrowHeight, 0)
@@ -71,7 +71,7 @@ class @Player extends FW.ParticleGenerator
 
   setThrustAngle: (angle) ->
     @_thrustAngle = angle
-    @reticle.rotation = angle
+    @reticle.rotation = angle * FW.Math.RAD_TO_DEG
 
   tick: ->
     super()
