@@ -180,13 +180,19 @@ class @Level extends FW.ContainerProxy
         container.x = halfWidth
         container.y = halfHeight
 
+        # Align the thrust reticle graphic toward the mouse
         angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
         player.setThrustAngle(angleToMouse)
 
+        # Clear existing forces, then accelerate towards the mouse
         forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) / 2, -Math.sin(angleToMouse) / 2)
         body.ClearForces()
         body.m_angularVelocity /= 10
         body.ApplyForce(forceVector, body.GetWorldCenter())
+
+        # Align the goal reticle graphic towards the goal
+        angleToGoal = Math.atan2(player.y - @_goal.y, player.x - @_goal.x)
+        player.setGoalAngle(angleToGoal)
 
         # Leave a trail of dots!
         lastDot = @_lastPlayerDot

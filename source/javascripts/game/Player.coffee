@@ -43,20 +43,16 @@ class @Player extends FW.ParticleGenerator
       isParticleCullable: (particle) ->
         particle.alpha <= 0.02
 
-    reticle = new createjs.Shape()
-    @reticle = reticle
-    graphics = reticle.graphics
-    graphics.clear()
 
     radius = 0.25
     arrowWidth = radius / 2
     halfArrowWidth = arrowWidth / 2
     arrowHeight = halfArrowWidth
 
-    # graphics.beginStroke("rgba(192, 0, 192, 0.5)")
-    # graphics.setStrokeStyle(0.05, "round", "bevel")
-    # graphics.drawCircle(0, 0, radius)
-    # graphics.endStroke()
+    thrustReticle = new createjs.Shape()
+    @thrustReticle = thrustReticle
+    graphics = thrustReticle.graphics
+    graphics.clear()
     graphics.beginStroke("rgba(192, 0, 192, 0.5)")
     graphics.beginFill("rgba(192, 0, 192, 0.5)")
     graphics.setStrokeStyle(0.01, "round", "bevel")
@@ -66,12 +62,29 @@ class @Player extends FW.ParticleGenerator
     graphics.lineTo(-radius, -halfArrowWidth)
     graphics.endStroke()
     graphics.endFill()
+    @addChild(thrustReticle)
 
-    @addChild(reticle)
+    radius += 0.06
+    goalReticle = new createjs.Shape()
+    @goalReticle = goalReticle
+    graphics = goalReticle.graphics
+    graphics.clear()
+    graphics.beginStroke("rgba(255, 128, 0, 0.5)")
+    graphics.beginFill("rgba(255, 128, 0, 0.5)")
+    graphics.setStrokeStyle(0.01, "round", "bevel")
+    graphics.moveTo(-radius, -halfArrowWidth)
+    graphics.lineTo(-radius - arrowHeight, 0)
+    graphics.lineTo(-radius, halfArrowWidth)
+    graphics.lineTo(-radius, -halfArrowWidth)
+    graphics.endStroke()
+    graphics.endFill()
+    @addChild(goalReticle)
 
   setThrustAngle: (angle) ->
-    @_thrustAngle = angle
-    @reticle.rotation = angle * FW.Math.RAD_TO_DEG
+    @thrustReticle.rotation = angle * FW.Math.RAD_TO_DEG
+
+  setGoalAngle: (angle) ->
+    @goalReticle.rotation = angle * FW.Math.RAD_TO_DEG
 
   tick: ->
     super()
