@@ -34,9 +34,15 @@ clamp = (value, min, max) ->
 # Normalizes the provided value to a 0 to 2pi radian range
 # This means original orientation is preserved
 normalizeToCircle = (value) ->
-  value % TWO_PI
+  normalizeToCap(value, TWO_PI)
+
+normalizeToHalfCircle = (value) ->
+  normalizeToCap(value, PI)
+
+normalizeToCap = (value, cap) ->
+  value % cap
   if value < 0
-    value += TWO_PI
+    value += cap
 
   return value
 
@@ -59,7 +65,19 @@ centroidOfSegments = (segments) ->
   for [x1, y1, x2, y2] in segments
     xSum += x1 + x2
     ySum += y1 + y2
-  [ xSum / 2 / segments.length, ySum / 2/ segments.length ]
+  [ xSum / 2 / segments.length, ySum / 2 / segments.length ]
+
+radiansDiff = (radians1, radians2) ->
+  diff = radians2 - radians1
+  sign = 1
+  if diff < 0
+    sign = -1
+  size = Math.abs(diff)
+  if size > PI
+    size = TWO_PI - size
+    sign = sign * -1
+
+  size * sign
 
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
@@ -73,3 +91,4 @@ FW.Math =
   linearInterpolate: linearInterpolate
   sample: sample
   centroidOfSegments: centroidOfSegments
+  radiansDiff: radiansDiff
