@@ -4584,6 +4584,16 @@ Box2D.postDefs = [];
       this.m_force.y += force.y;
       this.m_torque += ((point.x - this.m_sweep.c.x) * force.y - (point.y - this.m_sweep.c.y) * force.x);
    }
+   b2Body.prototype.ClearForces = function () {
+      if (this.m_type != b2Body.b2_dynamicBody) {
+         return;
+      }
+      if (this.IsAwake() == false) {
+         this.SetAwake(true);
+      }
+      this.m_force.SetZero();
+      this.m_torque = 0;
+   }
    b2Body.prototype.ApplyTorque = function (torque) {
       if (torque === undefined) torque = 0;
       if (this.m_type != b2Body.b2_dynamicBody) {
