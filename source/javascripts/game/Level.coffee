@@ -4,6 +4,10 @@ class @Level extends FW.ContainerProxy
   constructor: ->
     super()
 
+    goal = new Goal()
+    @_container.addChild(goal)
+    @_goal = goal
+
     @setupPhysics()
     @setupMaze()
 
@@ -59,6 +63,7 @@ class @Level extends FW.ContainerProxy
     onMazeGenerated = (maze) ->
       joinSegments(maze.projectedSegments)
       positionPlayerAtBeginning(maze)
+      positionGoalAtEnd(maze, level._goal)
 
     joinSegments = (segments) ->
       joiner = new Maze.SegmentJoiner(segments)
@@ -88,6 +93,18 @@ class @Level extends FW.ContainerProxy
       getPlayer (player) ->
         positionPlayer(maze, player)
         createPhysicsPlayer(player)
+
+    positionGoalAtEnd = (maze, goal) ->
+      # maximumDistanceTermination = [ undefined, -Infinity ]
+      # for [i, distance] in maze.terminations
+      #   if distance > maximumDistanceTermination[1]
+      #     maximumDistanceTermination[0] = i
+      #     maximumDistanceTermination[1] = distance
+      maximumDistanceTermination = maze.maxTermination
+
+      endingIndex = maximumDistanceTermination[0]
+      walls = maze.project.call(maze, endingIndex, true)
+      [goal.x, goal.y] = FW.Math.centroidOfSegments(walls)
 
     onSegmentsJoined = (segments) ->
       drawSegments(mazeGraphics, segments)
@@ -130,6 +147,7 @@ class @Level extends FW.ContainerProxy
     container.regY = @player.y
 
     if @mazeGenerated
+      @_goal.tick()
       @world.Step(1 / 20, 10, 10)
 
       # Update player graphic to follow physics entity
@@ -184,7 +202,7 @@ class @Level extends FW.ContainerProxy
           graphics.endStroke()
           @_lastPlayerDot.Set(player.x, player.y)
 
-      # @world.DrawDebugData()
+      @world.DrawDebugData()
 
 drawSegments = (graphics, segments) ->
   graphics.setStrokeStyle(0.25, "round", "bevel")
