@@ -1,5 +1,4 @@
-@FW ||= {}
-FW = @FW
+FW = @FW ||= {}
 
 FW.MouseHarness =
   outfit: (displayObject, receiver) ->
