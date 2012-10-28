@@ -6,6 +6,7 @@ class @Level extends FW.ContainerProxy
 
     @_container.scaleX = pixelsPerMeter
     @_container.scaleY = @_container.scaleX
+    @_lastPlayerDot = new Box2D.Common.Math.b2Vec2()
     @setupPhysics()
     @setupMaze()
 
@@ -48,6 +49,7 @@ class @Level extends FW.ContainerProxy
   setupMaze: ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
+    @mazeShape = mazeShape
 
     @_container.addChild(mazeShape)
 
@@ -159,6 +161,19 @@ class @Level extends FW.ContainerProxy
         body.ClearForces()
         body.m_angularVelocity /= 10
         body.ApplyForce(forceVector, body.GetWorldCenter())
+
+        # Leave a trail of dots!
+        lastDot = @_lastPlayerDot
+        lastDotDistance = FW.Math.distance(lastDot.x, lastDot.y, player.x, player.y)
+
+        if lastDotDistance > 0.1
+          graphics = @mazeShape.graphics
+          graphics.setStrokeStyle(0.02, "round", "bevel")
+          graphics.beginStroke("rgba(0, 192, 255, 0.5)")
+          graphics.moveTo(player.x, player.y)
+          graphics.drawCircle(player.x, player.y, 0.01)
+          graphics.endStroke()
+          @_lastPlayerDot.Set(player.x, player.y)
 
       # @world.DrawDebugData()
 
