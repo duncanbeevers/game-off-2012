@@ -80,7 +80,7 @@ class @Level extends FW.ContainerProxy
     createPhysicsPlayer = (player) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef()
       fixtureDef.density = 1
-      fixtureDef.friction = 0.6
+      fixtureDef.friction = 0.1
       fixtureDef.restitution = 0.1
       fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
       bodyDef = new Box2D.Dynamics.b2BodyDef()
@@ -130,8 +130,8 @@ class @Level extends FW.ContainerProxy
     craftPhysicsWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
       fixtureDef.density     = 1
-      fixtureDef.friction    = 0.5
-      fixtureDef.restitution = 0.2
+      fixtureDef.friction    = 0.1
+      fixtureDef.restitution = 0.1
 
       bodyDef = new Box2D.Dynamics.b2BodyDef()
 
@@ -185,7 +185,7 @@ class @Level extends FW.ContainerProxy
         diff /= 10
         container.rotation += diff * FW.Math.RAD_TO_DEG
         velocity = body.GetLinearVelocity()
-        boost = FW.Math.magnitude(velocity.x, velocity.y) * 3
+        boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
         targetScale = pixelsPerMeter - boost
 
         container.scaleX += (targetScale - container.scaleX) / 3
