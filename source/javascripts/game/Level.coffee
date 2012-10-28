@@ -39,7 +39,9 @@ class @Level extends FW.ContainerProxy
     world.SetDebugDraw(debugDraw)
 
   onAddedAsChild: (parent) ->
-    @harness = FW.MouseHarness.outfit(parent.getStage())
+    # @harness = FW.MouseHarness.outfit(parent.getStage())
+    # @harness = FW.MouseHarness.outfit(parent)
+    @harness = FW.MouseHarness.outfit(@_container)
 
   addChild: (player) ->
     super(player)
@@ -145,7 +147,10 @@ class @Level extends FW.ContainerProxy
 
         player.x = position.x
         player.y = position.y
+
         @_container.rotation = angle * FW.Math.RAD_TO_DEG
+        angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
+        player.setThrustAngle(angleToMouse * FW.Math.RAD_TO_DEG)
 
       @world.DrawDebugData()
 

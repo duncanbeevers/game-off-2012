@@ -3,12 +3,13 @@ FW = @FW
 
 FW.MouseHarness =
   outfit: (displayObject, receiver) ->
-    originalOnMouseDown = displayObject.onMouseDown
-    originalOnMouseUp   = displayObject.onMouseUp
-    originalOnMouseMove = displayObject.onMouseMove
-    originalOnMouseOver = displayObject.onMouseOver
-    originalOnMouseOut  = displayObject.onMouseOut
-    originalOnClick     = displayObject.onClick
+    stage = displayObject.getStage()
+    originalOnMouseDown = stage.onMouseDown
+    originalOnMouseUp   = stage.onMouseUp
+    originalOnMouseMove = stage.onMouseMove
+    originalOnMouseOver = stage.onMouseOver
+    originalOnMouseOut  = stage.onMouseOut
+    originalOnClick     = stage.onClick
 
     graphics = new createjs.Graphics()
 
@@ -36,46 +37,49 @@ FW.MouseHarness =
         color = "0, 0, 255"
 
       graphics.clear()
-      graphics.setStrokeStyle(4)
+      scalar = 1 / displayObject.scaleX
+      graphics.setStrokeStyle(4 * scalar)
       graphics.beginStroke("rgba(#{color}, 0.6)")
       graphics.beginFill("rgba(#{color}, 0.45)")
-      graphics.drawCircle(0, 0, 15)
+      graphics.drawCircle(0, 0, 15 * scalar)
 
     renderHarness(false)
 
-    displayObject.onMouseDown = (event) ->
+    stage.onMouseDown = (event) ->
       activateHarness()
       originalOnMouseDown && originalOnMouseDown.call(@, event)
 
-    displayObject.onMouseUp = (event) ->
+    stage.onMouseUp = (event) ->
       deactivateHarness()
-      harness_x = event.rawX
-      harness_y = event.rawY
+      harness_x = event.stageX
+      harness_y = event.stageY
       originalOnMouseUp && originalOnMouseUp.call(@, event)
 
-    displayObject.onMouseMove = (event) ->
-      harness_x = event.rawX
-      harness_y = event.rawY
+    stage.onMouseMove = (event) ->
+      harness_x = event.stageX
+      harness_y = event.stageY
       originalOnMouseMove && originalOnMouseMove.call(@, event)
 
-    displayObject.onMouseOver = (event) ->
+    stage.onMouseOver = (event) ->
       # debugger
       originalOnMouseOver && originalOnMouseOver.call(@, event)
 
-    displayObject.onMouseOut = (event) ->
+    stage.onMouseOut = (event) ->
       # debugger
       originalOnMouseOut && originalOnMouseOut.call(@, event)
 
-    displayObject.onClick = (event) ->
+    stage.onClick = (event) ->
       # debugger
       originalOnClick && originalOnClick.call(@, event)
 
     Ticker.addListener
       tick: ->
-        tracker.x = harness_x
-        tracker.y = harness_y
+        point = displayObject.globalToLocal(harness_x, harness_y)
+        tracker.x = point.x
+        tracker.y = point.y
 
     ->
-      x: harness_x
-      y: harness_y
+      point = displayObject.globalToLocal(harness_x, harness_y)
+      x: point.x
+      y: point.y
       activated: harness_activated

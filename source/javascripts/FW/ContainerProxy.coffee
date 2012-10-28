@@ -24,7 +24,7 @@ class FW.ContainerProxy
           parent.addChild(container)
           onAddedAsChild(parent)
 
-    FW.ProxyProperties(instance, container, [ 'regX', 'regY' ])
+    FW.ProxyProperties(instance, container, [ 'x', 'y', 'regX', 'regY' ])
 
   isVisible: ->
     @_container?.isVisible()

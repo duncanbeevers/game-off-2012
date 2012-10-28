@@ -45,15 +45,33 @@ class @Player extends FW.ParticleGenerator
 
     reticle = new createjs.Shape()
     @reticle = reticle
+    graphics = reticle.graphics
+    graphics.clear()
+
+    radius = 0.25
+    arrowWidth = radius / 2
+    halfArrowWidth = arrowWidth / 2
+    arrowHeight = halfArrowWidth
+
+    graphics.beginStroke("rgba(192, 0, 192, 0.8)")
+    graphics.setStrokeStyle(0.05, "round", "bevel")
+    graphics.drawCircle(0, 0, radius)
+    graphics.endStroke()
+    graphics.beginStroke("rgba(192, 0, 192, 0.8)")
+    graphics.beginFill("rgba(192, 0, 192, 0.8)")
+    graphics.setStrokeStyle(0.01, "round", "bevel")
+    graphics.moveTo(-radius, -halfArrowWidth)
+    graphics.lineTo(-radius - arrowHeight, 0)
+    graphics.lineTo(-radius, halfArrowWidth)
+    graphics.lineTo(-radius, -halfArrowWidth)
+    graphics.endStroke()
+    graphics.endFill()
+
     @addChild(reticle)
 
-  draw: ->
-    graphics = @reticle.graphics
-    graphics.clear()
-    graphics.setStrokeStyle(0.05, "round", "bevel")
-    graphics.beginStroke("rgba(192, 0, 192, 1)")
-
-    graphics.drawCircle(@x, @y, 0.3)
+  setThrustAngle: (angle) ->
+    @_thrustAngle = angle
+    @reticle.rotation = angle
 
   tick: ->
     super()
