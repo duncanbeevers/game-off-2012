@@ -81,6 +81,8 @@ radiansDiff = (radians1, radians2) ->
 
 distance = (x1, y1, x2, y2) ->
   Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+magnitude = (x, y) ->
+  distance(0, 0, x, y)
 
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
@@ -95,4 +97,5 @@ FW.Math =
   sample: sample
   centroidOfSegments: centroidOfSegments
   distance: distance
+  magnitude: magnitude
   radiansDiff: radiansDiff
