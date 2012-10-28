@@ -10,9 +10,10 @@ class @Level extends FW.ContainerProxy
     @setupMaze()
 
   setupPhysics: ->
+    b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     world = new Box2D.Dynamics.b2World(
-      # new Box2D.Common.Math.b2Vec2(0, 0),  # gravity
-      new Box2D.Common.Math.b2Vec2(0, 10),  # gravity
+      new Box2D.Common.Math.b2Vec2(0, 0),  # gravity
+      # new Box2D.Common.Math.b2Vec2(0, 10),  # gravity
       true                                  # allow sleep
     )
     @world = world
@@ -20,10 +21,9 @@ class @Level extends FW.ContainerProxy
     # TODO: Remove debug canvas stuff
     debugCanvas = document.getElementById("debugCanvas")
     debugContext = debugCanvas.getContext("2d")
-    b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     debugDraw = new b2DebugDraw()
     debugDraw.SetSprite(debugContext)
-    debugDraw.SetFillAlpha(0.7)
+    debugDraw.SetFillAlpha(1)
     debugDraw.SetLineThickness(1.0)
     debugDraw.SetFlags(
       b2DebugDraw.e_shapeBit        |
@@ -35,9 +35,9 @@ class @Level extends FW.ContainerProxy
       b2DebugDraw.e_obbBit          |
       b2DebugDraw.e_pairBit
     )
-    debugDraw.SetDrawScale(1)
+    # debugDraw.SetDrawScale(pixelsPerMeter)
+    debugDraw.SetDrawScale(pixelsPerMeter)
     world.SetDebugDraw(debugDraw)
-
 
   addChild: (player) ->
     super(player)
@@ -76,6 +76,7 @@ class @Level extends FW.ContainerProxy
       fixtureDef.density = 1
       fixtureDef.friction = 0.6
       fixtureDef.restitution = 0.1
+      # fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(50)
       fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.3)
       bodyDef = new Box2D.Dynamics.b2BodyDef()
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
@@ -105,10 +106,10 @@ class @Level extends FW.ContainerProxy
       passageSize = 1
       wallThickness = passageSize / 10
       for [x1, y1, x2, y2] in segments
-        x1 = x1 * passageSize
-        y1 = y1 * passageSize
-        x2 = x2 * passageSize
-        y2 = y2 * passageSize
+        # x1 = x1 * passageSize
+        # y1 = y1 * passageSize
+        # x2 = x2 * passageSize
+        # y2 = y2 * passageSize
         length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
         fixtureDef.shape.SetAsBox(length / 2, wallThickness)
         bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
@@ -131,6 +132,7 @@ class @Level extends FW.ContainerProxy
 
     if @mazeGenerated
       @world.Step(1 / 10, 10, 10)
+      @world.DrawDebugData()
 
       # Update player graphic to follow physics entity
       if @player.fixture
