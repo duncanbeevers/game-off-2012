@@ -89,6 +89,18 @@ class @Level extends FW.ContainerProxy
       bodyDef.position.y = player.y
       player.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
 
+    createPhysicsGoal = (goal) ->
+      fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+      fixtureDef.density = 1
+      fixtureDef.friction = 0.6
+      fixtureDef.restitution = 0.1
+      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
+      bodyDef = new Box2D.Dynamics.b2BodyDef()
+      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+      bodyDef.position.x = goal.x
+      bodyDef.position.y = goal.y
+      goal.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+
     positionPlayerAtBeginning = (maze) ->
       getPlayer (player) ->
         positionPlayer(maze, player)
@@ -105,6 +117,7 @@ class @Level extends FW.ContainerProxy
       endingIndex = maximumDistanceTermination[0]
       walls = maze.project.call(maze, endingIndex, true)
       [goal.x, goal.y] = FW.Math.centroidOfSegments(walls)
+      createPhysicsGoal(goal)
 
     onSegmentsJoined = (segments) ->
       drawSegments(mazeGraphics, segments)
