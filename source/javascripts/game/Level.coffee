@@ -4,9 +4,6 @@ class @Level extends FW.ContainerProxy
   constructor: ->
     super()
 
-    @_container.scaleX = pixelsPerMeter
-    @_container.scaleY = @_container.scaleX
-    @_lastPlayerDot = new Box2D.Common.Math.b2Vec2()
     @setupPhysics()
     @setupMaze()
 
@@ -72,8 +69,9 @@ class @Level extends FW.ContainerProxy
       [x, y] = FW.Math.centroidOfSegments(walls)
       player.x = x
       player.y = y
+      level._lastPlayerDot = new Box2D.Common.Math.b2Vec2(player.x, player.y)
 
-      # Create physics entity
+    # Create physics entity
     createPhysicsPlayer = (player) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef()
       fixtureDef.density = 1
@@ -119,18 +117,17 @@ class @Level extends FW.ContainerProxy
 
     options = $.extend {}, Maze.Structures.FoldedHexagon,
       project: new Maze.Projections.FoldedHexagonCell()
-      width: 4
-      height: 4
+      width: 6
+      height: 6
       done: onMazeGenerated
 
     @maze = Maze.createInteractive(options)
 
   tick: ->
+    container = @_container
     harness = @harness()
-    @_container.regX = @player.x
-    @_container.regY = @player.y
-    @_container.x = 250
-    @_container.y = 200
+    container.regX = @player.x
+    container.regY = @player.y
 
     if @mazeGenerated
       @world.Step(1 / 20, 10, 10)
@@ -138,9 +135,11 @@ class @Level extends FW.ContainerProxy
       # Update player graphic to follow physics entity
       if @player.fixture
         player = @player
-        canvas = @_container.getStage().canvas
-        xOffset = canvas.width / 2 / pixelsPerMeter - player.x
-        yOffset = canvas.height / 2 / pixelsPerMeter - player.y
+        canvas = container.getStage().canvas
+        halfWidth = canvas.width / 2
+        halfHeight = canvas.height / 2
+        xOffset = halfWidth / pixelsPerMeter - player.x
+        yOffset = halfHeight / pixelsPerMeter - player.y
         @debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
         body = player.fixture.GetBody()
         position = body.GetPosition()
@@ -149,10 +148,19 @@ class @Level extends FW.ContainerProxy
         player.y += (position.y - player.y) / 5
 
         bodyAngle = body.GetAngle()
-        currentRotation = FW.Math.normalizeToCircle(@_container.rotation * FW.Math.DEG_TO_RAD)
+        currentRotation = FW.Math.normalizeToCircle(container.rotation * FW.Math.DEG_TO_RAD)
+
         diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
         diff /= 10
-        @_container.rotation += diff * FW.Math.RAD_TO_DEG
+        container.rotation += diff * FW.Math.RAD_TO_DEG
+        velocity = body.GetLinearVelocity()
+        boost = FW.Math.magnitude(velocity.x, velocity.y) * 3
+        targetScale = pixelsPerMeter - boost
+
+        container.scaleX += (targetScale - container.scaleX) / 3
+        container.scaleY = container.scaleX
+        container.x = halfWidth
+        container.y = halfHeight
 
         angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
         player.setThrustAngle(angleToMouse)
@@ -169,9 +177,10 @@ class @Level extends FW.ContainerProxy
         if lastDotDistance > 0.1
           graphics = @mazeShape.graphics
           graphics.setStrokeStyle(0.02, "round", "bevel")
-          graphics.beginStroke("rgba(0, 192, 255, 0.5)")
+          graphics.beginStroke("rgba(192, 255, 64, 0.2)")
           graphics.moveTo(player.x, player.y)
           graphics.drawCircle(player.x, player.y, 0.01)
+          # graphics.lineTo(lastDot.x, lastDot.y)
           graphics.endStroke()
           @_lastPlayerDot.Set(player.x, player.y)
 
