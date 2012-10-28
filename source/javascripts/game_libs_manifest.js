@@ -14,5 +14,6 @@
 //= require FW/ParticleGenerator
 //= require FW/ProxyProperties
 //= require FW/MouseHarness
+//= require FW/NamedContactListener
 
 //= require Maze/Maze_manifest

@@ -80,6 +80,8 @@ class @Player extends FW.ParticleGenerator
     graphics.endFill()
     @addChild(goalReticle)
 
+  name: "Player"
+
   setThrustAngle: (angle) ->
     @thrustReticle.rotation = angle * FW.Math.RAD_TO_DEG
 

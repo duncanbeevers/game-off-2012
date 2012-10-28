@@ -12,12 +12,16 @@ class @Level extends FW.ContainerProxy
     @setupMaze()
 
   setupPhysics: ->
+    contactListener = new FW.NamedContactListener()
+    @_contactListener = contactListener
+
     b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     world = new Box2D.Dynamics.b2World(
       new Box2D.Common.Math.b2Vec2(0, 0), # no gravity
       true                                # allow sleep
     )
     @world = world
+    world.SetContactListener(contactListener)
 
     # TODO: Remove debug canvas stuff
     debugCanvas = document.getElementById("debugCanvas")
@@ -39,6 +43,11 @@ class @Level extends FW.ContainerProxy
     )
     debugDraw.SetDrawScale(pixelsPerMeter)
     world.SetDebugDraw(debugDraw)
+
+    level = @
+    contactListener.registerContactListener "Player", "Goal", ->
+      level.solved = true
+
 
   onAddedAsChild: (parent) ->
     @harness = FW.MouseHarness.outfit(@_container)
@@ -88,6 +97,8 @@ class @Level extends FW.ContainerProxy
       bodyDef.position.x = player.x
       bodyDef.position.y = player.y
       player.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+      player.fixture.SetUserData(player)
+
 
     createPhysicsGoal = (goal) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef()
@@ -100,6 +111,7 @@ class @Level extends FW.ContainerProxy
       bodyDef.position.x = goal.x
       bodyDef.position.y = goal.y
       goal.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+      goal.fixture.SetUserData(goal)
 
     positionPlayerAtBeginning = (maze) ->
       getPlayer (player) ->
@@ -120,7 +132,7 @@ class @Level extends FW.ContainerProxy
       createPhysicsGoal(goal)
 
     onSegmentsJoined = (segments) ->
-      drawSegments(mazeGraphics, segments)
+      level.bounds = drawSegments(mazeGraphics, segments)
 
       craftPhysicsWalls(segments)
       level.walls = segments
@@ -147,8 +159,8 @@ class @Level extends FW.ContainerProxy
 
     options = $.extend {}, Maze.Structures.FoldedHexagon,
       project: new Maze.Projections.FoldedHexagonCell()
-      width: 6
-      height: 6
+      width: 14
+      height: 14
       done: onMazeGenerated
 
     @maze = Maze.createInteractive(options)
@@ -156,8 +168,6 @@ class @Level extends FW.ContainerProxy
   tick: ->
     container = @_container
     harness = @harness()
-    container.regX = @player.x
-    container.regY = @player.y
 
     if @mazeGenerated
       @_goal.tick()
@@ -167,10 +177,12 @@ class @Level extends FW.ContainerProxy
       if @player.fixture
         player = @player
         canvas = container.getStage().canvas
-        halfWidth = canvas.width / 2
-        halfHeight = canvas.height / 2
-        xOffset = halfWidth / pixelsPerMeter - player.x
-        yOffset = halfHeight / pixelsPerMeter - player.y
+        canvasWidth = canvas.width
+        canvasHeight = canvas.height
+        halfCanvasWidth = canvasWidth / 2
+        halfCanvasHeight = canvasHeight / 2
+        xOffset = halfCanvasWidth / pixelsPerMeter - player.x
+        yOffset = halfCanvasHeight / pixelsPerMeter - player.y
         @debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
         body = player.fixture.GetBody()
         position = body.GetPosition()
@@ -184,14 +196,28 @@ class @Level extends FW.ContainerProxy
         diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
         diff /= 10
         container.rotation += diff * FW.Math.RAD_TO_DEG
-        velocity = body.GetLinearVelocity()
-        boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
-        targetScale = pixelsPerMeter - boost
+
+        if @solved
+          [minX, minY, maxX, maxY] = @bounds
+          width = maxX - minX
+          height = maxY - minY
+          targetScale = Math.min(canvasWidth / width, canvasHeight / height, canvasWidth / height, canvasHeight / width)
+          targetRegX = 0
+          targetRegY = 0
+        else
+          velocity = body.GetLinearVelocity()
+          boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
+          targetScale = pixelsPerMeter - boost
+          targetRegX = player.x
+          targetRegY = player.y
+
 
         container.scaleX += (targetScale - container.scaleX) / 3
         container.scaleY = container.scaleX
-        container.x = halfWidth
-        container.y = halfHeight
+        container.x = halfCanvasWidth
+        container.y = halfCanvasHeight
+        container.regX += (targetRegX - container.regX) / 5
+        container.regY += (targetRegY - container.regY) / 5
 
         # Align the thrust reticle graphic toward the mouse
         angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)

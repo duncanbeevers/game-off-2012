@@ -33,3 +33,5 @@ class @Goal extends FW.ParticleGenerator
 
       isParticleCullable: (particle) ->
         particle.alpha <= 0.02
+
+  name: "Goal"
