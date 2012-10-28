@@ -62,7 +62,7 @@ class @Level extends FW.ContainerProxy
   setupMaze: ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
-    @mazeShape = mazeShape
+    @_mazeShape = mazeShape
 
     @_mazeContainer.addChild(mazeShape)
 
@@ -72,7 +72,7 @@ class @Level extends FW.ContainerProxy
       # TODO: Deal with this race condition,
       fn(level._player)
 
-    onMazeGenerated = (maze) ->
+    onMazeAvailable = (maze) ->
       joinSegments(maze.projectedSegments)
       positionPlayerAtBeginning(maze)
       positionGoalAtEnd(maze, level._goal)
@@ -164,7 +164,7 @@ class @Level extends FW.ContainerProxy
       project: new Maze.Projections.FoldedHexagonCell()
       width: 14
       height: 14
-      done: onMazeGenerated
+      done: onMazeAvailable
 
     @maze = Maze.createInteractive(options)
 
@@ -245,7 +245,7 @@ class @Level extends FW.ContainerProxy
         lastDotDistance = FW.Math.distance(lastDot.x, lastDot.y, player.x, player.y)
 
         if lastDotDistance > 0.1
-          graphics = @mazeShape.graphics
+          graphics = @_mazeShape.graphics
           graphics.setStrokeStyle(0.02, "round", "bevel")
           graphics.beginStroke("rgba(192, 255, 64, 0.2)")
           graphics.moveTo(player.x, player.y)
