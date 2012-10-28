@@ -79,6 +79,9 @@ radiansDiff = (radians1, radians2) ->
 
   size * sign
 
+distance = (x1, y1, x2, y2) ->
+  Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
   TWO_PI: TWO_PI
@@ -91,4 +94,5 @@ FW.Math =
   linearInterpolate: linearInterpolate
   sample: sample
   centroidOfSegments: centroidOfSegments
+  distance: distance
   radiansDiff: radiansDiff
