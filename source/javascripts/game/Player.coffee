@@ -42,3 +42,18 @@ class @Player extends FW.ParticleGenerator
 
       isParticleCullable: (particle) ->
         particle.alpha <= 0.02
+
+    reticle = new createjs.Shape()
+    @reticle = reticle
+    @addChild(reticle)
+
+  draw: ->
+    graphics = @reticle.graphics
+    graphics.clear()
+    graphics.setStrokeStyle(0.05, "round", "bevel")
+    graphics.beginStroke("rgba(192, 0, 192, 1)")
+
+    graphics.drawCircle(@x, @y, 0.3)
+
+  tick: ->
+    super()
