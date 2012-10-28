@@ -13,5 +13,6 @@
 //= require FW/ContainerProxy
 //= require FW/ParticleGenerator
 //= require FW/ProxyProperties
+//= require FW/MouseHarness
 
 //= require Maze/Maze_manifest

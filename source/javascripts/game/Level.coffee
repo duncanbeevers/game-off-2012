@@ -12,9 +12,8 @@ class @Level extends FW.ContainerProxy
   setupPhysics: ->
     b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     world = new Box2D.Dynamics.b2World(
-      new Box2D.Common.Math.b2Vec2(0, 0),  # gravity
-      # new Box2D.Common.Math.b2Vec2(0, 10),  # gravity
-      true                                  # allow sleep
+      new Box2D.Common.Math.b2Vec2(0, 0), # no gravity
+      true                                # allow sleep
     )
     @world = world
 
@@ -22,6 +21,7 @@ class @Level extends FW.ContainerProxy
     debugCanvas = document.getElementById("debugCanvas")
     debugContext = debugCanvas.getContext("2d")
     debugDraw = new b2DebugDraw()
+    @debugDraw = debugDraw
     debugDraw.SetSprite(debugContext)
     debugDraw.SetFillAlpha(1)
     debugDraw.SetLineThickness(1.0)
@@ -35,9 +35,11 @@ class @Level extends FW.ContainerProxy
       b2DebugDraw.e_obbBit          |
       b2DebugDraw.e_pairBit
     )
-    # debugDraw.SetDrawScale(pixelsPerMeter)
     debugDraw.SetDrawScale(pixelsPerMeter)
     world.SetDebugDraw(debugDraw)
+
+  onAddedAsChild: (parent) ->
+    @harness = FW.MouseHarness.outfit(parent.getStage())
 
   addChild: (player) ->
     super(player)
@@ -58,7 +60,6 @@ class @Level extends FW.ContainerProxy
     onMazeGenerated = (maze) ->
       joinSegments(maze.projectedSegments)
       positionPlayerAtBeginning(maze)
-      level.mazeGenerated = true
 
     joinSegments = (segments) ->
       joiner = new Maze.SegmentJoiner(segments)
@@ -77,7 +78,7 @@ class @Level extends FW.ContainerProxy
       fixtureDef.friction = 0.6
       fixtureDef.restitution = 0.1
       # fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(50)
-      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.3)
+      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
       bodyDef = new Box2D.Dynamics.b2BodyDef()
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
       bodyDef.position.x = player.x
@@ -91,7 +92,9 @@ class @Level extends FW.ContainerProxy
 
     onSegmentsJoined = (segments) ->
       craftPhysicsWalls(segments)
-      @walls = segments
+      level.walls = segments
+      level.mazeGenerated = true
+
 
     craftPhysicsWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
@@ -103,13 +106,8 @@ class @Level extends FW.ContainerProxy
 
       bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
       fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape()
-      passageSize = 1
-      wallThickness = passageSize / 10
+      wallThickness = 0.1
       for [x1, y1, x2, y2] in segments
-        # x1 = x1 * passageSize
-        # y1 = y1 * passageSize
-        # x2 = x2 * passageSize
-        # y2 = y2 * passageSize
         length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
         fixtureDef.shape.SetAsBox(length / 2, wallThickness)
         bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
@@ -125,22 +123,31 @@ class @Level extends FW.ContainerProxy
     @maze = Maze.createInteractive(options)
 
   tick: ->
+    harness = @harness()
     @_container.regX = @player.x
     @_container.regY = @player.y
     @_container.x = 250
     @_container.y = 200
 
     if @mazeGenerated
-      @world.Step(1 / 10, 10, 10)
-      @world.DrawDebugData()
+      @world.Step(1 / 20, 10, 10)
 
       # Update player graphic to follow physics entity
       if @player.fixture
         player = @player
-        position = player.fixture.GetBody().GetPosition()
-        # console.log "graphic: %o,%o body: %o,%o", player.x, player.y, position.x, position.y
-        # player.x = position.x
-        # player.y = position.y
+        canvas = @_container.getStage().canvas
+        xOffset = canvas.width / 2 / pixelsPerMeter - player.x
+        yOffset = canvas.height / 2 / pixelsPerMeter - player.y
+        @debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
+        body = player.fixture.GetBody()
+        position = body.GetPosition()
+        angle = body.GetAngle()
+
+        player.x = position.x
+        player.y = position.y
+        @_container.rotation = angle * FW.Math.RAD_TO_DEG
+
+      @world.DrawDebugData()
 
 drawSegments = (graphics, segments) ->
   graphics.setStrokeStyle(0.35, "round", "bevel")
