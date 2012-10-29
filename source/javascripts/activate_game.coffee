@@ -1,13 +1,13 @@
 createjs = @createjs
 $ ->
   stage = new createjs.Stage(document.getElementById("gameCanvas"))
-  level = new Level()
+  $.getJSON("levels/level1.json").done (data) ->
+    level = new Level(data)
+    stage.addChild(level)
 
-  stage.addChild(level)
+    updater =
+      tick: ->
+        level.tick()
+        stage.update()
 
-  updater =
-    tick: ->
-      level.tick()
-      stage.update()
-
-  Ticker.addListener updater
+    Ticker.addListener updater

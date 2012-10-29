@@ -1,7 +1,7 @@
 pixelsPerMeter = 120
 
 class @Level extends FW.ContainerProxy
-  constructor: ->
+  constructor: (mazeData) ->
     super()
 
     mazeContainer = new createjs.Container()
@@ -16,7 +16,7 @@ class @Level extends FW.ContainerProxy
     @_goal = goal
 
     @setupPhysics()
-    @setupMaze()
+    @setupMaze(mazeData)
 
   setupPhysics: ->
     contactListener = new FW.NamedContactListener()
@@ -59,7 +59,7 @@ class @Level extends FW.ContainerProxy
   onAddedAsChild: (parent) ->
     @harness = FW.MouseHarness.outfit(@_mazeContainer)
 
-  setupMaze: ->
+  setupMaze: (mazeData) ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
     @_mazeShape = mazeShape
@@ -72,20 +72,19 @@ class @Level extends FW.ContainerProxy
       # TODO: Deal with this race condition,
       fn(level._player)
 
-    onMazeAvailable = (maze) ->
-      joinSegments(maze.projectedSegments)
-      positionPlayerAtBeginning(maze)
-      positionGoalAtEnd(maze, level._goal)
+    onMazeDataAvailable = (mazeData) ->
+      positionPlayerAtBeginning(mazeData.start)
+      positionGoalAtEnd(mazeData.end, level._goal)
+      segments = mazeData.segments
 
-    joinSegments = (segments) ->
-      joiner = new Maze.SegmentJoiner(segments)
-      joiner.solve(onSegmentsJoined)
+      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, segments)
 
-    positionPlayer = (maze, player) ->
-      walls = maze.project.call(maze, maze.initialIndex())
-      [x, y] = FW.Math.centroidOfSegments(walls)
-      player.x = x
-      player.y = y
+      craftPhysicsWalls(segments)
+      level.walls = segments
+      level.mazeGenerated = true
+
+    positionPlayer = (start, player) ->
+      [ player.x, player.y ] = start
       level._lastPlayerDot = new Box2D.Common.Math.b2Vec2(player.x, player.y)
 
     # Create physics entity
@@ -121,26 +120,9 @@ class @Level extends FW.ContainerProxy
         positionPlayer(maze, player)
         createPhysicsPlayer(player)
 
-    positionGoalAtEnd = (maze, goal) ->
-      # maximumDistanceTermination = [ undefined, -Infinity ]
-      # for [i, distance] in maze.terminations
-      #   if distance > maximumDistanceTermination[1]
-      #     maximumDistanceTermination[0] = i
-      #     maximumDistanceTermination[1] = distance
-      maximumDistanceTermination = maze.maxTermination
-
-      endingIndex = maximumDistanceTermination[0]
-      walls = maze.project.call(maze, endingIndex)
-      [goal.x, goal.y] = FW.Math.centroidOfSegments(walls)
+    positionGoalAtEnd = (end, goal) ->
+      [ goal.x, goal.y ] = end
       createPhysicsGoal(goal)
-
-    onSegmentsJoined = (segments) ->
-      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, segments)
-
-      craftPhysicsWalls(segments)
-      level.walls = segments
-      level.mazeGenerated = true
-
 
     craftPhysicsWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
@@ -160,13 +142,7 @@ class @Level extends FW.ContainerProxy
         bodyDef.angle = Math.atan2(y2 - y1, x2 - x1)
         world.CreateBody(bodyDef).CreateFixture(fixtureDef)
 
-    options = $.extend {}, Maze.Structures.FoldedHexagon,
-      project: new Maze.Projections.FoldedHexagonCell()
-      width: 14
-      height: 14
-      done: onMazeAvailable
-
-    @maze = Maze.createInteractive(options)
+    onMazeDataAvailable(mazeData)
 
   tick: ->
     player = @_player
