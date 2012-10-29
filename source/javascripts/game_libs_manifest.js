@@ -6,14 +6,6 @@
 //= require lib/easeljs
 //= require lib/box2dweb
 
-//= require require_shim
-//= require FW/Math
-//= require FW/SortedArray
-//= require FW/SortedSet
-//= require FW/ContainerProxy
-//= require FW/ParticleGenerator
-//= require FW/ProxyProperties
-//= require FW/MouseHarness
-//= require FW/NamedContactListener
+//= require FW/FW_manifest.js
 
 //= require Maze/Maze_manifest
