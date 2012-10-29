@@ -152,8 +152,7 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   tick: ->
-    fps = Ticker.getMeasuredFPS()
-    @world.Step(1 / fps, 10, 10)
+    @world.Step(1 / Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
     goal = @_goal
@@ -161,88 +160,104 @@ class @Level extends FW.ContainerProxy
     player.tick()
     goal.tick()
 
-    container = @_mazeContainer
     harness = @harness()
 
-    easers =
-      mazeRotation: fps / 2
-      mazeZoom: fps / 6.5
-      mazePan: fps / 4
-      playerPosition: fps / 4
-      playerRotation: fps / 2
-
-
-    # Update player graphic to follow physics entity
-    canvas = container.getStage().canvas
-    canvasWidth = canvas.width
-    canvasHeight = canvas.height
-    halfCanvasWidth = canvasWidth / 2
-    halfCanvasHeight = canvasHeight / 2
-    xOffset = halfCanvasWidth / pixelsPerMeter - player.x
-    yOffset = halfCanvasHeight / pixelsPerMeter - player.y
-    @debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
-    body = player.fixture.GetBody()
-    position = body.GetPosition()
-
-    player.x += (position.x - player.x) / easers.playerPosition
-    player.y += (position.y - player.y) / easers.playerPosition
-
-    bodyAngle = body.GetAngle()
-    currentRotation = FW.Math.normalizeToCircle(container.rotation * FW.Math.DEG_TO_RAD)
-
-
-    diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
-    diff /= easers.mazeRotation
-    container.rotation += diff * FW.Math.RAD_TO_DEG
-
-    if @solved
-      [minX, minY, maxX, maxY] = @bounds
-      width = maxX - minX
-      height = maxY - minY
-      targetScale = Math.min(canvasWidth / width, canvasHeight / height, canvasWidth / height, canvasHeight / width)
-      targetRegX = 0
-      targetRegY = 0
-    else
-      velocity = body.GetLinearVelocity()
-      boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
-      targetScale = pixelsPerMeter - boost
-      targetRegX = player.x
-      targetRegY = player.y
-
-
-    container.scaleX += (targetScale - container.scaleX) / easers.mazeZoom
-    container.scaleY = container.scaleX
-    container.x = halfCanvasWidth
-    container.y = halfCanvasHeight
-    container.regX += (targetRegX - container.regX) / easers.mazePan
-    container.regY += (targetRegY - container.regY) / easers.mazePan
-
-    # Align the thrust reticle graphic toward the mouse
-    angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
-    player.setThrustAngle(angleToMouse)
-
-    # Clear existing forces, then accelerate towards the mouse
-    forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) / 2, -Math.sin(angleToMouse) / 2)
-    body.ClearForces()
-    body.m_angularVelocity /= easers.playerRotation
-    body.ApplyForce(forceVector, body.GetWorldCenter())
-
-    # Align the goal reticle graphic towards the goal
-    angleToGoal = Math.atan2(player.y - @_goal.y, player.x - @_goal.x)
-    player.setGoalAngle(angleToGoal)
-
-    # Leave a trail of dots!
-    lastDot = @_lastPlayerDot
-    lastDotDistance = FW.Math.distance(lastDot.x, lastDot.y, player.x, player.y)
-
-    if lastDotDistance > 0.1
-      graphics = @_mazeShape.graphics
-      graphics.setStrokeStyle(0.02, "round", "bevel")
-      graphics.beginStroke("rgba(192, 255, 64, 0.2)")
-      graphics.moveTo(player.x, player.y)
-      # graphics.drawCircle(player.x, player.y, 0.01)
-      graphics.lineTo(lastDot.x, lastDot.y)
-      graphics.endStroke()
-      @_lastPlayerDot.Set(player.x, player.y)
+    cameraTrackPlayer(player, @)
+    playerTrackMouse(player, harness)
+    playerTrackGoal(player, @_goal)
+    playerLeaveTrack(player, @)
 
     @world.DrawDebugData()
+
+cameraTrackPlayer = (player, level) ->
+  solved = level.solved
+  container = level._mazeContainer
+  canvas = container.getStage().canvas
+  canvasWidth = canvas.width
+  canvasHeight = canvas.height
+  halfCanvasWidth = canvasWidth / 2
+  halfCanvasHeight = canvasHeight / 2
+  xOffset = halfCanvasWidth / pixelsPerMeter - player.x
+  yOffset = halfCanvasHeight / pixelsPerMeter - player.y
+  level.debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
+  body = player.fixture.GetBody()
+  position = body.GetPosition()
+
+
+  playerPositionEase = easers('playerPosition')
+  player.x += (position.x - player.x) / playerPositionEase
+  player.y += (position.y - player.y) / playerPositionEase
+
+  bodyAngle = body.GetAngle()
+  currentRotation = FW.Math.normalizeToCircle(container.rotation * FW.Math.DEG_TO_RAD)
+
+  diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
+  diff /= easers('mazeRotation')
+  container.rotation += diff * FW.Math.RAD_TO_DEG
+
+  if solved
+    [minX, minY, maxX, maxY] = level.bounds
+    width = maxX - minX
+    height = maxY - minY
+    targetScale = Math.min(canvasWidth / width, canvasHeight / height, canvasWidth / height, canvasHeight / width)
+    targetRegX = 0
+    targetRegY = 0
+  else
+    velocity = body.GetLinearVelocity()
+    boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
+    targetScale = pixelsPerMeter - boost
+    targetRegX = player.x
+    targetRegY = player.y
+
+
+  container.scaleX += (targetScale - container.scaleX) / easers('mazeZoom')
+  container.scaleY = container.scaleX
+  container.x = halfCanvasWidth
+  container.y = halfCanvasHeight
+  mazePan = easers('mazePan')
+  container.regX += (targetRegX - container.regX) / mazePan
+  container.regY += (targetRegY - container.regY) / mazePan
+
+playerTrackMouse = (player, harness) ->
+  body = player.fixture.GetBody()
+
+  # Align the thrust reticle graphic toward the mouse
+  angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
+  player.setThrustAngle(angleToMouse)
+
+  # Clear existing forces, then accelerate towards the mouse
+  forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) / 2, -Math.sin(angleToMouse) / 2)
+  body.ClearForces()
+  body.m_angularVelocity /= easers('playerRotation')
+  body.ApplyForce(forceVector, body.GetWorldCenter())
+
+playerTrackGoal = (player, goal) ->
+  # Align the goal reticle graphic towards the goal
+  angleToGoal = Math.atan2(player.y - goal.y, player.x - goal.x)
+  player.setGoalAngle(angleToGoal)
+
+playerLeaveTrack = (player, level) ->
+  # Leave a trail of dots!
+  lastDot = level._lastPlayerDot
+  lastDotDistance = FW.Math.distance(lastDot.x, lastDot.y, player.x, player.y)
+
+  if lastDotDistance > 0.1
+    graphics = level._mazeShape.graphics
+    graphics.setStrokeStyle(0.02, "round", "bevel")
+    graphics.beginStroke("rgba(192, 255, 64, 0.2)")
+    graphics.moveTo(player.x, player.y)
+    # graphics.drawCircle(player.x, player.y, 0.01)
+    graphics.lineTo(lastDot.x, lastDot.y)
+    graphics.endStroke()
+    lastDot.Set(player.x, player.y)
+
+easers = (key) ->
+  fps = Ticker.getMeasuredFPS()
+  divisor = switch key
+    when 'mazeRotation'   then 2
+    when 'mazeZoom'       then 6.5
+    when 'mazePan'        then 4
+    when 'playerPosition' then 4
+    when 'playerRotation' then 2
+
+  fps / divisor
