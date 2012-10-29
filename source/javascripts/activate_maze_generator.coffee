@@ -13,6 +13,12 @@ $ ->
   updateStatus = (status) ->
     $("#status_text").text(status)
 
+  updateInfo = (maze) ->
+    info =
+      terminations: maze.terminations.length
+      maxLength: maze.maxTermination[1]
+    $("#info").text(JSON.stringify(info))
+
   stage = new createjs.Stage(document.getElementById("gameCanvas"))
   mazeContainer = new createjs.Shape()
   mazeGraphics = mazeContainer.graphics
@@ -30,6 +36,7 @@ $ ->
 
   onMazeAvailable = (maze) ->
     updateStatus("Joining segments")
+    updateInfo(maze)
     joiner = new Maze.SegmentJoiner(maze.projectedSegments)
     joiner.solve(onSegmentsJoined)
 
