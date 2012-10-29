@@ -1,10 +1,7 @@
-//= require game/easeljs_namespace
+//= require game/createjs_namespace
 
-//= require lib/preloadjs
-//= require lib/soundjs
-//= require lib/tweenjs
-//= require lib/easeljs
-//= require lib/box2dweb
+//= require lib/createjs_manifest
+//= require lib/box2dweb_manifest
 
 //= require FW/FW_manifest.js
 
