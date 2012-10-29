@@ -10,6 +10,7 @@ $ ->
   onResize()
 
   stage = new createjs.Stage($canvas[0])
+
   $.getJSON("levels/level1.json").done (data) ->
     Ticker.setFPS(30)
 
@@ -21,3 +22,6 @@ $ ->
         stage.update()
 
     Ticker.addListener updater
+
+    $canvas.show()
+    $("#loading").hide()
