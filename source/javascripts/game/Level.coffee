@@ -34,7 +34,6 @@ class @Level extends FW.ContainerProxy
     contactListener = new FW.NamedContactListener()
     @_contactListener = contactListener
 
-    b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     world = new Box2D.Dynamics.b2World(
       new Box2D.Common.Math.b2Vec2(0, 0), # no gravity
       true                                # allow sleep
@@ -42,26 +41,27 @@ class @Level extends FW.ContainerProxy
     @world = world
     world.SetContactListener(contactListener)
 
-    # TODO: Remove debug canvas stuff
     debugCanvas = document.getElementById("debugCanvas")
-    debugContext = debugCanvas.getContext("2d")
-    debugDraw = new b2DebugDraw()
-    @debugDraw = debugDraw
-    debugDraw.SetSprite(debugContext)
-    debugDraw.SetFillAlpha(1)
-    debugDraw.SetLineThickness(1.0)
-    debugDraw.SetFlags(
-      b2DebugDraw.e_shapeBit        |
-      b2DebugDraw.e_jointBit        |
-      b2DebugDraw.e_aabbBit         |
-      b2DebugDraw.e_centerOfMassBit |
-      b2DebugDraw.e_coreShapeBit    |
-      b2DebugDraw.e_jointBit        |
-      b2DebugDraw.e_obbBit          |
-      b2DebugDraw.e_pairBit
-    )
-    debugDraw.SetDrawScale(pixelsPerMeter)
-    world.SetDebugDraw(debugDraw)
+    if debugCanvas
+      b2DebugDraw = Box2D.Dynamics.b2DebugDraw
+      debugContext = debugCanvas.getContext("2d")
+      debugDraw = new b2DebugDraw()
+      @debugDraw = debugDraw
+      debugDraw.SetSprite(debugContext)
+      debugDraw.SetFillAlpha(1)
+      debugDraw.SetLineThickness(1.0)
+      debugDraw.SetFlags(
+        b2DebugDraw.e_shapeBit        |
+        b2DebugDraw.e_jointBit        |
+        b2DebugDraw.e_aabbBit         |
+        b2DebugDraw.e_centerOfMassBit |
+        b2DebugDraw.e_coreShapeBit    |
+        b2DebugDraw.e_jointBit        |
+        b2DebugDraw.e_obbBit          |
+        b2DebugDraw.e_pairBit
+      )
+      debugDraw.SetDrawScale(pixelsPerMeter)
+      world.SetDebugDraw(debugDraw)
 
     level = @
     contactListener.registerContactListener "Player", "Goal", ->
@@ -186,7 +186,7 @@ cameraTrackPlayer = (player, level) ->
   halfCanvasHeight = canvasHeight / 2
   xOffset = halfCanvasWidth / pixelsPerMeter - player.x
   yOffset = halfCanvasHeight / pixelsPerMeter - player.y
-  level.debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
+  level.debugDraw?.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
   body = player.fixture.GetBody()
   position = body.GetPosition()
 
