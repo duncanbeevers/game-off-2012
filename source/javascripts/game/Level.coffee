@@ -11,17 +11,24 @@ class @Level extends FW.ContainerProxy
     mazeContainer.addChild(goal)
     @_container.addChild(mazeContainer)
 
+    countDown = new CountDown ->
+      Ticker.addListener level
+
+    @_countDown = countDown
+    @_container.addChild(countDown)
+
     @_player = player
     @_mazeContainer = mazeContainer
     @_goal = goal
 
     @setupPhysics()
 
+
     level = @
     @setupMaze mazeData, -> level.onReady()
 
   onReady: ->
-    createjs.Ticker.addListener(@)
+    createjs.Ticker.addListener(@_countDown)
 
   setupPhysics: ->
     contactListener = new FW.NamedContactListener()
