@@ -2,6 +2,8 @@ generateMaze = (maze, done) ->
   recurse(maze, maze.initialIndex(), false)
 
 recurse = (maze, i, didBacktrack) ->
+  cache = maze._projectionEdgeCache
+
   # Track whether we are back at the beginning
   # (ie, stack is empty and no direction to turn)
   bottomedOut = false
@@ -22,7 +24,7 @@ recurse = (maze, i, didBacktrack) ->
 
     addTunnel(maze, i, newI)
   else
-    projectAndDrawMazeCell(maze, i)
+    projectAndDrawMazeCell(maze, i, cache)
     # Oh no! Nowhere to turn!
     # Backtrack until we find a spot to branch off again
     if maze.stack && maze.stack.length
@@ -90,10 +92,10 @@ pickDirection = (maze, currentIndex) ->
   # Pick one at random
   return directions[Math.floor(Math.random() * directions.length)]
 
-projectAndDrawMazeCell = (maze, i) ->
+projectAndDrawMazeCell = (maze, i, cache) ->
   if maze.project
     projectedSegments = maze.projectedSegments || []
-    cellSegments = maze.project.call(maze, i)
+    cellSegments = maze.project.call(maze, i, cache)
     if maze.draw
       maze.draw(cellSegments)
 
@@ -101,6 +103,8 @@ projectAndDrawMazeCell = (maze, i) ->
 
 class @Maze
   constructor: (options) ->
+    @_projectionEdgeCache ||= {}
+
     defaultOptions =
       unicursal: false
       width: 4
@@ -138,10 +142,10 @@ class @Maze
     nonMaximalTerminations = (i for [i, length] in @terminations when @maxTermination[0] != i)
 
     terminations = for i in nonMaximalTerminations
-      centroid(@project.call(@, i, true))
+      centroid(@project.call(@, i))
 
-    start = centroid(@project.call(@, @initialIndex(), true))
-    end = centroid(@project.call(@, @maxTermination[0], true))
+    start = centroid(@project.call(@, @initialIndex()))
+    end = centroid(@project.call(@, @maxTermination[0]))
 
     serialized =
       start: start

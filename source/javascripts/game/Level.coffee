@@ -82,7 +82,7 @@ class @Level extends FW.ContainerProxy
       joiner.solve(onSegmentsJoined)
 
     positionPlayer = (maze, player) ->
-      walls = maze.project.call(maze, maze.initialIndex(), true)
+      walls = maze.project.call(maze, maze.initialIndex())
       [x, y] = FW.Math.centroidOfSegments(walls)
       player.x = x
       player.y = y
@@ -130,7 +130,7 @@ class @Level extends FW.ContainerProxy
       maximumDistanceTermination = maze.maxTermination
 
       endingIndex = maximumDistanceTermination[0]
-      walls = maze.project.call(maze, endingIndex, true)
+      walls = maze.project.call(maze, endingIndex)
       [goal.x, goal.y] = FW.Math.centroidOfSegments(walls)
       createPhysicsGoal(goal)
 

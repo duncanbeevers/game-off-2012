@@ -1,18 +1,18 @@
 Maze = @Maze ||= {}
 Maze.Projections = Maze.Projections ||= {}
 
-mazeCell = (maze, i, forceEnclose) ->
+mazeCell = (maze, i, cache) ->
+  if cache
+    forceEnclose = false
+  else
+    forceEnclose = true
+
   maze.cell(i, forceEnclose)
 
 
 class BaseProjection
-  constructor: ->
-    @_projectionEdgeCache = {}
-
-  segmentsForCellCircuit: (i, cell, points, forceEnclose) ->
+  segmentsForCellCircuit: (i, cell, points, cache) ->
     segments = []
-    if !forceEnclose
-      cache = @_projectionEdgeCache
 
     for direction, _i in cell
       [x, y] = points[_i]
@@ -38,8 +38,8 @@ class BaseProjection
     segments
 
 class Maze.Projections.GraphPaper extends BaseProjection
-  call: (maze, i, forceEnclose = false) ->
-    cell = mazeCell(maze, i, forceEnclose)
+  call: (maze, i, cache) ->
+    cell = mazeCell(maze, i, cache)
 
     x = i % @width
     y = Math.floor(i / @width)
@@ -49,11 +49,11 @@ class Maze.Projections.GraphPaper extends BaseProjection
       [ x + 1, y ]
       [ x + 1, y + 1 ]
       [ x, y + 1 ]
-    ], forceEnclose)
+    ], cache)
 
 class Maze.Projections.FoldedHexagonCell extends BaseProjection
-  call: (maze, i, forceEnclose = false) ->
-    cell = mazeCell(maze, i, forceEnclose)
+  call: (maze, i, cache) ->
+    cell = mazeCell(maze, i, cache)
     mazeX = i % maze.width
     mazeY = Math.floor(i / maze.width)
 
@@ -89,7 +89,7 @@ class Maze.Projections.FoldedHexagonCell extends BaseProjection
           [ x + bigSkew, y + smallSkew ]
           [ x + bigSkew, y + smallSkew + 1 ]
           [ x, y + 1]
-        ], forceEnclose)
+        ], cache)
 
       when 2 # SW
         x = (height - mazeY) * bigSkew - (bigSkew * halfWidth)
@@ -99,7 +99,7 @@ class Maze.Projections.FoldedHexagonCell extends BaseProjection
           [ x, y + 1 ]
           [ x - bigSkew, y + 1 + smallSkew ]
           [ x - bigSkew, y + smallSkew ]
-        ], forceEnclose)
+        ], cache)
 
       when 3 # SE
         x = (mazeX - halfWidth) * bigSkew + reflectionX - (mazeY - halfHeight) * bigSkew - (bigSkew * halfWidth)
@@ -110,4 +110,4 @@ class Maze.Projections.FoldedHexagonCell extends BaseProjection
           [ x + bigSkew, y + smallSkew ]
           [ x, y + smallSkew * 2 ]
           [ x - bigSkew, y + smallSkew ]
-        ], forceEnclose)
+        ], cache)
