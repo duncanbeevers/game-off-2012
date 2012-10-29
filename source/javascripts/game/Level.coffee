@@ -21,6 +21,15 @@ class @Level extends FW.ContainerProxy
     @_mazeContainer = mazeContainer
     @_goal = goal
 
+    timerText = new createjs.Text()
+    timerText.color = "#FF4522"
+    timerText.font = "24px Upheaval"
+    timerText.textAlign = "center"
+    timerText.textBaseline = "middle"
+
+    @_timerText = timerText
+    @_container.addChild(timerText)
+
     @setupPhysics()
 
 
@@ -67,6 +76,7 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Goal", ->
       level.solved = true
+      level.completionTime ||= Ticker.getTime()
 
 
   onAddedAsChild: (parent) ->
@@ -174,6 +184,7 @@ class @Level extends FW.ContainerProxy
     playerTrackMouse(player, harness)
     playerTrackGoal(player, @_goal)
     playerLeaveTrack(player, @)
+    updateTimer(@_timerText, @)
 
     @world.DrawDebugData()
 
@@ -267,6 +278,7 @@ easers = (key) ->
     when 'mazePan'        then 4
     when 'playerPosition' then 4
     when 'playerRotation' then 2
+    when 'timerText'      then 4
 
   fps / divisor
 
@@ -277,3 +289,26 @@ computePixelsPerMeter = (level) ->
   canvasHeight = canvas.height
 
   Math.min(canvasWidth / maxViewportMeters, canvasHeight / maxViewportMeters)
+
+updateTimer = (timer, level) ->
+  now = Ticker.getTime()
+  if !level.startTime
+    level.startTime = now
+  elapsed = (level.completionTime || now) - level.startTime
+  canvas = timer.getStage().canvas
+
+  timer.text = FW.Time.clockFormat(elapsed)
+  if level.solved
+    targetX = canvas.width / 2
+    targetY = canvas.height / 2
+    targetScale = canvas.width / 105
+  else
+    targetX = canvas.width / 2
+    targetY = 12
+    targetScale = 1
+
+  ease = easers('timerText')
+  timer.x += (targetX - timer.x) / ease
+  timer.y += (targetY - timer.y) / ease
+  timer.scaleX += (targetScale - timer.scaleX) / ease
+  timer.scaleY = timer.scaleX

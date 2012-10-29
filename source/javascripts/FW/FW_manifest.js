@@ -1,5 +1,6 @@
 //= require require_shim
 //= require FW/Math
+//= require FW/Time
 //= require FW/SortedArray
 //= require FW/SortedSet
 //= require FW/ContainerProxy
