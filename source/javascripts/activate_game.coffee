@@ -1,6 +1,15 @@
 createjs = @createjs
 $ ->
-  stage = new createjs.Stage(document.getElementById("gameCanvas"))
+  $canvas = $("#gameCanvas")
+  $window = $(window)
+
+  onResize = ->
+    $canvas.attr(width: $window.width(), height: $window.height())
+
+  $(window).on "resize", onResize
+  onResize()
+
+  stage = new createjs.Stage($canvas[0])
   $.getJSON("levels/level1.json").done (data) ->
     Ticker.setFPS(30)
 

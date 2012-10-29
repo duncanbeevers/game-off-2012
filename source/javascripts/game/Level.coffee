@@ -1,4 +1,4 @@
-pixelsPerMeter = 120
+maxViewportMeters = 4
 
 class @Level extends FW.ContainerProxy
   constructor: (mazeData) ->
@@ -31,6 +31,8 @@ class @Level extends FW.ContainerProxy
     createjs.Ticker.addListener(@_countDown)
 
   setupPhysics: ->
+    level = @
+
     contactListener = new FW.NamedContactListener()
     @_contactListener = contactListener
 
@@ -60,10 +62,9 @@ class @Level extends FW.ContainerProxy
         b2DebugDraw.e_obbBit          |
         b2DebugDraw.e_pairBit
       )
-      debugDraw.SetDrawScale(pixelsPerMeter)
+      debugDraw.SetDrawScale(computePixelsPerMeter(level))
       world.SetDebugDraw(debugDraw)
 
-    level = @
     contactListener.registerContactListener "Player", "Goal", ->
       level.solved = true
 
@@ -184,12 +185,12 @@ cameraTrackPlayer = (player, level) ->
   canvasHeight = canvas.height
   halfCanvasWidth = canvasWidth / 2
   halfCanvasHeight = canvasHeight / 2
+  pixelsPerMeter = computePixelsPerMeter(level)
   xOffset = halfCanvasWidth / pixelsPerMeter - player.x
   yOffset = halfCanvasHeight / pixelsPerMeter - player.y
   level.debugDraw?.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
   body = player.fixture.GetBody()
   position = body.GetPosition()
-
 
   playerPositionEase = easers('playerPosition')
   player.x += (position.x - player.x) / playerPositionEase
@@ -268,3 +269,11 @@ easers = (key) ->
     when 'playerRotation' then 2
 
   fps / divisor
+
+computePixelsPerMeter = (level) ->
+  container = level._mazeContainer
+  canvas = container.getStage().canvas
+  canvasWidth = canvas.width
+  canvasHeight = canvas.height
+
+  Math.min(canvasWidth / maxViewportMeters, canvasHeight / maxViewportMeters)
