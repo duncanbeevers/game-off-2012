@@ -1,0 +1,20 @@
+section
+  div id="content"
+    canvas id="gameCanvas" width="512" height="384"
+
+section
+  p
+    ' Status:
+    span id="status_text"
+      | Loading
+
+section
+  button id="generate"
+    | Generate
+  button id="serialize"
+    | Serialize
+
+section
+  p id="serialized"
+
+== javascript_include_tag "game_libs_manifest", "game_tools_libs_manifest", "activate_maze_generator"
