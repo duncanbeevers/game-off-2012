@@ -2,9 +2,9 @@ FW = @FW ||= {}
 
 FW.CreateJS ||= {}
 
-FW.CreateJS.drawSegments = (graphics, segments) ->
+FW.CreateJS.drawSegments = (graphics, color, segments) ->
   graphics.setStrokeStyle(0.25, "round", "bevel")
-  graphics.beginStroke("rgba(0, 192, 192, 0.3)")
+  graphics.beginStroke(color)
 
   minX = Infinity
   minY = Infinity
@@ -17,5 +17,7 @@ FW.CreateJS.drawSegments = (graphics, segments) ->
     minY = Math.min(minY, y1, y2)
     maxX = Math.max(maxX, x1, x2)
     maxY = Math.max(maxY, y1, y2)
+
+  graphics.endStroke()
 
   [ minX, minY, maxX, maxY ]

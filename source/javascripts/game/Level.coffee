@@ -86,8 +86,12 @@ class @Level extends FW.ContainerProxy
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
     @_mazeShape = mazeShape
-
     @_mazeContainer.addChild(mazeShape)
+
+    pathShape = new createjs.Shape()
+    pathGraphics = pathShape.graphics
+    @_pathShape = pathShape
+    @_mazeContainer.addChild(pathShape)
 
     world = @world
     level = @
@@ -100,7 +104,7 @@ class @Level extends FW.ContainerProxy
       positionGoalAtEnd(mazeData.end, level._goal)
       segments = mazeData.segments
 
-      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, segments)
+      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, "rgba(87, 21, 183, 0.3)", segments)
 
       craftPhysicsWalls(segments)
       level.walls = segments
@@ -260,14 +264,21 @@ playerLeaveTrack = (player, level) ->
   lastDot = level._lastPlayerDot
   lastDotDistance = FW.Math.distance(lastDot.x, lastDot.y, player.x, player.y)
 
-  if lastDotDistance > 0.1
-    graphics = level._mazeShape.graphics
-    graphics.setStrokeStyle(0.02, "round", "bevel")
-    graphics.beginStroke("rgba(192, 255, 64, 0.2)")
-    graphics.moveTo(player.x, player.y)
-    # graphics.drawCircle(player.x, player.y, 0.01)
-    graphics.lineTo(lastDot.x, lastDot.y)
-    graphics.endStroke()
+  body = player.fixture.GetBody()
+  velocity = body.GetLinearVelocity()
+  magnitude = FW.Math.magnitude(velocity.x, velocity.y)
+  moveDistance = Math.max(magnitude / 10, 0.02)
+
+  if lastDotDistance > moveDistance
+    graphics = level._pathShape.graphics
+    if !level._drewAnyDots
+      graphics.endStroke()
+      graphics.beginStroke("rgba(0, 255, 255, 1)")
+      graphics.setStrokeStyle(0.02, "round", "bevel")
+      graphics.moveTo(lastDot.x, lastDot.y)
+      level._drewAnyDots = true
+
+    graphics.lineTo(player.x, player.y)
     lastDot.Set(player.x, player.y)
 
 easers = (key) ->
