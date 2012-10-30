@@ -34,9 +34,9 @@ task :compile_wavs do
     filename = File.basename(wav, File.extname(wav))
     mp3 = File.join("source/sounds", "#{filename}.mp3")
     quality = 8
-    unless FileUtils.uptodate?(mp3, [ wav ])
+    if !FileUtils.uptodate?(mp3, [ wav ]) || ENV['FORCE_COMPILE']
       puts "Compiling #{wav} to #{mp3}"
-      `lame -c -t -h -S -q0 -V #{quality} #{wav} #{mp3}`
+      `lame --nores -c -t -h -S --quiet -q0 -V #{quality} #{wav} #{mp3}`
     end
   end
 end

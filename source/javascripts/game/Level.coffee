@@ -323,7 +323,7 @@ computePixelsPerMeter = (level) ->
   Math.min(canvasWidth / maxViewportMeters, canvasHeight / maxViewportMeters)
 
 updateTimer = (timer, level) ->
-  now = Ticker.getTime()
+  now = Ticker.getTime(true)
   if !level.startTime
     level.startTime = now
   elapsed = (level.completionTime || now) - level.startTime

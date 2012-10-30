@@ -7,25 +7,29 @@ $ ->
     $canvas.attr(width: $window.width(), height: $window.height())
 
   $(window).on "resize", onResize
-  onResize()
+
+  game = null
+  onVisibilityChange = (event) ->
+    documentHidden = document.hidden || document.webkitHidden
+
+    if documentHidden
+      game?.pause()
+    else
+      game?.unpause()
+
+  $(document).on "visibilitychange", onVisibilityChange
+  $(document).on "webkitvisibilitychange", onVisibilityChange
 
   onPreloadComplete = ->
-    stage = new createjs.Stage($canvas[0])
-
+    # TODO: Integrate this with preloader, make LevelLoader
     $.getJSON("levels/level3.json").done (data) ->
-      Ticker.setFPS(30)
 
-      level = new Level(data)
-      stage.addChild(level)
-
-      updater =
-        tick: ->
-          stage.update()
-
-      Ticker.addListener updater
-
+      onResize()
       $canvas.show()
       $("#loading").hide()
 
+      game = new Game($canvas[0], data)
+      window.game = game
+
+
   preloader = new Preloader(onPreloadComplete)
-  # onPreloadComplete()
