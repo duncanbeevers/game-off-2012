@@ -29,11 +29,12 @@ class @CountDown extends FW.ContainerProxy
     if !@_startTime
       @_startTime = now
     elapsed = now - @_startTime
-    remaining = @_duration - elapsed
+    duration = @_duration
+    remaining = duration - elapsed
 
     intraSecondProgress = elapsed % 1000
 
-    display = Math.floor((remaining / 1000) + 1)
+    display = Math.floor((Math.min(remaining, duration - 1) / 1000) + 1)
     if display < 0
       @_container.removeChild(text)
       createjs.Ticker.removeListener(@)
