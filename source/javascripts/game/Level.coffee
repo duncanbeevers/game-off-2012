@@ -271,7 +271,7 @@ playerLeaveTrack = (player, level) ->
   body = player.fixture.GetBody()
   velocity = body.GetLinearVelocity()
   magnitude = FW.Math.magnitude(velocity.x, velocity.y)
-  moveDistance = Math.max(magnitude / 10, 0.01)
+  moveDistance = Math.max(magnitude / 20, 0.01)
 
   if lastDotDistance > moveDistance
     pathGraphics = level._pathShape.graphics
