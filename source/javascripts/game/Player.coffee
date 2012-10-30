@@ -1,12 +1,10 @@
 class @Player extends FW.ParticleGenerator
   constructor: ->
     super
-      maxParticles: 30
+      maxParticles: 100
+      absolutePlacement: true
       numberOfParticlesToGenerate: ->
-        if FW.Math.rand(2) == 0
-          1
-        else
-          0
+        2
 
       generateParticle: ->
         src = FW.Math.sample([
@@ -21,8 +19,16 @@ class @Player extends FW.ParticleGenerator
         particle.x = 0
         particle.y = 0
 
-        vec = FW.Math.random(0, FW.Math.TWO_PI)
+        # vec = FW.Math.random(0, FW.Math.TWO_PI)
         intensity = Math.random(0.5, 1)
+        body = @fixture.GetBody()
+
+        velocity = body.GetLinearVelocity()
+        # particle.xVel = -velocity.x * intensity / bitmapWidth
+        # particle.yVel = -velocity.y * intensity / bitmapHeight
+        vec = Math.tan(velocity.y, velocity.x) + Math.PI + FW.Math.random(-Math.PI / 2, Math.PI / 2)
+
+
         particle.xVel = Math.cos(vec) * intensity / bitmapWidth
         particle.yVel = Math.sin(vec) * intensity / bitmapHeight
         particle.rotationVel = FW.Math.random(-5, 5)
