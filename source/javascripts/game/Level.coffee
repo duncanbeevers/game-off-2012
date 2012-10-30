@@ -89,8 +89,12 @@ class @Level extends FW.ContainerProxy
     @_mazeContainer.addChild(mazeShape)
 
     pathShape = new createjs.Shape()
+    pathGlowShape = new createjs.Shape()
     pathGraphics = pathShape.graphics
+    pathGlowGraphics = pathGlowShape.graphics
     @_pathShape = pathShape
+    @_pathGlowShape = pathGlowShape
+    @_mazeContainer.addChild(pathGlowShape)
     @_mazeContainer.addChild(pathShape)
 
     world = @world
@@ -267,18 +271,25 @@ playerLeaveTrack = (player, level) ->
   body = player.fixture.GetBody()
   velocity = body.GetLinearVelocity()
   magnitude = FW.Math.magnitude(velocity.x, velocity.y)
-  moveDistance = Math.max(magnitude / 10, 0.02)
+  moveDistance = Math.max(magnitude / 10, 0.01)
 
   if lastDotDistance > moveDistance
-    graphics = level._pathShape.graphics
+    pathGraphics = level._pathShape.graphics
+    pathGlowGraphics = level._pathGlowShape.graphics
     if !level._drewAnyDots
-      graphics.endStroke()
-      graphics.beginStroke("rgba(0, 255, 255, 1)")
-      graphics.setStrokeStyle(0.02, "round", "bevel")
-      graphics.moveTo(lastDot.x, lastDot.y)
+      pathGraphics.endStroke()
+      pathGraphics.beginStroke("rgba(0, 255, 255, 1)")
+      pathGraphics.setStrokeStyle(0.02, "round", "round")
+      pathGraphics.moveTo(lastDot.x, lastDot.y)
+
+      pathGlowGraphics.endStroke()
+      pathGlowGraphics.beginStroke("rgba(0, 255, 255, 0.4)")
+      pathGlowGraphics.setStrokeStyle(0.08, "round", "round")
+      pathGlowGraphics.moveTo(lastDot.x, lastDot.y)
       level._drewAnyDots = true
 
-    graphics.lineTo(player.x, player.y)
+    pathGraphics.lineTo(player.x, player.y)
+    pathGlowGraphics.lineTo(player.x, player.y)
     lastDot.Set(player.x, player.y)
 
 easers = (key) ->
