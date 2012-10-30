@@ -51,6 +51,15 @@ class @Level extends FW.ContainerProxy
     )
     @world = world
     world.SetContactListener(contactListener)
+    contactListener.registerContactListener "Wall", "Player", ->
+      src = FW.Math.sample([
+        "sounds/plink1.mp3"
+        "sounds/plink2.mp3"
+        "sounds/plink3.mp3"
+        "sounds/plink4.mp3"
+        "sounds/plink5.mp3"
+      ])
+      createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
 
     debugCanvas = document.getElementById("debugCanvas")
     if debugCanvas
@@ -110,7 +119,7 @@ class @Level extends FW.ContainerProxy
 
       level.bounds = FW.CreateJS.drawSegments(mazeGraphics, "rgba(87, 21, 183, 0.3)", segments)
 
-      craftPhysicsWalls(segments)
+      createPhysicsWalls(segments)
       level.walls = segments
       level.mazeGenerated = true
 
@@ -155,7 +164,7 @@ class @Level extends FW.ContainerProxy
       [ goal.x, goal.y ] = end
       createPhysicsGoal(goal)
 
-    craftPhysicsWalls = (segments) ->
+    createPhysicsWalls = (segments) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
       fixtureDef.density     = 1
       fixtureDef.friction    = 0.1
@@ -171,7 +180,8 @@ class @Level extends FW.ContainerProxy
         fixtureDef.shape.SetAsBox(length / 2, wallThickness)
         bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
         bodyDef.angle = Math.atan2(y2 - y1, x2 - x1)
-        world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+        fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+        fixture.SetUserData name: "Wall"
 
     onMazeDataAvailable(mazeData)
     # Invoke synchronously

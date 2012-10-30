@@ -9,19 +9,23 @@ $ ->
   $(window).on "resize", onResize
   onResize()
 
-  stage = new createjs.Stage($canvas[0])
+  onPreloadComplete = ->
+    stage = new createjs.Stage($canvas[0])
 
-  $.getJSON("levels/level1.json").done (data) ->
-    Ticker.setFPS(30)
+    $.getJSON("levels/level3.json").done (data) ->
+      Ticker.setFPS(30)
 
-    level = new Level(data)
-    stage.addChild(level)
+      level = new Level(data)
+      stage.addChild(level)
 
-    updater =
-      tick: ->
-        stage.update()
+      updater =
+        tick: ->
+          stage.update()
 
-    Ticker.addListener updater
+      Ticker.addListener updater
 
-    $canvas.show()
-    $("#loading").hide()
+      $canvas.show()
+      $("#loading").hide()
+
+  preloader = new Preloader(onPreloadComplete)
+  # onPreloadComplete()

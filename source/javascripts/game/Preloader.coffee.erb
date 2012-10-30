@@ -1,0 +1,42 @@
+class @Preloader
+  constructor: (onComplete) ->
+    instance = @
+    preloader = new createjs.PreloadJS()
+    preloader.installPlugin(createjs.SoundJS)
+    preloader.installPlugin()
+    @_externalOnComplete = onComplete
+
+    preloader.onFileLoad = (event) -> instance.onFileLoad(event)
+    preloader.onProgress = (event) -> instance.onProgress(event)
+    preloader.onComplete = (event) -> instance.onComplete(event)
+
+    manifest = <%=
+
+      assets = nil
+      Dir.chdir("source") do
+        assets = (Dir.glob("images/**/*") + Dir.glob("sounds/**/*")).select { |f| !File.directory?(f) }
+      end
+
+      manifest_entries = assets.map do |f|
+        {
+          id: File.basename(f),
+          src: f
+        }
+      end
+
+      manifest_entries.to_json
+
+    %>
+
+    preloader.loadManifest(manifest)
+
+    @_preloader = preloader
+
+  onFileLoad: (event) ->
+
+
+  onProgress: (event) ->
+
+
+  onComplete: (event) ->
+    @_externalOnComplete()
