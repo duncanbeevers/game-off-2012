@@ -27,3 +27,16 @@ task :test do
   puts `mocha --compilers coffee:coffee-script test`
   raise 'javascript specs failed' if $?.to_i != 0
 end
+
+desc "Compile wavs to mp3s"
+task :compile_wavs do
+  Dir.glob("originals/**/*.wav").each do |wav|
+    filename = File.basename(wav, File.extname(wav))
+    mp3 = File.join("source/sounds", "#{filename}.mp3")
+    quality = 8
+    unless FileUtils.uptodate?(mp3, [ wav ])
+      puts "Compiling #{wav} to #{mp3}"
+      `lame -c -t -h -S -q0 -V #{quality} #{wav} #{mp3}`
+    end
+  end
+end
