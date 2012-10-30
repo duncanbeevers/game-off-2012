@@ -12,7 +12,7 @@ class @Level extends FW.ContainerProxy
     @_container.addChild(mazeContainer)
 
     countDown = new CountDown ->
-      Ticker.addListener level
+      createjs.Ticker.addListener level
 
     @_countDown = countDown
     @_container.addChild(countDown)
@@ -85,7 +85,7 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Goal", ->
       level.solved = true
-      level.completionTime ||= Ticker.getTime()
+      level.completionTime ||= createjs.Ticker.getTime(true)
 
 
   onAddedAsChild: (parent) ->
@@ -188,7 +188,7 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   tick: ->
-    @world.Step(1 / Ticker.getMeasuredFPS(), 10, 10)
+    @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
     goal = @_goal
@@ -303,7 +303,7 @@ playerLeaveTrack = (player, level) ->
     lastDot.Set(player.x, player.y)
 
 easers = (key) ->
-  fps = Ticker.getMeasuredFPS()
+  fps = createjs.Ticker.getMeasuredFPS()
   divisor = switch key
     when 'mazeRotation'   then 2
     when 'mazeZoom'       then 6.5
@@ -323,7 +323,7 @@ computePixelsPerMeter = (level) ->
   Math.min(canvasWidth / maxViewportMeters, canvasHeight / maxViewportMeters)
 
 updateTimer = (timer, level) ->
-  now = Ticker.getTime(true)
+  now = createjs.Ticker.getTime(true)
   if !level.startTime
     level.startTime = now
   elapsed = (level.completionTime || now) - level.startTime

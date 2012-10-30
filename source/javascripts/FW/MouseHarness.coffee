@@ -71,7 +71,7 @@ FW.MouseHarness =
       # debugger
       originalOnClick && originalOnClick.call(@, event)
 
-    Ticker.addListener
+    createjs.Ticker.addListener
       tick: ->
         point = displayObject.globalToLocal(harness_x, harness_y)
         tracker.x = point.x

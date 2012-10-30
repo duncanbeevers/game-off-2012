@@ -1,6 +1,6 @@
 class @Game
   constructor: (canvas, data) ->
-    Ticker.setFPS(30)
+    createjs.Ticker.setFPS(30)
 
     @_bgm = createjs.SoundJS.play("sounds/BGM1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, -1, 0.2, 0)
 
@@ -11,7 +11,7 @@ class @Game
 
     updater = tick: -> stage.update()
 
-    Ticker.addListener(updater)
+    createjs.Ticker.addListener(updater)
 
   pause: () ->
     createjs.Ticker.setPaused(true)

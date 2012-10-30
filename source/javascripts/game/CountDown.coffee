@@ -36,7 +36,7 @@ class @CountDown extends FW.ContainerProxy
     display = Math.floor((remaining / 1000) + 1)
     if display < 0
       @_container.removeChild(text)
-      Ticker.removeListener(@)
+      createjs.Ticker.removeListener(@)
       display = null
     else if display <= 0
       display = "Begin"

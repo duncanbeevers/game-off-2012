@@ -19,7 +19,9 @@ $ ->
       maxLength: maze.maxTermination[1]
     $("#info").text(JSON.stringify(info))
 
-  stage = new createjs.Stage(document.getElementById("gameCanvas"))
+  $canvas = $("#generatorCanvas")
+  $canvas.show()
+  stage = new createjs.Stage($canvas[0])
   mazeContainer = new createjs.Shape()
   mazeGraphics = mazeContainer.graphics
   stage.addChild(mazeContainer)
@@ -50,8 +52,8 @@ $ ->
     project: new Maze.Projections.FoldedHexagonCell()
     draw: (segments) ->
       FW.CreateJS.drawSegments(mazeGraphics, segments)
-    width: 14
-    height: 14
+    width: 6
+    height: 6
     done: onMazeAvailable
 
   generateMaze = ->
@@ -66,4 +68,4 @@ $ ->
     tick: ->
       stage.update()
 
-  Ticker.addListener updater
+  createjs.Ticker.addListener updater

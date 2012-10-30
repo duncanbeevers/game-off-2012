@@ -34,10 +34,10 @@ class FW.NamedContactListener
       tickerContact = contact
       tickerFixtureA = fixtureA
       tickerFixtureB = fixtureB
-      Ticker.addListener(ticker)
+      createjs.Ticker.addListener(ticker)
 
     disableNotifyInContact = (contact, fixtureA, fixtureB) ->
-      Ticker.removeListener(ticker)
+      createjs.Ticker.removeListener(ticker)
 
     @registerContactListener(nameA, nameB, enableNotifyInContact, disableNotifyInContact)
 
