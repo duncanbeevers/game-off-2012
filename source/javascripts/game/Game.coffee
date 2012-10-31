@@ -1,13 +1,15 @@
 BASE_BGM_VOLUME = 0.2
 
 class @Game
-  constructor: (canvas, data) ->
+  constructor: (canvas, preloader) ->
     createjs.Ticker.setFPS(30)
 
     @playBgm()
 
     stage = new createjs.Stage(canvas)
 
+
+    data = JSON.parse(preloader.getResult("levels/level1.json").result)
     level = new Level(data)
     stage.addChild(level)
 

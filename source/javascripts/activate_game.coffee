@@ -21,15 +21,11 @@ $ ->
   $(document).on "webkitvisibilitychange", onVisibilityChange
 
   onPreloadComplete = ->
-    # TODO: Integrate this with preloader, make LevelLoader
-    $.getJSON("levels/level3.json").done (data) ->
+    onResize()
+    $canvas.show()
+    $("#loading").hide()
 
-      onResize()
-      $canvas.show()
-      $("#loading").hide()
-
-      game = new Game($canvas[0], data)
-      window.game = game
-
+    game = new Game($canvas[0], preloader)
+    window.game = game
 
   preloader = new Preloader(onPreloadComplete)
