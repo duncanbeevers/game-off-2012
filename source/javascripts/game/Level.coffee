@@ -1,8 +1,9 @@
 maxViewportMeters = 4
 
 class @Level extends FW.ContainerProxy
-  constructor: (mazeData) ->
+  constructor: (game, mazeData) ->
     super()
+    @_game = game
 
     mazeContainer = new createjs.Container()
     player = new Player()
@@ -90,6 +91,8 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Goal", ->
       level.solved = true
+      createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
+      level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
       level.completionTime ||= createjs.Ticker.getTime(true)
 
 

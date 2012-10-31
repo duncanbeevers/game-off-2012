@@ -4,13 +4,20 @@ class @Game
   constructor: (canvas, preloader) ->
     createjs.Ticker.setFPS(30)
 
-    @playBgm()
+    @playBgm([
+      "sounds/BGM1.mp3"
+      "sounds/BGM2.mp3"
+      "sounds/BGM3.mp3"
+      "sounds/BGM4.mp3"
+    ])
 
     stage = new createjs.Stage(canvas)
 
+    # titleScreen = new TitleScreen()
+    # stage.addChild(titleScreen)
 
     data = JSON.parse(preloader.getResult("levels/level1.json").result)
-    level = new Level(data)
+    level = new Level(@, data)
     stage.addChild(level)
 
     updater = tick: -> stage.update()
@@ -25,23 +32,19 @@ class @Game
     @_bgm.resume()
     createjs.Ticker.setPaused(false)
 
-  playBgm: () ->
-    tracks = [
-      "sounds/BGM1.mp3"
-      "sounds/BGM2.mp3"
-      "sounds/BGM3.mp3"
-      "sounds/BGM4.mp3"
-    ]
+  setBgmTracks: (tracks) ->
+    @_bgmTracks = tracks
 
+  playBgm: (tracks) ->
     game = @
+    bgm = game._bgm
+    if tracks
+      game._bgmTracks = tracks
 
-    bgm = null
-    play = () ->
-      track = FW.Math.sample(tracks)
-      bgm?.stop()
-      bgm = createjs.SoundJS.play(track, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, BASE_BGM_VOLUME, 0)
-      bgm.onComplete ||= -> play()
+    track = FW.Math.sample(game._bgmTracks)
+    bgm?.stop()
+    newBgm = createjs.SoundJS.play(track, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, BASE_BGM_VOLUME, 0)
+    if newBgm != bgm
+      newBgm.onComplete = -> game.playBgm()
 
-      game._bgm = bgm
-
-    play()
+    game._bgm = newBgm
