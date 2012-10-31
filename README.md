@@ -12,3 +12,5 @@ TODO
   Tiled triangles maze structure & projection
   Pause / unpause
   Auto-pause on tab blur
+  Glow Stacker (for rendering stacked lines at increasing opacity and decreasing line width)
+  Difficulty - (ball size, acceleration, friction, restitution, density)
