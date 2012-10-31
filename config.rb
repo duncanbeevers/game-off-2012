@@ -75,3 +75,25 @@ configure :build do
   # Or use a different image path
   # set :http_path, "/Content/images/"
 end
+
+helpers do
+  def assets_manifest_json
+    assets = nil
+    Dir.chdir("source") do
+      assets = (
+        Dir.glob("images/**/*") +
+        Dir.glob("sounds/**/*") +
+        Dir.glob("levels/**/*")
+      ).select { |f| !File.directory?(f) }
+    end
+
+    manifest_entries = assets.map do |f|
+      {
+        id: File.basename(f),
+        src: f
+      }
+    end
+
+    manifest_entries.to_json
+  end
+end

@@ -3,31 +3,13 @@ class @Preloader
     instance = @
     preloader = new createjs.PreloadJS()
     preloader.installPlugin(createjs.SoundJS)
-    preloader.installPlugin()
     @_externalOnComplete = onComplete
 
     preloader.onFileLoad = (event) -> instance.onFileLoad(event)
     preloader.onProgress = (event) -> instance.onProgress(event)
     preloader.onComplete = (event) -> instance.onComplete(event)
 
-    manifest = <%=
-
-      # TODO: Move this to a Middleman helper method
-      assets = nil
-      Dir.chdir("source") do
-        assets = (Dir.glob("images/**/*") + Dir.glob("sounds/**/*")).select { |f| !File.directory?(f) }
-      end
-
-      manifest_entries = assets.map do |f|
-        {
-          id: File.basename(f),
-          src: f
-        }
-      end
-
-      manifest_entries.to_json
-
-    %>
+    manifest = <%= assets_manifest_json %>
 
     preloader.loadManifest(manifest)
 
