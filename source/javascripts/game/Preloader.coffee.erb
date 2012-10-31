@@ -1,28 +1,15 @@
 class @Preloader
-  constructor: (onComplete) ->
+  constructor: (onProgress, onComplete) ->
     instance = @
     preloader = new createjs.PreloadJS()
     preloader.installPlugin(createjs.SoundJS)
-    @_externalOnComplete = onComplete
 
-    preloader.onFileLoad = (event) -> instance.onFileLoad(event)
-    preloader.onProgress = (event) -> instance.onProgress(event)
-    preloader.onComplete = (event) -> instance.onComplete(event)
+    preloader.onProgress = (event) -> onProgress(event)
+    preloader.onComplete = (event) -> onComplete(event)
 
-    manifest = <%= assets_manifest_json %>
-
-    preloader.loadManifest(manifest)
+    preloader.loadManifest(<%= assets_manifest_json %>)
 
     @_preloader = preloader
-
-  onFileLoad: (event) ->
-
-
-  onProgress: (event) ->
-
-
-  onComplete: (event) ->
-    @_externalOnComplete()
 
   getResult: (src) ->
     @_preloader.getResult(src)
