@@ -8,7 +8,7 @@ class @CountDown extends FW.ContainerProxy
     # text = new createjs.Text("Wonderful News!", "#FF4522", "36px Arial")
     # text = new createjs.Text("Wonderful News!", "#FF4522", "36px 04b_19")
     text = new createjs.Text()
-    text.color = "#FF4522"
+    text.color = "#04FAFF"
 
     # font-style font-variant font-weight font-size/line-height font-family"
     # text.font = "bold 48px Arial"
