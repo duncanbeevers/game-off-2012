@@ -26,6 +26,9 @@ class FW.ContainerProxy
 
     FW.ProxyProperties(instance, container, [ 'x', 'y', 'regX', 'regY' ])
 
+  getStage: ->
+    @_container?.getStage()
+
   isVisible: ->
     @_container?.isVisible()
 
