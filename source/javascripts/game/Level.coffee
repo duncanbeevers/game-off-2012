@@ -22,7 +22,7 @@ class @Level extends FW.ContainerProxy
     @_goal = goal
 
     timerText = new createjs.Text()
-    timerText.color = "#FF4522"
+    timerText.color = "#B500FF"
     timerText.font = "24px Upheaval"
     timerText.textAlign = "center"
     timerText.textBaseline = "middle"
@@ -58,6 +58,11 @@ class @Level extends FW.ContainerProxy
         "sounds/plink3.mp3"
         "sounds/plink4.mp3"
         "sounds/plink5.mp3"
+        "sounds/plonk1.mp3"
+        "sounds/plonk2.mp3"
+        "sounds/plonk3.mp3"
+        "sounds/plonk4.mp3"
+        "sounds/plonk5.mp3"
       ])
       createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
 
