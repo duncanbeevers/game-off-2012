@@ -188,7 +188,8 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   tick: ->
-    @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
+    if !@.solved
+      @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
     goal = @_goal
