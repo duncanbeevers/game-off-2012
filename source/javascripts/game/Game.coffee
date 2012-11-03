@@ -3,6 +3,7 @@ BASE_BGM_VOLUME = 0.2
 class @Game
   constructor: (canvas, preloader) ->
     createjs.Ticker.setFPS(30)
+    @_preloader = preloader
 
     @playBgm([
       "sounds/BGM1.mp3"
@@ -48,3 +49,6 @@ class @Game
       newBgm.onComplete = -> game.playBgm()
 
     game._bgm = newBgm
+
+  getPreloader: ->
+    @_preloader

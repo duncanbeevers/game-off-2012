@@ -28,6 +28,8 @@ $ ->
     $progress.text(text)
 
   onPreloadComplete = ->
+    preloader.hydrateLevels()
+
     $progress.hide()
 
     onResize()

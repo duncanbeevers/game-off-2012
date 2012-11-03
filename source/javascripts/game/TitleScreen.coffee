@@ -1,9 +1,11 @@
 gui = new dat.GUI()
 
 class @TitleScreen extends FW.ContainerProxy
-  constructor: ->
+  constructor: (game) ->
     super()
     @_tickHandlers = []
+
+    preloader = game.getPreloader()
 
     createTitleBox(@)
     createjs.Ticker.addListener(@)
