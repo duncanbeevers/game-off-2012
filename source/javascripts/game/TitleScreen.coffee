@@ -8,6 +8,7 @@ class @TitleScreen extends FW.ContainerProxy
     preloader = game.getPreloader()
 
     createTitleBox(@)
+    createLevelPicker(@, preloader.getLevels())
     createjs.Ticker.addListener(@)
 
   addTickHandler: (handler) ->
@@ -50,3 +51,10 @@ createTitleBox = (screen) ->
     canvas = screen.getStage().canvas
     background.scaleX = canvas.width
     background.scaleY = 48
+
+createLevelPicker = (screen, levels) ->
+  levelPicker = new LevelPicker(screen, levels)
+
+  screen.addChild(levelPicker)
+  screen.addTickHandler ->
+    # Something
