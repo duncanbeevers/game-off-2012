@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+      "folder_exclude_patterns": ["build", ".bundle", "submodules"],
+      "file_exclude_patterns": [".gitmodules", ".rvmrc", "Gemfile.lock", "Mazeoid.sublime-*"]
+		}
+	]
+}
