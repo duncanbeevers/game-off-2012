@@ -12,13 +12,27 @@ section
     span id="info"
 
 section
-  select id="type"
+  select id="type" disabled="true"
     option value="GraphPaper" Graph Paper
     option value="Hexagon" Hexagon
-  button id="generate"
+  button id="generate" disabled="true"
     | Generate
-  button id="serialize"
+  button id="serialize" disabled="true"
     | Serialize
+
+section.config.GraphPaper
+  p
+    label for="GraphPaper_width" Width
+    input id="GraphPaper_width" name="width"
+
+  p
+    label for="GraphPaper_height" Height
+    input id="GraphPaper_height" name="height"
+
+section.config.Hexagon
+  p
+    label for="Hexagon_width" Size
+    input id="Hexagon_width" name="size"
 
 section
   p id="serialized"

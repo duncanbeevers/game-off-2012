@@ -14,17 +14,19 @@ Maze.Structures.GraphPaper =
   # Perimeter is enforced as invalid translation result
   translateDirection: (i, direction) ->
     [x, y] = indexToCoords(@, i)
+    width = @width
+    height = @height
 
     switch direction
       when 0 # NORTH
         if y > 0
-          i - @height
+          i - width
       when 1 # EAST
-        if x < @width - 1
+        if x < width - 1
           i + 1
       when 2 # SOUTH
-        if y < @height - 1
-          i + @height
+        if y < height - 1
+          i + width
       when 3 # WEST
         if x > 0
           i - 1
@@ -63,5 +65,5 @@ indexToCoords = (maze, i) ->
   width = maze.width
   height = maze.height
   x = i % width
-  y = Math.floor(i / height)
+  y = Math.floor(i / width)
   [ x, y ]

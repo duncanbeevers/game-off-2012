@@ -41,8 +41,9 @@ class Maze.Projections.GraphPaper extends BaseProjection
   call: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
     width = maze.width
+    height = maze.height
     halfWidth = width / 2
-    halfHeight = maze.height / 2
+    halfHeight = height / 2
 
     x = i % width - halfWidth
     y = Math.floor(i / width) - halfHeight

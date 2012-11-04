@@ -3,13 +3,12 @@ pixelsPerMeter = 25
 
 $ ->
   maze = null
+  $type = $("#type")
 
-  $("#serialize").on "click", ->
-    $("#serialized").text(JSON.stringify(maze.serialize()))
-
-  $("#generate").on "click", ->
-    type = $("#type").val()
-    generateMaze(type)
+  onTypeChange = ->
+    type = $type.val()
+    $(".config:not(.#{type})").hide()
+    $(".config.#{type}").show()
 
   updateStatus = (status, disable) ->
     $("#status_text").text(status)
@@ -66,14 +65,13 @@ $ ->
       when "GraphPaper"
         $.extend mazeOptions, Maze.Structures.GraphPaper,
           project: new Maze.Projections.GraphPaper()
-          width: 6
-          height: 6
 
       when "Hexagon"
+        size = Math.floor((mazeOptions.size + 1) / 2) * 2
         $.extend mazeOptions, Maze.Structures.FoldedHexagon,
           project: new Maze.Projections.FoldedHexagonCell()
-          width: 16
-          height: 16
+          width: size
+          height: size
 
       else
         status = "Unknown maze type: #{type}"
@@ -82,11 +80,26 @@ $ ->
     updateStatus(status, disable)
     maze = Maze.createInteractive(mazeOptions)
 
-  updateStatus("Ready")
-  # stage.addChild(level)
 
-  updater =
-    tick: ->
-      stage.update()
+  # Register event handlers
+  $("#serialize").on "click", ->
+    $("#serialized").text(JSON.stringify(maze.serialize()))
 
-  createjs.Ticker.addListener updater
+  $type.on "change", onTypeChange
+
+  $("#generate").on "click", ->
+    options = {}
+
+    type = $type.val()
+    inputs = $(".config.#{type} input")
+    for input in inputs
+      $input = $(input)
+      options[$input.attr("name")] = + $input.val()
+
+    generateMaze(type, options)
+
+  # Set up initial state
+  updateStatus("Ready", false)
+  onTypeChange()
+
+  createjs.Ticker.addListener tick: -> stage.update()
