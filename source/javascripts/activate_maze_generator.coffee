@@ -8,7 +8,8 @@ $ ->
     $("#serialized").text(JSON.stringify(maze.serialize()))
 
   $("#generate").on "click", ->
-    generateMaze()
+    type = $("#type").val()
+    generateMaze(type)
 
   updateStatus = (status) ->
     $("#status_text").text(status)
@@ -46,20 +47,37 @@ $ ->
     updateStatus("Ready")
     maze.joinedSegments = segments
     mazeGraphics.clear()
-    FW.CreateJS.drawSegments(mazeGraphics, segments)
+    FW.CreateJS.drawSegments(mazeGraphics, "#fff", segments)
 
-  options = $.extend {}, Maze.Structures.FoldedHexagon,
-    project: new Maze.Projections.FoldedHexagonCell()
-    draw: (segments) ->
-      FW.CreateJS.drawSegments(mazeGraphics, segments)
-    width: 6
-    height: 6
-    done: onMazeAvailable
-
-  generateMaze = ->
-    updateStatus("Generating")
+  generateMaze = (type, options) ->
     mazeGraphics.clear()
-    maze = Maze.createInteractive(options)
+    status = "Generating"
+
+    # Define maze options common to all mazes
+    mazeOptions = $.extend {}, options || {},
+      draw: (segments) ->
+        FW.CreateJS.drawSegments(mazeGraphics, "#0f0", segments)
+      done: onMazeAvailable
+
+
+    switch type
+      when "GraphPaper"
+        $.extend mazeOptions, Maze.Structures.GraphPaper,
+          project: new Maze.Projections.GraphPaper()
+          width: 6
+          height: 6
+
+      when "Hexagon"
+        $.extend mazeOptions, Maze.Structures.FoldedHexagon,
+          project: new Maze.Projections.FoldedHexagonCell()
+          width: 16
+          height: 16
+
+      else
+        status = "Unknown maze type: #{type}"
+
+    updateStatus(status)
+    maze = Maze.createInteractive(mazeOptions)
 
   updateStatus("Ready")
   # stage.addChild(level)
