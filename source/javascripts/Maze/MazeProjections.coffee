@@ -38,7 +38,7 @@ class BaseProjection
     segments
 
 class Maze.Projections.GraphPaper extends BaseProjection
-  call: (maze, i, cache) ->
+  project: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
     width = maze.width
     height = maze.height
@@ -56,7 +56,7 @@ class Maze.Projections.GraphPaper extends BaseProjection
     ], cache)
 
 class Maze.Projections.FoldedHexagonCell extends BaseProjection
-  call: (maze, i, cache) ->
+  project: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
     mazeX = i % maze.width
     mazeY = Math.floor(i / maze.width)

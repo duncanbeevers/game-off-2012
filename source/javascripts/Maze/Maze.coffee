@@ -95,7 +95,7 @@ pickDirection = (maze, currentIndex) ->
 projectAndDrawMazeCell = (maze, i, cache) ->
   if maze.project
     projectedSegments = maze.projectedSegments || []
-    cellSegments = maze.project.call(maze, i, cache)
+    cellSegments = maze.project.project(maze, i, cache)
     if maze.draw
       maze.draw(cellSegments)
 
@@ -146,10 +146,10 @@ class @Maze
     nonMaximalTerminations = (i for [i, length] in @terminations when @maxTermination[0] != i)
 
     terminations = for i in nonMaximalTerminations
-      centroid(@project.call(@, i))
+      centroid(@project.project(@, i))
 
-    start = centroid(@project.call(@, @initialIndex()))
-    end = centroid(@project.call(@, @maxTermination[0]))
+    start = centroid(@project.project(@, @initialIndex()))
+    end = centroid(@project.project(@, @maxTermination[0]))
 
     segments = for [x1, y1, x2, y2] in @joinedSegments || @projectedSegments
       [ snap(x1), snap(y1), snap(x2), snap(y2) ]
