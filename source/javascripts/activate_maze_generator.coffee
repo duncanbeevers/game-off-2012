@@ -28,8 +28,11 @@ $ ->
   $canvas = $("#generatorCanvas")
   $canvas.attr(width: "500", height: "500")
   stage = new createjs.Stage($canvas[0])
-  mazeContainer = new createjs.Shape()
-  mazeGraphics = mazeContainer.graphics
+  mazeContainer = new createjs.Container()
+
+  mazeShape = new createjs.Shape()
+  mazeGraphics = mazeShape.graphics
+
   stage.addChild(mazeContainer)
 
   canvasWidth = stage.canvas.width
@@ -106,14 +109,21 @@ $ ->
       when "Substrate"
         $.extend mazeOptions, Maze.Structures.Substrate,
           projection: new Maze.Projections.GraphPaper()
-          substratePixelsPerMeter: 5
 
         createMaze = next
         imageUrl = mazeOptions.imageUrl
         next = ->
           preloader = new createjs.PreloadJS()
           preloader.onComplete = ->
-            mazeOptions.substrateBitmap = new createjs.Bitmap(imageUrl)
+            bitmap = new createjs.Bitmap(imageUrl)
+            bitmap.regX = bitmap.image.width / 2
+            bitmap.regY = bitmap.image.height / 2
+            bitmap.scaleX = 1 / mazeOptions.substratePixelsPerMeter
+            bitmap.scaleY = bitmap.scaleX
+
+            mazeOptions.substrateBitmap = bitmap
+            mazeContainer.addChild(bitmap)
+            mazeContainer.addChild(mazeShape)
             createMaze()
 
           preloader.loadManifest([ imageUrl ])

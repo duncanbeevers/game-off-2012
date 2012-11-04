@@ -71,7 +71,7 @@ indexToCoords = (maze, i) ->
 Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
   initialize: ->
     # Okay, let's have some fun with this image
-    substratePixelsPerMeter = @substratePixelsPerMeter
+    substratePixelsPerMeter = @substratePixelsPerMeter ||= 1
 
     bitmap = @substrateBitmap
     image = bitmap.image
@@ -95,8 +95,8 @@ Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
       segments = maze.projection.project(maze, i, true)
       substratePixelsPerMeter = @substratePixelsPerMeter
       [ red, green, blue, alpha ] = FW.CreateJS.getColorWithinSegments(
-        @substrateBitmap,
         segments,
+        @substrateBitmap,
         @width / 2,
         @height / 2,
         substratePixelsPerMeter,
