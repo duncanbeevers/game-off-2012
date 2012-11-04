@@ -1,5 +1,4 @@
 createjs = @createjs
-pixelsPerMeter = 25
 
 $ ->
   maze = null
@@ -12,7 +11,7 @@ $ ->
 
   updateStatus = (status, disable) ->
     $("#status_text").text(status)
-    $("button,select").attr("disabled", disable || false)
+    $("button,select").attr("disabled", !!disable)
 
   updateInfo = (maze) ->
     info =
@@ -34,30 +33,53 @@ $ ->
 
   mazeContainer.x = halfCanvasWidth
   mazeContainer.y = halfCanvasHeight
-  mazeContainer.scaleX = pixelsPerMeter
-  mazeContainer.scaleY = mazeContainer.scaleX
 
   onMazeAvailable = (maze) ->
-    updateStatus("Joining segments", true)
+    updateStatus("Ready")
     updateInfo(maze)
-    joiner = new Maze.SegmentJoiner(maze.projectedSegments)
-    joiner.solve(onSegmentsJoined)
 
   onSegmentsJoined = (segments) ->
     updateStatus("Ready")
     maze.joinedSegments = segments
+
     mazeGraphics.clear()
-    FW.CreateJS.drawSegments(mazeGraphics, "#fff", segments)
+    drawSegments("#fff", segments)
+
+  minX = null
+  maxX = null
+  minY = null
+  maxY = null
+  resetBoundaries = ->
+    minX = Infinity
+    maxX = -Infinity
+    minY = Infinity
+    maxY = -Infinity
+
+  targetScale = 1
+  drawSegments = (color, segments) ->
+    canvas = mazeContainer.getStage().canvas
+    canvasWidth = canvas.width
+    canvasHeight = canvas.height
+    canvasSize = Math.min(canvasWidth, canvasHeight)
+    canvasSize -= canvasSize / 15
+
+    [_minX, _minY, _maxX, _maxY] = FW.CreateJS.drawSegments(mazeGraphics, color, segments)
+    minX = Math.min(minX, _minX)
+    maxX = Math.max(maxX, _maxX)
+    minY = Math.min(minY, _minY)
+    maxY = Math.max(maxY, _maxY)
+    targetScale = canvasSize / Math.max(maxX * 2, -minX * 2, maxY * 2, -minY * 2, maxX - minX, maxY - minY)
 
   generateMaze = (type, options) ->
+    resetBoundaries()
     mazeGraphics.clear()
+
     status = "Generating"
     disable = true
 
     # Define maze options common to all mazes
     mazeOptions = $.extend {}, options || {},
-      draw: (segments) ->
-        FW.CreateJS.drawSegments(mazeGraphics, "#0f0", segments)
+      draw: (segments) -> drawSegments("#0f0", segments)
       done: onMazeAvailable
 
 
@@ -98,8 +120,16 @@ $ ->
 
     generateMaze(type, options)
 
+  $("#optimize").on "click", ->
+    updateStatus("Joining segments", true)
+    joiner = new Maze.SegmentJoiner(maze.projectedSegments)
+    joiner.solve(onSegmentsJoined)
+
   # Set up initial state
   updateStatus("Ready", false)
   onTypeChange()
 
-  createjs.Ticker.addListener tick: -> stage.update()
+  createjs.Ticker.addListener tick: ->
+    mazeContainer.scaleX += (targetScale - mazeContainer.scaleX) / 10
+    mazeContainer.scaleY = mazeContainer.scaleX
+    stage.update()
