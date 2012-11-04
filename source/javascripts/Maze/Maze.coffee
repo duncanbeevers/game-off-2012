@@ -136,7 +136,11 @@ class @Maze
       [ destination, tunnel ]
 
   serialize: ->
-    centroid = FW.Math.centroidOfSegments
+    snap = (x) -> FW.Math.snap(x, 1000)
+
+    centroid = (segments) ->
+      [x, y] = FW.Math.centroidOfSegments(segments)
+      [ snap(x), snap(y) ]
 
     # Split out the final termination from the others
     nonMaximalTerminations = (i for [i, length] in @terminations when @maxTermination[0] != i)
@@ -147,11 +151,14 @@ class @Maze
     start = centroid(@project.call(@, @initialIndex()))
     end = centroid(@project.call(@, @maxTermination[0]))
 
+    segments = for [x1, y1, x2, y2] in @joinedSegments || @projectedSegments
+      [ snap(x1), snap(y1), snap(x2), snap(y2) ]
+
     serialized =
       start: start
       end: end
       terminations: terminations
-      segments: @joinedSegments || @projectedSegments
+      segments: segments
 
 Maze.createInteractive = (options) ->
   extendedOptions = $.extend({}, options)

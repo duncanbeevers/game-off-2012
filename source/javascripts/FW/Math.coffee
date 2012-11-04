@@ -84,6 +84,22 @@ distance = (x1, y1, x2, y2) ->
 magnitude = (x, y) ->
   distance(0, 0, x, y)
 
+snap  = (x, precision) ->
+  scaleUp = x * precision
+  roundDown = Math.floor(scaleUp)
+  roundUp   = Math.ceil(scaleUp)
+  roundDownDelta = Math.abs(scaleUp - roundDown)
+  roundUpDelta   = Math.abs(scaleUp - roundUp)
+
+  if roundDownDelta < 1
+    newX = roundDown
+  else if roundUpDelta < 1
+    newX = roundUp
+  else
+    newX = scaleUp
+
+  newX / precision
+
 FW.Math =
   PI_AND_A_HALF: PI + PI / 2
   TWO_PI: TWO_PI
@@ -92,6 +108,7 @@ FW.Math =
   random: random
   rand: rand
   clamp: clamp
+  snap: snap
   normalizeToCircle: normalizeToCircle
   linearInterpolate: linearInterpolate
   sample: sample
