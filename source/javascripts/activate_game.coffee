@@ -33,7 +33,6 @@ $ ->
     $progress.hide()
 
     onResize()
-    $canvas.show()
     $("#loading").hide()
 
     game = new Game($canvas[0], preloader)

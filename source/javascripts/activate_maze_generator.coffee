@@ -20,7 +20,7 @@ $ ->
     $("#info").text(JSON.stringify(info))
 
   $canvas = $("#generatorCanvas")
-  $canvas.show()
+  $canvas.attr(width: "500", height: "500")
   stage = new createjs.Stage($canvas[0])
   mazeContainer = new createjs.Shape()
   mazeGraphics = mazeContainer.graphics
