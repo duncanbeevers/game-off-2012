@@ -14,10 +14,15 @@ $ ->
     $("button,select").attr("disabled", !!disable)
 
   updateInfo = (maze) ->
-    info =
-      terminations: maze.terminations.length
-      maxLength: maze.maxTermination[1]
-    $("#info").text(JSON.stringify(info))
+    if maze.terminations
+      info =
+        terminations: maze.terminations.length
+        maxLength: maze.maxTermination[1]
+      text = JSON.stringify(info)
+    else
+      text = ""
+
+    $("#info").text(text)
 
   $canvas = $("#generatorCanvas")
   $canvas.attr(width: "500", height: "500")
@@ -49,13 +54,14 @@ $ ->
   maxX = null
   minY = null
   maxY = null
+  targetScale = null
   resetBoundaries = ->
     minX = Infinity
     maxX = -Infinity
     minY = Infinity
     maxY = -Infinity
+    targetScale = 1
 
-  targetScale = 1
   drawSegments = (color, segments) ->
     canvas = mazeContainer.getStage().canvas
     canvasWidth = canvas.width
@@ -121,9 +127,12 @@ $ ->
     generateMaze(type, options)
 
   $("#optimize").on "click", ->
-    updateStatus("Joining segments", true)
-    joiner = new Maze.SegmentJoiner(maze.projectedSegments)
-    joiner.solve(onSegmentsJoined)
+    if maze.projectedSegments
+      updateStatus("Joining segments", true)
+      joiner = new Maze.SegmentJoiner(maze.projectedSegments)
+      joiner.solve(onSegmentsJoined)
+    else
+      updateStatus("No maze generated")
 
   # Set up initial state
   updateStatus("Ready", false)
