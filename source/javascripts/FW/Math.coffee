@@ -67,6 +67,9 @@ centroidOfSegments = (segments) ->
     ySum += y1 + y2
   [ xSum / 2 / segments.length, ySum / 2 / segments.length ]
 
+centroidOfRectangle = (rectangle) ->
+  [ rectangle.width / 2 + rectangle.x, rectangle.height / 2 + rectangle.y ]
+
 radiansDiff = (radians1, radians2) ->
   diff = radians2 - radians1
   sign = 1
@@ -113,6 +116,7 @@ FW.Math =
   linearInterpolate: linearInterpolate
   sample: sample
   centroidOfSegments: centroidOfSegments
+  centroidOfRectangle: centroidOfRectangle
   distance: distance
   magnitude: magnitude
   radiansDiff: radiansDiff
