@@ -40,9 +40,12 @@ class BaseProjection
 class Maze.Projections.GraphPaper extends BaseProjection
   call: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
+    width = maze.width
+    halfWidth = width / 2
+    halfHeight = maze.height / 2
 
-    x = i % @width
-    y = Math.floor(i / @width)
+    x = i % width - halfWidth
+    y = Math.floor(i / width) - halfHeight
 
     segments = @segmentsForCellCircuit(i, cell, [
       [ x, y ]
