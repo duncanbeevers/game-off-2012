@@ -106,7 +106,8 @@ $ ->
         disable = false
 
     updateStatus(status, disable)
-    maze = Maze.createInteractive(mazeOptions)
+    if disable
+      maze = Maze.createInteractive(mazeOptions)
 
 
   # Register event handlers
