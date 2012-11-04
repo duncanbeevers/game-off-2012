@@ -1,4 +1,5 @@
 createjs = @createjs
+# gui = new dat.GUI()
 
 $ ->
   maze = null
@@ -88,6 +89,7 @@ $ ->
       draw: (segments) -> drawSegments("#0f0", segments)
       done: onMazeAvailable
 
+    next = -> maze = Maze.createInteractive(mazeOptions)
 
     switch type
       when "GraphPaper"
@@ -101,13 +103,28 @@ $ ->
           width: size
           height: size
 
+      when "Substrate"
+        $.extend mazeOptions, Maze.Structures.Substrate,
+          projection: new Maze.Projections.GraphPaper()
+          substratePixelsPerMeter: 5
+
+        createMaze = next
+        imageUrl = mazeOptions.imageUrl
+        next = ->
+          preloader = new createjs.PreloadJS()
+          preloader.onComplete = ->
+            mazeOptions.substrateBitmap = new createjs.Bitmap(imageUrl)
+            createMaze()
+
+          preloader.loadManifest([ imageUrl ])
+
       else
         status = "Unknown maze type: #{type}"
         disable = false
 
     updateStatus(status, disable)
     if disable
-      maze = Maze.createInteractive(mazeOptions)
+      next()
 
 
   # Register event handlers

@@ -67,3 +67,46 @@ indexToCoords = (maze, i) ->
   x = i % width
   y = Math.floor(i / width)
   [ x, y ]
+
+Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
+  initialize: ->
+    # Okay, let's have some fun with this image
+    substratePixelsPerMeter = @substratePixelsPerMeter
+
+    bitmap = @substrateBitmap
+    image = bitmap.image
+    width = Math.ceil(image.width / substratePixelsPerMeter)
+    height = Math.ceil(image.height / substratePixelsPerMeter)
+    @width = width
+    @height = height
+
+    # Blue dot is the start
+    rect = FW.CreateJS.getFuzzyColorBoundsRect(bitmap, 0, 0, 255, 255, 32)
+    if rect
+      [x, y] = FW.Math.centroidOfRectangle(rect)
+      @_initialIndex = @projection.infer(@, x / substratePixelsPerMeter - width / 2, y / substratePixelsPerMeter - height / 2)
+
+  initialIndex: ->
+    @_initialIndex
+
+  avoid: (maze, i) ->
+    cache = @_substrateAvoidCache ||= []
+    if cache[i] == undefined
+      segments = maze.projection.project(maze, i, true)
+      substratePixelsPerMeter = @substratePixelsPerMeter
+      [ red, green, blue, alpha ] = FW.CreateJS.getColorWithinSegments(
+        @substrateBitmap,
+        segments,
+        @width / 2,
+        @height / 2,
+        substratePixelsPerMeter,
+        substratePixelsPerMeter
+      )
+
+      # Avoid transparent cells
+      if alpha < 128
+        cache[i] = true
+      else
+        cache[i] = false
+
+    cache[i]
