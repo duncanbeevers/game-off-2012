@@ -76,7 +76,52 @@ getFullColorBoundsRect = (bitmap, match) ->
   else
     null
 
+getColorWithinSegments = (bitmap, segments, xOffset, yOffset, xScale, yScale) ->
+  # Naive AABB approach for now, should be decent
+  minX = Infinity
+  maxX = -Infinity
+  minY = Infinity
+  maxY = -Infinity
+  for [x1, y1, x2, y2] in segments
+    minX = Math.min(minX, x1, x2)
+    maxX = Math.max(maxX, x1, x2)
+    minY = Math.min(minY, y1, y2)
+    maxY = Math.max(maxY, y1, y2)
+
+  x1 = (minX + xOffset) * xScale
+  y1 = (minY + yOffset) * yScale
+  x2 = (maxX + xOffset) * xScale
+  y2 = (maxY + yOffset) * yScale
+
+  imageData = bitmap.cachedImageData
+  data = imageData.data
+  redSum   = 0
+  greenSum = 0
+  blueSum  = 0
+  alphaSum = 0
+
+  if segments.length
+    for x in [x1...x2]
+      for y in [y1...y2]
+        i = ((y * imageData.width) + x) * 4
+        redSum   += data[i]
+        greenSum += data[i + 1]
+        blueSum  += data[i + 2]
+        alphaSum += data[i + 3]
+
+    denominator = (x2 - x1) * (y2 - y1)
+
+    redAverage   = Math.floor(redSum   / denominator)
+    greenAverage = Math.floor(greenSum / denominator)
+    blueAverage  = Math.floor(blueSum  / denominator)
+    alphaAverage = Math.floor(alphaSum / denominator)
+
+    [ redAverage, greenAverage, blueAverage, alphaAverage ]
+  else
+    [ 0, 0, 0, 0 ]
+
 FW.CreateJS =
   drawSegments: drawSegments
   getColorBoundsRect: getColorBoundsRect
   getFuzzyColorBoundsRect: getFuzzyColorBoundsRect
+  getColorWithinSegments: getColorWithinSegments
