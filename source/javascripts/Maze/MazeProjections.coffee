@@ -55,6 +55,9 @@ class Maze.Projections.GraphPaper extends BaseProjection
       [ x, y + 1 ]
     ], cache)
 
+  infer: (maze, x, y) ->
+    Math.floor((y % maze.width) + x)
+
 class Maze.Projections.FoldedHexagonCell extends BaseProjection
   project: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
@@ -115,3 +118,5 @@ class Maze.Projections.FoldedHexagonCell extends BaseProjection
           [ x, y + smallSkew * 2 ]
           [ x - bigSkew, y + smallSkew ]
         ], cache)
+  infer: ->
+    # Not implemented
