@@ -11,8 +11,9 @@ $ ->
     type = $("#type").val()
     generateMaze(type)
 
-  updateStatus = (status) ->
+  updateStatus = (status, disable) ->
     $("#status_text").text(status)
+    $("button,select").attr("disabled", disable || false)
 
   updateInfo = (maze) ->
     info =
@@ -38,7 +39,7 @@ $ ->
   mazeContainer.scaleY = mazeContainer.scaleX
 
   onMazeAvailable = (maze) ->
-    updateStatus("Joining segments")
+    updateStatus("Joining segments", true)
     updateInfo(maze)
     joiner = new Maze.SegmentJoiner(maze.projectedSegments)
     joiner.solve(onSegmentsJoined)
@@ -52,6 +53,7 @@ $ ->
   generateMaze = (type, options) ->
     mazeGraphics.clear()
     status = "Generating"
+    disable = true
 
     # Define maze options common to all mazes
     mazeOptions = $.extend {}, options || {},
@@ -75,8 +77,9 @@ $ ->
 
       else
         status = "Unknown maze type: #{type}"
+        disable = false
 
-    updateStatus(status)
+    updateStatus(status, disable)
     maze = Maze.createInteractive(mazeOptions)
 
   updateStatus("Ready")
