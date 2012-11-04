@@ -92,12 +92,12 @@ $ ->
     switch type
       when "GraphPaper"
         $.extend mazeOptions, Maze.Structures.GraphPaper,
-          project: new Maze.Projections.GraphPaper()
+          projection: new Maze.Projections.GraphPaper()
 
       when "Hexagon"
         size = Math.floor((mazeOptions.size + 1) / 2) * 2
         $.extend mazeOptions, Maze.Structures.FoldedHexagon,
-          project: new Maze.Projections.FoldedHexagonCell()
+          projection: new Maze.Projections.FoldedHexagonCell()
           width: size
           height: size
 
