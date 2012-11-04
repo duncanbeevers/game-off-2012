@@ -15,10 +15,6 @@ section
   select id="type" disabled="true"
     option value="GraphPaper" Graph Paper
     option value="Hexagon" Hexagon
-  button id="generate" disabled="true"
-    | Generate
-  button id="serialize" disabled="true"
-    | Serialize
 
 section.config.GraphPaper
   p
@@ -33,6 +29,14 @@ section.config.Hexagon
   p
     label for="Hexagon_width" Size
     input id="Hexagon_width" name="size"
+
+section
+  button id="generate" disabled="true"
+    | Generate
+  button id="optimize" disabled="true"
+    | Optimize
+  button id="serialize" disabled="true"
+    | Serialize
 
 section
   p id="serialized"
