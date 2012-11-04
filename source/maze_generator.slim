@@ -20,21 +20,21 @@ section
 section.config.GraphPaper
   p
     label for="GraphPaper_width" Width
-    input id="GraphPaper_width" name="width" value="6"
+    input id="GraphPaper_width" type="number" name="width" min="1" value="6"
 
   p
     label for="GraphPaper_height" Height
-    input id="GraphPaper_height" name="height" value="6"
+    input id="GraphPaper_height" type="number" name="height" min="1" value="6"
 
 section.config.Hexagon
   p
     label for="Hexagon_width" Size
-    input id="Hexagon_width" name="size" value="6"
+    input id="Hexagon_width" type="number" name="size" step="2" min="2" value="6"
 
 section.config.Substrate
   p
     label for="Substrate_image_url" Image URL
-    input id="Substrate_image_url" name="image_url" value="http://localhost:4567/images/substrates/TestLevel1.png"
+    input id="Substrate_image_url" type="url" name="image_url" value="http://localhost:4567/images/substrates/TestLevel1.png"
 
 section
   button id="generate" disabled="true"

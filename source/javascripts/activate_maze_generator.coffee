@@ -123,7 +123,11 @@ $ ->
     inputs = $(".config.#{type} input")
     for input in inputs
       $input = $(input)
-      options[$input.attr("name")] = + $input.val()
+      val = $input.val()
+      if $input.attr("type") == "number"
+        val = +val
+
+      options[$input.attr("name")] = val
 
     generateMaze(type, options)
 
