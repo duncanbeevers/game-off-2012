@@ -78,13 +78,14 @@ class @Level extends FW.ContainerProxy
       debugDraw.SetLineThickness(1.0)
       debugDraw.SetFlags(
         b2DebugDraw.e_shapeBit        |
-        b2DebugDraw.e_jointBit        |
-        b2DebugDraw.e_aabbBit         |
+        # b2DebugDraw.e_jointBit        |
+        # b2DebugDraw.e_aabbBit         |
         b2DebugDraw.e_centerOfMassBit |
-        b2DebugDraw.e_coreShapeBit    |
-        b2DebugDraw.e_jointBit        |
-        b2DebugDraw.e_obbBit          |
-        b2DebugDraw.e_pairBit
+        # b2DebugDraw.e_coreShapeBit    |
+        # b2DebugDraw.e_jointBit        |
+        # b2DebugDraw.e_obbBit          |
+        # b2DebugDraw.e_pairBit         |
+        0
       )
       world.SetDebugDraw(debugDraw)
 
