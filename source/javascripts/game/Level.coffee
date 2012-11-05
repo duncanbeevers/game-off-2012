@@ -207,15 +207,15 @@ class @Level extends FW.ContainerProxy
 
     harness = @harness()
 
-    cameraTrackPlayer(player, @)
+    levelTrackPlayer(@, player, goal)
     playerTrackMouse(player, harness)
-    playerTrackGoal(player, @_goal)
+    playerTrackGoal(player, goal)
     playerLeaveTrack(player, @)
     updateTimer(@_timerText, @)
 
     @world.DrawDebugData()
 
-cameraTrackPlayer = (player, level) ->
+levelTrackPlayer = (level, player, goal) ->
   solved = level.solved
   container = level._mazeContainer
   canvas = container.getStage().canvas
@@ -250,13 +250,17 @@ cameraTrackPlayer = (player, level) ->
     targetRegY = 0
   else
     velocity = body.GetLinearVelocity()
-    boost = FW.Math.magnitude(velocity.x, velocity.y) * 6
-    targetScale = pixelsPerMeter - boost
+    velocityBoost = FW.Math.magnitude(velocity.x, velocity.y) * 6
+    targetScale = pixelsPerMeter - velocityBoost
     targetRegX = player.x
     targetRegY = player.y
 
 
-  container.scaleX += (targetScale - container.scaleX) / easers('mazeZoom')
+  if targetScale > container.scaleX
+    zoomEase = easers('mazeZoomIn')
+  else
+    zoomEase = easers('mazeZoomOut')
+  container.scaleX += (targetScale - container.scaleX) / zoomEase
   container.scaleY = container.scaleX
   container.x = halfCanvasWidth
   container.y = halfCanvasHeight
@@ -315,7 +319,8 @@ easers = (key) ->
   fps = createjs.Ticker.getMeasuredFPS()
   divisor = switch key
     when 'mazeRotation'   then 2
-    when 'mazeZoom'       then 6.5
+    when 'mazeZoomOut'    then 6
+    when 'mazeZoomIn'     then 5
     when 'mazePan'        then 4
     when 'playerPosition' then 4
     when 'playerRotation' then 2
