@@ -9,3 +9,4 @@
 //= require FW/MouseHarness
 //= require FW/NamedContactListener
 //= require FW/CreateJS
+//= require FW/Input
