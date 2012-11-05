@@ -88,10 +88,10 @@ getColorWithinSegments = (segments, bitmap, xOffset, yOffset, xScale, yScale) ->
     minY = Math.min(minY, y1, y2)
     maxY = Math.max(maxY, y1, y2)
 
-  x1 = (minX + xOffset) * xScale
-  y1 = (minY + yOffset) * yScale
-  x2 = (maxX + xOffset) * xScale
-  y2 = (maxY + yOffset) * yScale
+  x1 = Math.floor((minX + xOffset) * xScale)
+  y1 = Math.floor((minY + yOffset) * yScale)
+  x2 = Math.floor((maxX + xOffset) * xScale)
+  y2 = Math.floor((maxY + yOffset) * yScale)
 
   imageData = bitmap.cachedImageData
   data = imageData.data
