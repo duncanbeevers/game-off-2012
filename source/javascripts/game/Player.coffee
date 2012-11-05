@@ -1,54 +1,6 @@
 class @Player extends FW.ParticleGenerator
   constructor: ->
-    super
-      maxParticles: 100
-      absolutePlacement: true
-      numberOfParticlesToGenerate: ->
-        2
-
-      generateParticle: ->
-        src = FW.Math.sample([
-            "images/skulls/skull1.png", "images/skulls/skull2.png", "images/skulls/skull3.png",
-            "images/skulls/animalskull1.png", "images/skulls/animalskull2.png", "images/skulls/animalskull3.png", "images/skulls/animalskull4.png"
-            ])
-        bitmapWidth = 64
-        bitmapHeight = bitmapWidth
-        particle = new createjs.Bitmap(src)
-        particle.regX = bitmapWidth / 2
-        particle.regY = bitmapHeight / 2
-        particle.x = 0
-        particle.y = 0
-
-        # vec = FW.Math.random(0, FW.Math.TWO_PI)
-        intensity = Math.random(0.5, 1)
-        body = @fixture.GetBody()
-
-        velocity = body.GetLinearVelocity()
-        # particle.xVel = -velocity.x * intensity / bitmapWidth
-        # particle.yVel = -velocity.y * intensity / bitmapHeight
-        vec = Math.tan(velocity.y, velocity.x) + Math.PI + FW.Math.random(-Math.PI / 2, Math.PI / 2)
-
-
-        particle.xVel = Math.cos(vec) * intensity / bitmapWidth
-        particle.yVel = Math.sin(vec) * intensity / bitmapHeight
-        particle.rotationVel = FW.Math.random(-5, 5)
-        particle.rotation = FW.Math.random(360)
-        particle.scaleX = FW.Math.random(0.1, 0.3) / bitmapWidth
-        particle.scaleY = particle.scaleX
-        particle
-
-
-      updateParticle: (particle) ->
-        particle.alpha *= 0.92
-        particle.scaleX *= 0.99
-        particle.scaleY = particle.scaleX
-        particle.x += particle.xVel
-        particle.y += particle.yVel
-        particle.rotation += particle.rotationVel
-
-      isParticleCullable: (particle) ->
-        particle.alpha <= 0.02
-
+    super()
 
     radius = 0.25
     arrowWidth = radius / 2
@@ -93,7 +45,55 @@ class @Player extends FW.ParticleGenerator
 
     @addChild(goalReticle)
 
+  # Collision name
   name: "Player"
+
+  # ParticleEmitter properties
+  maxParticles: 100
+  absolutePlacement: true
+
+  numberOfParticlesToGenerate: -> 2
+
+  generateParticle: ->
+    src = FW.Math.sample([
+        "images/skulls/skull1.png", "images/skulls/skull2.png", "images/skulls/skull3.png",
+        "images/skulls/animalskull1.png", "images/skulls/animalskull2.png", "images/skulls/animalskull3.png", "images/skulls/animalskull4.png"
+        ])
+    new createjs.Bitmap(src)
+
+  initializeParticle: (particle) ->
+    bitmapWidth = 64
+    bitmapHeight = bitmapWidth
+
+    particle.alpha = 1
+    particle.regX = bitmapWidth / 2
+    particle.regY = bitmapHeight / 2
+    particle.x = 0
+    particle.y = 0
+
+    intensity = FW.Math.random(0.5, 1)
+    body = @fixture.GetBody()
+
+    velocity = body.GetLinearVelocity()
+    vec = Math.tan(velocity.y, velocity.x) + Math.PI + FW.Math.random(-Math.PI / 2, Math.PI / 2)
+
+    particle.xVel = Math.cos(vec) * intensity / bitmapWidth
+    particle.yVel = Math.sin(vec) * intensity / bitmapHeight
+    particle.rotationVel = FW.Math.random(-5, 5)
+    particle.rotation = FW.Math.random(360)
+    particle.scaleX = FW.Math.random(0.1, 0.3) / bitmapWidth
+    particle.scaleY = particle.scaleX
+
+  updateParticle: (particle) ->
+    particle.alpha *= 0.92
+    particle.scaleX *= 0.99
+    particle.scaleY = particle.scaleX
+    particle.x += particle.xVel
+    particle.y += particle.yVel
+    particle.rotation += particle.rotationVel
+
+  isParticleCullable: (particle) ->
+    particle.alpha <= 0.02
 
   setThrustAngle: (angle) ->
     @thrustReticle.rotation = angle * FW.Math.RAD_TO_DEG
