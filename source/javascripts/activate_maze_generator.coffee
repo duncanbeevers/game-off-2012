@@ -33,6 +33,7 @@ $ ->
   mazeShape = new createjs.Shape()
   mazeGraphics = mazeShape.graphics
 
+  mazeContainer.addChild(mazeShape)
   stage.addChild(mazeContainer)
 
   canvasWidth = stage.canvas.width
@@ -80,6 +81,7 @@ $ ->
     maxY = Math.max(maxY, _maxY)
     targetScale = canvasSize / Math.max(maxX * 2, -minX * 2, maxY * 2, -minY * 2, maxX - minX, maxY - minY)
 
+  substrateContainer = null
   generateMaze = (type, options) ->
     resetBoundaries()
     mazeGraphics.clear()
@@ -112,6 +114,11 @@ $ ->
 
         createMaze = next
         imageUrl = mazeOptions.imageUrl
+
+        if !substrateContainer
+          substrateContainer = new createjs.Container()
+          mazeContainer.addChildAt(substrateContainer, 0)
+
         next = ->
           preloader = new createjs.PreloadJS()
           preloader.onComplete = ->
@@ -122,8 +129,8 @@ $ ->
             bitmap.scaleY = bitmap.scaleX
 
             mazeOptions.substrateBitmap = bitmap
-            mazeContainer.addChild(bitmap)
-            mazeContainer.addChild(mazeShape)
+            substrateContainer.removeAllChildren()
+            substrateContainer.addChild(bitmap)
             createMaze()
 
           preloader.loadManifest([ imageUrl ])
