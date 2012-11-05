@@ -53,7 +53,7 @@ $ ->
     maze.joinedSegments = segments
 
     mazeGraphics.clear()
-    drawSegments("#fff", segments)
+    drawSegments("rgba(73, 21, 172, 0.5)", segments)
 
   minX = null
   maxX = null
@@ -91,7 +91,7 @@ $ ->
 
     # Define maze options common to all mazes
     mazeOptions = $.extend {}, options || {},
-      draw: (segments) -> drawSegments("#0f0", segments)
+      draw: (segments) -> drawSegments("rgba(33, 153, 255, 0.5)", segments)
       done: onMazeAvailable
 
     next = -> maze = Maze.createInteractive(mazeOptions)
