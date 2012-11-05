@@ -277,7 +277,8 @@ playerTrackMouse = (player, harness) ->
   player.setThrustAngle(angleToMouse)
 
   # Clear existing forces, then accelerate towards the mouse
-  forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) / 2, -Math.sin(angleToMouse) / 2)
+  forceVectorScalar = 0.5
+  forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) * forceVectorScalar, -Math.sin(angleToMouse) * forceVectorScalar)
   body.ClearForces()
   body.m_angularVelocity /= easers('playerRotation')
   body.ApplyForce(forceVector, body.GetWorldCenter())
