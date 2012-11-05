@@ -21,7 +21,7 @@ class KeyMap
     start = @_map[code]
     duration = now - start
 
-    delete @_map[code]
+    @_map[code] = undefined
     handlers = @_handlers[code]
     if handlers && handlers.length
       for [_, onUp] in handlers
