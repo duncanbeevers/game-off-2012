@@ -1,5 +1,3 @@
-gui = new dat.GUI()
-
 class @TitleScreen extends FW.ContainerProxy
   constructor: (game) ->
     super()
