@@ -17,7 +17,8 @@ class @Game
     # titleScreen = new TitleScreen(@)
     # stage.addChild(titleScreen)
 
-    data = JSON.parse(preloader.getResult("levels/level2.json").result)
+    # data = JSON.parse(preloader.getResult("levels/level2.json").result)
+    data = FW.Math.sample(preloader.getLevels())
     level = new Level(@, data)
 
     keymap.subscribe FW.Input.KeyMap.SPACE, ->
