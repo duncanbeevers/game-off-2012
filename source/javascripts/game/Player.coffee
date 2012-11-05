@@ -70,20 +70,27 @@ class @Player extends FW.ParticleGenerator
     graphics.endFill()
     @addChild(thrustReticle)
 
-    radius += 0.06
+    radius += 0.1
     goalReticle = new createjs.Shape()
     @goalReticle = goalReticle
     graphics = goalReticle.graphics
     graphics.clear()
-    graphics.beginStroke("rgba(255, 128, 0, 0.5)")
-    graphics.beginFill("rgba(255, 128, 0, 0.5)")
-    graphics.setStrokeStyle(0.01, "round", "bevel")
-    graphics.moveTo(-radius, -halfArrowWidth)
-    graphics.lineTo(-radius - arrowHeight, 0)
-    graphics.lineTo(-radius, halfArrowWidth)
-    graphics.lineTo(-radius, -halfArrowWidth)
+
+    graphics.setStrokeStyle(0.055, "round", "bevel")
+    graphics.beginStroke("rgba(0, 3, 79, 0.5)")
+    graphics.arc(0, 0, radius, Math.PI - 0.2, Math.PI + 0.2)
     graphics.endStroke()
-    graphics.endFill()
+
+    graphics.setStrokeStyle(0.05, "round", "bevel")
+    graphics.beginStroke("rgba(4, 51, 119, 0.5)")
+    graphics.arc(0, 0, radius + 0.08, Math.PI - 0.2, Math.PI + 0.2)
+    graphics.endStroke()
+
+    graphics.setStrokeStyle(0.045, "round", "bevel")
+    graphics.beginStroke("rgba(33, 153, 255, 0.5)")
+    graphics.arc(0, 0, radius + 0.16, Math.PI - 0.2, Math.PI + 0.2)
+    graphics.endStroke()
+
     @addChild(goalReticle)
 
   name: "Player"
