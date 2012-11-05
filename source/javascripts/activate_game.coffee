@@ -3,8 +3,12 @@ $ ->
   $canvas = $("#gameCanvas")
   $window = $(window)
 
+  keymap = new FW.Input.KeyMap()
+
   onResize = ->
-    $canvas.attr(width: $window.width(), height: $window.height())
+    $("canvas").
+      attr(width: $window.width(), height: $window.height()).
+      css(left: 0, top: 0, position: 'absolute')
 
   $(window).on "resize", onResize
 
@@ -17,8 +21,11 @@ $ ->
     else
       game?.unpause()
 
-  $(document).on "visibilitychange", onVisibilityChange
-  $(document).on "webkitvisibilitychange", onVisibilityChange
+  $document = $(document)
+  $document.on "visibilitychange", onVisibilityChange
+  $document.on "webkitvisibilitychange", onVisibilityChange
+  $document.on "keydown", (event) -> keymap.onKeyDown(event.keyCode)
+  $document.on "keyup", (event) -> keymap.onKeyUp(event.keyCode)
 
   $progress = $("#progress")
   onPreloadProgress = (event) ->
@@ -35,7 +42,8 @@ $ ->
     onResize()
     $("#loading").hide()
 
-    game = new Game($canvas[0], preloader)
+    game = new Game($canvas[0], preloader, keymap)
+
     window.game = game
 
   preloader = new Preloader(onPreloadProgress, onPreloadComplete)

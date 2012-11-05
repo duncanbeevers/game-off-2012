@@ -1,7 +1,7 @@
 BASE_BGM_VOLUME = 0.2
 
 class @Game
-  constructor: (canvas, preloader) ->
+  constructor: (canvas, preloader, keymap) ->
     createjs.Ticker.setFPS(30)
     @_preloader = preloader
 
@@ -14,11 +14,15 @@ class @Game
 
     stage = new createjs.Stage(canvas)
 
-    # titleScreen = new TitleScreen()
+    # titleScreen = new TitleScreen(@)
     # stage.addChild(titleScreen)
 
-    data = JSON.parse(preloader.getResult("levels/level1.json").result)
+    data = JSON.parse(preloader.getResult("levels/level2.json").result)
     level = new Level(@, data)
+
+    keymap.subscribe FW.Input.KeyMap.SPACE, ->
+      level.releasePups()
+
     stage.addChild(level)
 
     updater = tick: -> stage.update()

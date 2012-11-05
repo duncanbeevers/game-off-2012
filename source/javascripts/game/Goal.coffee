@@ -1,7 +1,7 @@
 class @Goal extends FW.ParticleGenerator
   maxParticles: 30
 
-  numberOfParticlesToGenerate: -> 1 # FW.Math.rand(2)
+  numberOfParticlesToGenerate: -> FW.Math.rand(2)
 
   generateParticle: ->
     src = FW.Math.sample([ "images/goal/star1.png" ])

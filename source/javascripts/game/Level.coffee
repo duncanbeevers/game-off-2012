@@ -86,7 +86,6 @@ class @Level extends FW.ContainerProxy
         b2DebugDraw.e_obbBit          |
         b2DebugDraw.e_pairBit
       )
-      debugDraw.SetDrawScale(computePixelsPerMeter(level))
       world.SetDebugDraw(debugDraw)
 
     contactListener.registerContactListener "Player", "Goal", ->
@@ -127,7 +126,7 @@ class @Level extends FW.ContainerProxy
 
       level.bounds = FW.CreateJS.drawSegments(mazeGraphics, "rgba(87, 21, 183, 0.3)", segments)
 
-      createPhysicsWalls(segments)
+      createPhysicsWalls(world, segments)
       level.walls = segments
       level.mazeGenerated = true
 
@@ -136,61 +135,15 @@ class @Level extends FW.ContainerProxy
       level._lastPlayerDot = new Box2D.Common.Math.b2Vec2(player.x, player.y)
 
     # Create physics entity
-    createPhysicsPlayer = (player) ->
-      fixtureDef = new Box2D.Dynamics.b2FixtureDef()
-      fixtureDef.density = 1
-      fixtureDef.friction = 0.3
-      fixtureDef.restitution = 0.1
-      diameter = 0.25
-      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
-      bodyDef = new Box2D.Dynamics.b2BodyDef()
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
-      bodyDef.position.x = player.x
-      bodyDef.position.y = player.y
-      player.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-      player.fixture.SetUserData(player)
-
-
-    createPhysicsGoal = (goal) ->
-      fixtureDef = new Box2D.Dynamics.b2FixtureDef()
-      fixtureDef.density = 1
-      fixtureDef.friction = 0.6
-      fixtureDef.restitution = 0.1
-      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
-      bodyDef = new Box2D.Dynamics.b2BodyDef()
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
-      bodyDef.position.x = goal.x
-      bodyDef.position.y = goal.y
-      goal.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-      goal.fixture.SetUserData(goal)
 
     positionPlayerAtBeginning = (maze) ->
       getPlayer (player) ->
         positionPlayer(maze, player)
-        createPhysicsPlayer(player)
+        createPhysicsPlayer(world, player)
 
     positionGoalAtEnd = (end, goal) ->
       [ goal.x, goal.y ] = end
-      createPhysicsGoal(goal)
-
-    createPhysicsWalls = (segments) ->
-      fixtureDef = new Box2D.Dynamics.b2FixtureDef
-      fixtureDef.density     = 1
-      fixtureDef.friction    = 0.1
-      fixtureDef.restitution = 0.5
-
-      bodyDef = new Box2D.Dynamics.b2BodyDef()
-
-      bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
-      fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape()
-      wallThickness = 0.1
-      for [x1, y1, x2, y2] in segments
-        length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-        fixtureDef.shape.SetAsBox(length / 2, wallThickness)
-        bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
-        bodyDef.angle = Math.atan2(y2 - y1, x2 - x1)
-        fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-        fixture.SetUserData name: "Wall"
+      createPhysicsGoal(world, goal)
 
     onMazeDataAvailable(mazeData)
     # Invoke synchronously
@@ -216,6 +169,13 @@ class @Level extends FW.ContainerProxy
 
     @world.DrawDebugData()
 
+  releasePups: () ->
+    mazeContainer = @_mazeContainer
+    player = @_player
+    pup = new Pup()
+    mazeContainer.addChild(pup)
+    createPhysicsPup(@world, pup, player)
+
 levelTrackPlayer = (level, player, goal) ->
   solved = level.solved
   container = level._mazeContainer
@@ -227,7 +187,8 @@ levelTrackPlayer = (level, player, goal) ->
   pixelsPerMeter = computePixelsPerMeter(level)
   xOffset = halfCanvasWidth / pixelsPerMeter - player.x
   yOffset = halfCanvasHeight / pixelsPerMeter - player.y
-  level.debugDraw?.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(xOffset, yOffset))
+  debugDraw = level.debugDraw
+
   body = player.fixture.GetBody()
   position = body.GetPosition()
 
@@ -240,7 +201,9 @@ levelTrackPlayer = (level, player, goal) ->
 
   diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
   diff /= easers('mazeRotation')
-  container.rotation += diff * FW.Math.RAD_TO_DEG
+
+  if !debugDraw
+    container.rotation += diff * FW.Math.RAD_TO_DEG
 
   if solved
     [minX, minY, maxX, maxY] = level.bounds
@@ -261,6 +224,7 @@ levelTrackPlayer = (level, player, goal) ->
     zoomEase = easers('mazeZoomIn')
   else
     zoomEase = easers('mazeZoomOut')
+
   container.scaleX += (targetScale - container.scaleX) / zoomEase
   container.scaleY = container.scaleX
   container.x = halfCanvasWidth
@@ -268,6 +232,15 @@ levelTrackPlayer = (level, player, goal) ->
   mazePan = easers('mazePan')
   container.regX += (targetRegX - container.regX) / mazePan
   container.regY += (targetRegY - container.regY) / mazePan
+
+  if debugDraw
+    scale = container.scaleX
+    debugDraw.SetDrawScale(scale)
+    debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(
+      halfCanvasWidth / scale - container.regX
+      halfCanvasHeight / scale - container.regY
+    ))
+    # debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(player.x, player.y))
 
 playerTrackMouse = (player, harness) ->
   body = player.fixture.GetBody()
@@ -324,7 +297,7 @@ easers = (key) ->
     when 'mazeZoomOut'    then 6
     when 'mazeZoomIn'     then 5
     when 'mazePan'        then 4
-    when 'playerPosition' then 4
+    when 'playerPosition' then 5
     when 'playerRotation' then 2
     when 'timerText'      then 4
 
@@ -360,3 +333,68 @@ updateTimer = (timer, level) ->
   timer.y += (targetY - timer.y) / ease
   timer.scaleX += (targetScale - timer.scaleX) / ease
   timer.scaleY = timer.scaleX
+
+createPhysicsPlayer = (world, player) ->
+  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+  fixtureDef.density = 1
+  fixtureDef.friction = 0.3
+  fixtureDef.restitution = 0.1
+  diameter = 0.25
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
+  bodyDef = new Box2D.Dynamics.b2BodyDef()
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+  bodyDef.position.x = player.x
+  bodyDef.position.y = player.y
+  player.radius = diameter / 2
+  player.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+  player.fixture.SetUserData(player)
+
+createPhysicsGoal = (world, goal) ->
+  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+  fixtureDef.density = 1
+  fixtureDef.friction = 0.6
+  fixtureDef.restitution = 0.1
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
+  bodyDef = new Box2D.Dynamics.b2BodyDef()
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+  bodyDef.position.x = goal.x
+  bodyDef.position.y = goal.y
+  goal.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+  goal.fixture.SetUserData(goal)
+
+createPhysicsWalls = (world, segments) ->
+  fixtureDef = new Box2D.Dynamics.b2FixtureDef
+  fixtureDef.density     = 1
+  fixtureDef.friction    = 0.1
+  fixtureDef.restitution = 0.5
+
+  bodyDef = new Box2D.Dynamics.b2BodyDef()
+
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape()
+  wallThickness = 0.1
+  for [x1, y1, x2, y2] in segments
+    length = FW.Math.distance(x1, y1, x2, y2)
+    fixtureDef.shape.SetAsBox(length / 2, wallThickness)
+    bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
+    bodyDef.angle = Math.atan2(y2 - y1, x2 - x1)
+    fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+    fixture.SetUserData name: "Wall"
+
+createPhysicsPup = (world, pup, player) ->
+  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+  fixtureDef.density = 1
+  fixtureDef.friction = 0.1
+  fixtureDef.restitution = 0.1
+  diameter = 0.1
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
+  bodyDef = new Box2D.Dynamics.b2BodyDef()
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+
+  # TODO : Distribute multiple pups about the player
+  distanceFromPlayer = (player.radius - diameter)
+  bodyDef.position.x = player.x - distanceFromPlayer
+  bodyDef.position.y = player.y
+
+  pup.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+  pup.fixture.SetUserData(player)
