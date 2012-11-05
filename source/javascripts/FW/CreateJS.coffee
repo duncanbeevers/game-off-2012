@@ -76,7 +76,7 @@ getFullColorBoundsRect = (bitmap, match) ->
   else
     null
 
-getColorWithinSegments = (bitmap, segments, xOffset, yOffset, xScale, yScale) ->
+getColorWithinSegments = (segments, bitmap, xOffset, yOffset, xScale, yScale) ->
   # Naive AABB approach for now, should be decent
   minX = Infinity
   maxX = -Infinity
