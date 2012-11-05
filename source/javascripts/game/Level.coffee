@@ -139,9 +139,10 @@ class @Level extends FW.ContainerProxy
     createPhysicsPlayer = (player) ->
       fixtureDef = new Box2D.Dynamics.b2FixtureDef()
       fixtureDef.density = 1
-      fixtureDef.friction = 0.1
+      fixtureDef.friction = 0.3
       fixtureDef.restitution = 0.1
-      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
+      diameter = 0.25
+      fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
       bodyDef = new Box2D.Dynamics.b2BodyDef()
       bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
       bodyDef.position.x = player.x
@@ -176,7 +177,7 @@ class @Level extends FW.ContainerProxy
       fixtureDef = new Box2D.Dynamics.b2FixtureDef
       fixtureDef.density     = 1
       fixtureDef.friction    = 0.1
-      fixtureDef.restitution = 0.1
+      fixtureDef.restitution = 0.5
 
       bodyDef = new Box2D.Dynamics.b2BodyDef()
 
@@ -346,7 +347,7 @@ updateTimer = (timer, level) ->
   timer.text = FW.Time.clockFormat(elapsed)
   if level.solved
     targetX = canvas.width / 2
-    targetY = canvas.height / 2
+    targetY = canvas.height / 2 - 25
     targetScale = canvas.width / 105
   else
     targetX = canvas.width / 2
