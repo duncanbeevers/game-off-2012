@@ -43,7 +43,7 @@ class @CountDown extends FW.ContainerProxy
       display = "Begin"
       if !@_onCompleteFired
         @_onCompleteFired = true
-        @_onComplete()
+        @_onComplete?()
 
     if display
       text.text = display
