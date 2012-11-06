@@ -11,7 +11,7 @@ class @Pup extends FW.ParticleGenerator
     particle.y = 0
     particle.rotationVel = FW.Math.random(-5, 5)
 
-    graphics = particle.graphics()
+    graphics = particle.graphics
     graphics.clear()
 
     graphics.beginFill("rgba(255, 0, 0, 0.8)")
