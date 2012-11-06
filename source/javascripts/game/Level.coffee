@@ -236,7 +236,7 @@ levelTrackPlayer = (level, player, goal) ->
   container.regY += (targetRegY - container.regY) / mazePan
 
   if debugDraw
-    scale = container.scaleX
+    scale = Math.max(container.scaleX, 0)
     debugDraw.SetDrawScale(scale)
     debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(
       halfCanvasWidth / scale - container.regX
