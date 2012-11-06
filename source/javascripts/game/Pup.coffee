@@ -1,6 +1,6 @@
 class @Pup extends FW.ParticleGenerator
   maxParticles: 30
-  numberOfParticlesToGenerate: -> 1
+  numberOfParticlesToGenerate: -> FW.Math.rand(7) == 0
 
   generateParticle: ->
     new createjs.Shape()
@@ -12,8 +12,8 @@ class @Pup extends FW.ParticleGenerator
     graphics = particle.graphics
     graphics.clear()
 
-    graphics.beginFill("rgba(255, 0, 0, 0.8)")
-    graphics.drawCircle(FW.Math.random(-0.1, 0.1), FW.Math.random(-0.1, 0.1), 0.5)
+    graphics.beginFill("rgba(172, 255, 85, 0.1)")
+    graphics.drawCircle(FW.Math.random(-0.1, 0.1), FW.Math.random(-0.1, 0.1), 1)
     graphics.endFill()
 
   updateParticle: (particle) ->
