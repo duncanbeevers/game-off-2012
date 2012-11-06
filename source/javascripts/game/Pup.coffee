@@ -7,8 +7,6 @@ class @Pup extends FW.ParticleGenerator
 
   initializeParticle: (particle) ->
     particle.alpha = 1
-    particle.x = 0
-    particle.y = 0
     particle.rotationVel = FW.Math.random(-5, 5)
 
     graphics = particle.graphics
@@ -28,3 +26,10 @@ class @Pup extends FW.ParticleGenerator
 
   isParticleCullable: (particle) ->
     particle.alpha <= 0.02
+
+  tick: ->
+    super()
+    body = @fixture.GetBody()
+    position = body.GetPosition()
+    @x = position.x
+    @y = position.y
