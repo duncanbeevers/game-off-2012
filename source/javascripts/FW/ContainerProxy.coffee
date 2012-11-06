@@ -7,9 +7,11 @@ class FW.ContainerProxy
     instance = @
 
     onAddedAsChild = (parent) ->
+      createjs.Ticker.addListener(instance)
       instance.onAddedAsChild?(parent)
 
     onRemovedAsChild = (parent) ->
+      createjs.Ticker.removeListener(instance)
       instance.onRemovedAsChild?(parent)
 
     parent = undefined

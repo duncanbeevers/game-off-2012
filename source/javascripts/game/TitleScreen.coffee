@@ -7,7 +7,6 @@ class @TitleScreen extends FW.ContainerProxy
 
     createTitleBox(@)
     createLevelPicker(@, preloader.getLevels())
-    createjs.Ticker.addListener(@)
 
   addTickHandler: (handler) ->
     @_tickHandlers.push(handler)

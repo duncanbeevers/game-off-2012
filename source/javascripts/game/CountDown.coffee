@@ -51,5 +51,5 @@ class @CountDown extends FW.ContainerProxy
       text.scaleY = text.scaleX
       text.alpha = FW.Math.linearInterpolate(1, 0.2, 0, 1000, intraSecondProgress)
 
-    # createjs.Ticker.removeListener(@)
-    # @_onComplete()
+  getCompleted: ->
+    @_onCompleteFired

@@ -12,8 +12,7 @@ class @Level extends FW.ContainerProxy
     mazeContainer.addChild(goal)
     @_container.addChild(mazeContainer)
 
-    countDown = new CountDown ->
-      createjs.Ticker.addListener level
+    countDown = new CountDown
 
     @_countDown = countDown
     @_container.addChild(countDown)
@@ -38,7 +37,8 @@ class @Level extends FW.ContainerProxy
     @setupMaze mazeData, -> level.onReady()
 
   onReady: ->
-    createjs.Ticker.addListener(@_countDown)
+    # @_countDown.begin()
+    # createjs.Ticker.addListener(@_countDown)
 
   setupPhysics: ->
     level = @
@@ -151,22 +151,23 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   tick: ->
-    if !@.solved
+    runSimulation = !@solved && @_countDown.getCompleted()
+    if runSimulation
       @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
     goal = @_goal
 
-    player.tick()
-    goal.tick()
-
     harness = @harness()
 
     levelTrackPlayer(@, player, goal)
-    playerTrackMouse(player, harness)
-    playerTrackGoal(player, goal)
-    playerLeaveTrack(player, @)
-    updateTimer(@_timerText, @)
+    playerReticleTrackMouse(player, harness)
+    playerReticleTrackGoal(player, goal)
+
+    if runSimulation
+      playerLeaveTrack(player, @)
+      playerAccelerateTowardsTarget(player)
+      updateTimer(@_timerText, @)
 
     @world.DrawDebugData()
 
@@ -243,21 +244,27 @@ levelTrackPlayer = (level, player, goal) ->
     ))
     # debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(player.x, player.y))
 
-playerTrackMouse = (player, harness) ->
+playerReticleTrackMouse = (player, harness) ->
+  # Align the thrust reticle graphic toward the mouse
+  targetX = player.x - harness.x
+  targetY = player.y - harness.y
+
+  angleToMouse = Math.atan2(targetY, targetX)
+  player.setThrustAngle(angleToMouse)
+  player.thrustTarget = [ targetX, targetY ]
+
+playerAccelerateTowardsTarget = (player) ->
   body = player.fixture.GetBody()
 
-  # Align the thrust reticle graphic toward the mouse
-  angleToMouse = Math.atan2(player.y - harness.y, player.x - harness.x)
-  player.setThrustAngle(angleToMouse)
-
-  # Clear existing forces, then accelerate towards the mouse
-  forceVectorScalar = 0.5
-  forceVector = new Box2D.Common.Math.b2Vec2(-Math.cos(angleToMouse) * forceVectorScalar, -Math.sin(angleToMouse) * forceVectorScalar)
+  # Clear existing forces, then accelerate towards the target
+  [ thrustX, thrustY ] = FW.Math.normalizeVector(player.thrustTarget)
+  forceVectorScalar = -0.5
+  forceVector = new Box2D.Common.Math.b2Vec2(thrustX * forceVectorScalar, thrustY * forceVectorScalar)
   body.ClearForces()
   body.m_angularVelocity /= easers('playerRotation')
   body.ApplyForce(forceVector, body.GetWorldCenter())
 
-playerTrackGoal = (player, goal) ->
+playerReticleTrackGoal = (player, goal) ->
   # Align the goal reticle graphic towards the goal
   angleToGoal = Math.atan2(player.y - goal.y, player.x - goal.x)
   player.setGoalAngle(angleToGoal)

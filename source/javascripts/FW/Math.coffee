@@ -46,6 +46,11 @@ normalizeToCap = (value, cap) ->
 
   return value
 
+normalizeVector = (vector) ->
+  [x, y] = vector
+  length = magnitude(x, y)
+  [ x / length, y / length ]
+
 # Does a linear interpolation between one range and another
 # The first two arguments indicate the target range
 # The second two arguments indicate the source range
@@ -113,6 +118,7 @@ FW.Math =
   clamp: clamp
   snap: snap
   normalizeToCircle: normalizeToCircle
+  normalizeVector: normalizeVector
   linearInterpolate: linearInterpolate
   sample: sample
   centroidOfSegments: centroidOfSegments
