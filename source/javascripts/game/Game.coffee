@@ -21,8 +21,13 @@ class @Game
     data = FW.Math.sample(preloader.getLevels())
     level = new Level(@, data)
 
-    keymap.subscribe FW.Input.KeyMap.SPACE, ->
-      level.releasePups()
+    beginBacktrack = ->
+      level.beginBacktrack()
+
+    endBacktrack = ->
+      level.endBacktrack()
+
+    keymap.subscribe FW.Input.KeyMap.SPACE, beginBacktrack, endBacktrack
 
     stage.addChild(level)
 

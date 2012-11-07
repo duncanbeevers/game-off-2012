@@ -151,8 +151,9 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   tick: ->
-    runSimulation = !@solved && @_countDown.getCompleted()
+    runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
     if runSimulation
+      @_everRanSimulation = true
       @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
@@ -160,13 +161,16 @@ class @Level extends FW.ContainerProxy
 
     harness = @harness()
 
-    levelTrackPlayer(@, player, goal)
+    levelTrackPlayer(@, player)
     playerReticleTrackMouse(player, harness)
     playerReticleTrackGoal(player, goal)
 
     if runSimulation
+      playerTrackFixture(player)
       playerLeaveTrack(player, @)
       playerAccelerateTowardsTarget(player)
+
+    if @_everRanSimulation
       updateTimer(@_timerText, @)
 
     @world.DrawDebugData()
@@ -178,7 +182,22 @@ class @Level extends FW.ContainerProxy
     mazeContainer.addChild(pup)
     createPhysicsPup(@world, pup, player)
 
-levelTrackPlayer = (level, player, goal) ->
+  beginBacktrack: () ->
+    @_backtracking = true
+
+  endBacktrack: () ->
+    @_backtracking = false
+
+playerTrackFixture = (player) ->
+  body = player.fixture.GetBody()
+  position = body.GetPosition()
+
+  playerPositionEase = easers('playerPosition')
+  player.x += (position.x - player.x) / playerPositionEase
+  player.y += (position.y - player.y) / playerPositionEase
+
+
+levelTrackPlayer = (level, player) ->
   solved = level.solved
   container = level._mazeContainer
   canvas = container.getStage().canvas
@@ -192,11 +211,6 @@ levelTrackPlayer = (level, player, goal) ->
   debugDraw = level.debugDraw
 
   body = player.fixture.GetBody()
-  position = body.GetPosition()
-
-  playerPositionEase = easers('playerPosition')
-  player.x += (position.x - player.x) / playerPositionEase
-  player.y += (position.y - player.y) / playerPositionEase
 
   bodyAngle = body.GetAngle()
   currentRotation = FW.Math.normalizeToCircle(container.rotation * FW.Math.DEG_TO_RAD)
