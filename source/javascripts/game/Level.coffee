@@ -159,6 +159,10 @@ class @Level extends FW.ContainerProxy
     player = @_player
     goal = @_goal
 
+    if @_backtracking && @_playerPositionStack.length
+      [ player.x, player.y ] = @_playerPositionStack.pop()
+
+
     harness = @harness()
 
     levelTrackPlayer(@, player)
@@ -187,6 +191,11 @@ class @Level extends FW.ContainerProxy
 
   endBacktrack: () ->
     @_backtracking = false
+    @_drewAnyDots = false
+    player = @_player
+    body = player.fixture.GetBody()
+    body.SetPosition(new Box2D.Common.Math.b2Vec2(player.x, player.y))
+    @_lastPlayerDot.Set(player.x, player.y)
 
 playerTrackFixture = (player) ->
   body = player.fixture.GetBody()
@@ -294,6 +303,10 @@ playerLeaveTrack = (player, level) ->
   moveDistance = Math.max(magnitude / 20, 0.01)
 
   if lastDotDistance > moveDistance
+    position = body.GetPosition()
+    level._playerPositionStack ||= [ lastDot.x, lastDot.y ]
+    level._playerPositionStack.push([ position.x, player.y ])
+
     pathGraphics = level._pathShape.graphics
     pathGlowGraphics = level._pathGlowShape.graphics
     if !level._drewAnyDots
