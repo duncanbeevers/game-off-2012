@@ -85,6 +85,8 @@ $ ->
   generateMaze = (type, options) ->
     resetBoundaries()
     mazeGraphics.clear()
+    if substrateContainer
+      substrateContainer.removeAllChildren()
 
     status = "Generating"
     disable = true
@@ -129,7 +131,6 @@ $ ->
             bitmap.scaleY = bitmap.scaleX
 
             mazeOptions.substrateBitmap = bitmap
-            substrateContainer.removeAllChildren()
             substrateContainer.addChild(bitmap)
             createMaze()
 
