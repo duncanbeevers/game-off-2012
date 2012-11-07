@@ -76,7 +76,12 @@ getFullColorBoundsRect = (bitmap, match) ->
   else
     null
 
-getColorWithinSegments = (segments, bitmap, xOffset, yOffset, xScale, yScale) ->
+getColorWithinSegments = (segments, bitmap) ->
+  xOffset = bitmap.regX
+  yOffset = bitmap.regY
+  xScale = bitmap.scaleX
+  yScale = bitmap.scaleY
+
   # Naive AABB approach for now, should be decent
   minX = Infinity
   maxX = -Infinity
@@ -88,28 +93,28 @@ getColorWithinSegments = (segments, bitmap, xOffset, yOffset, xScale, yScale) ->
     minY = Math.min(minY, y1, y2)
     maxY = Math.max(maxY, y1, y2)
 
-  x1 = Math.floor((minX + xOffset) * xScale)
-  y1 = Math.floor((minY + yOffset) * yScale)
-  x2 = Math.floor((maxX + xOffset) * xScale)
-  y2 = Math.floor((maxY + yOffset) * yScale)
+  x1 = Math.floor(minX / xScale) + xOffset
+  y1 = Math.floor(minY / yScale) + yOffset
+  x2 = Math.floor(maxX / xScale) + xOffset
+  y2 = Math.floor(maxY / yScale) + yOffset
 
   imageData = bitmap.cachedImageData
-  data = imageData.data
-  redSum   = 0
-  greenSum = 0
-  blueSum  = 0
-  alphaSum = 0
+  data      = imageData.data
+  redSum    = 0
+  greenSum  = 0
+  blueSum   = 0
+  alphaSum  = 0
 
   if segments.length
-    for x in [x1...x2]
-      for y in [y1...y2]
+    for x in [x1..x2]
+      for y in [y1..y2]
         i = ((y * imageData.width) + x) * 4
         redSum   += data[i]
         greenSum += data[i + 1]
         blueSum  += data[i + 2]
         alphaSum += data[i + 3]
 
-    denominator = (x2 - x1) * (y2 - y1)
+    denominator = (x2 - x1 + 1) * (y2 - y1 + 1)
 
     redAverage   = Math.floor(redSum   / denominator)
     greenAverage = Math.floor(greenSum / denominator)

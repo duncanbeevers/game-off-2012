@@ -11,6 +11,8 @@ mazeCell = (maze, i, cache) ->
 
 
 class BaseProjection
+  rowHeight: 1
+  columnWidth: 1
   segmentsForCellCircuit: (i, cell, points, cache) ->
     segments = []
 
@@ -37,6 +39,18 @@ class BaseProjection
 
     segments
 
+  infer: (maze, x, y) ->
+    bestI = undefined
+    bestDistance = Infinity
+    for i in [0..(maze.width * maze.height)]
+      segments = @project(maze, i)
+      [centerX, centerY] = FW.Math.centroidOfSegments(segments)
+      distance = FW.Math.distance(x, y, centerX, centerY)
+      if distance < bestDistance
+        bestDistance = distance
+        bestI = i
+    bestI
+
 class Maze.Projections.GraphPaper extends BaseProjection
   project: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
@@ -55,10 +69,8 @@ class Maze.Projections.GraphPaper extends BaseProjection
       [ x, y + 1 ]
     ], cache)
 
-  infer: (maze, x, y) ->
-    Math.floor(y + maze.height / 2) * maze.width + Math.floor(x + maze.width / 2)
-
 class Maze.Projections.SawTooth extends BaseProjection
+  rowHeight: 2
   project: (maze, i, cache) ->
     cell = mazeCell(maze, i, cache)
     mazeCol = i % maze.width
@@ -182,5 +194,3 @@ class Maze.Projections.FoldedHexagonCell extends BaseProjection
           [ x, y + smallSkew * 2 ]
           [ x - bigSkew, y + smallSkew ]
         ], cache)
-  infer: ->
-    # Not implemented

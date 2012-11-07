@@ -85,7 +85,6 @@ Maze.Structures.FoldedHexagon = $.extend {}, Maze.Structures.GraphPaper,
           mirror = true
 
     if mirror
-      # y * width + x
       x * width + y
     else
       # Rely on the GraphPaper template translation
@@ -101,15 +100,19 @@ indexToCoords = (maze, i) ->
   y = Math.floor(i / width)
   [ x, y ]
 
-Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
+Maze.Structures.Substrate = $.extend {},
   initialize: ->
     # Okay, let's have some fun with this image
     substratePixelsPerMeter = @substratePixelsPerMeter ||= 1
 
     bitmap = @substrateBitmap
+
     image = bitmap.image
-    width = Math.ceil(image.width / substratePixelsPerMeter)
-    height = Math.ceil(image.height / substratePixelsPerMeter)
+    # Underlying grid width and height
+    imageWidth = image.width
+    imageHeight = image.height
+    width = Math.ceil(imageWidth / substratePixelsPerMeter) * @projection.columnWidth
+    height = Math.ceil(imageHeight / substratePixelsPerMeter) * @projection.rowHeight
     @width = width
     @height = height
 
@@ -117,7 +120,9 @@ Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
     rect = FW.CreateJS.getFuzzyColorBoundsRect(bitmap, 0, 0, 255, 255, 32)
     if rect
       [x, y] = FW.Math.centroidOfRectangle(rect)
-      @_initialIndex = @projection.infer(@, x / substratePixelsPerMeter - width / 2, y / substratePixelsPerMeter - height / 2)
+      x - imageWidth / 2
+      y - imageHeight / 2
+      @_initialIndex = @projection.infer(@, (x - imageWidth / 2) / substratePixelsPerMeter, (y - imageHeight / 2) / substratePixelsPerMeter)
 
   initialIndex: ->
     @_initialIndex
@@ -126,20 +131,12 @@ Maze.Structures.Substrate = $.extend {}, Maze.Structures.GraphPaper,
     cache = @_substrateAvoidCache ||= []
     if cache[i] == undefined
       segments = maze.projection.project(maze, i, true)
-      substratePixelsPerMeter = @substratePixelsPerMeter
-      [ red, green, blue, alpha ] = FW.CreateJS.getColorWithinSegments(
-        segments,
-        @substrateBitmap,
-        @width / 2,
-        @height / 2,
-        substratePixelsPerMeter,
-        substratePixelsPerMeter
-      )
+      [ red, green, blue, alpha ] = FW.CreateJS.getColorWithinSegments(segments, @substrateBitmap)
 
       # Avoid transparent cells
-      if alpha < 128
-        cache[i] = true
-      else
+      if alpha >= 128
         cache[i] = false
+      else
+        cache[i] = true
 
     cache[i]

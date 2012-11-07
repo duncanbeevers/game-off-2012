@@ -96,7 +96,8 @@ $ ->
       draw: (segments) -> drawSegments("rgba(33, 153, 255, 0.5)", segments)
       done: onMazeAvailable
 
-    next = -> maze = Maze.createInteractive(mazeOptions)
+    next = ->
+      maze = Maze.createInteractive(mazeOptions)
 
     switch type
       when "GraphPaper"
@@ -118,8 +119,16 @@ $ ->
           height: height
 
       when "Substrate"
+        switch mazeOptions.projectionName
+          when "GraphPaper"
+            structure = Maze.Structures.GraphPaper
+            projection = new Maze.Projections.GraphPaper()
+          when "SawTooth"
+            structure = Maze.Structures.SawTooth
+            projection = new Maze.Projections.SawTooth()
+
         $.extend mazeOptions, Maze.Structures.Substrate,
-          projection: new Maze.Projections.GraphPaper()
+          structure, projection: projection
 
         createMaze = next
         imageUrl = mazeOptions.imageUrl
@@ -162,7 +171,12 @@ $ ->
     options = {}
 
     type = $type.val()
-    inputs = $(".config.#{type} input")
+
+    tags = [ "input", "select" ]
+    selectors = for tag in tags
+      ".config.#{type} #{tag}"
+
+    inputs = $(selectors.join(","))
     for input in inputs
       $input = $(input)
       val = $input.val()
