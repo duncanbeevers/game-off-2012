@@ -48,7 +48,7 @@ class Maze.Projections.GraphPaper extends BaseProjection
     x = i % width - halfWidth
     y = Math.floor(i / width) - halfHeight
 
-    segments = @segmentsForCellCircuit(i, cell, [
+    @segmentsForCellCircuit(i, cell, [
       [ x, y ]
       [ x + 1, y ]
       [ x + 1, y + 1 ]
@@ -57,6 +57,70 @@ class Maze.Projections.GraphPaper extends BaseProjection
 
   infer: (maze, x, y) ->
     Math.floor(y + maze.height / 2) * maze.width + Math.floor(x + maze.width / 2)
+
+class Maze.Projections.SawTooth extends BaseProjection
+  project: (maze, i, cache) ->
+    cell = mazeCell(maze, i, cache)
+    mazeCol = i % maze.width
+    mazeRow = Math.floor(i / maze.width)
+
+    pointUp = mazeRow % 2
+
+    x = mazeCol - maze.width / 2
+    y = Math.floor(mazeRow / 2) - maze.height / 4
+
+    if pointUp
+      @segmentsForCellCircuit(i, cell, [
+        [ x + 1, y + 1 ]
+        [ x, y + 1 ]
+        [ x + 1, y ]
+      ], cache)
+    else
+      @segmentsForCellCircuit(i, cell, [
+        [ x, y ]
+        [ x + 1, y ]
+        [ x, y + 1 ]
+      ], cache)
+
+class Maze.Projections.SlantedSawTooth extends BaseProjection
+  constructor: (options) ->
+    options ||= {}
+    @peakAngle = FW.Math.clamp(options.peakAngle || 60, 15, 175)
+    halfBaseWidth = Math.sin(@peakAngle / 2 * FW.Math.DEG_TO_RAD)
+    @_baseWidth = halfBaseWidth * 2
+    @_rowHeight = 1 - halfBaseWidth
+
+  project: (maze, i, cache) ->
+    baseWidth = @_baseWidth
+    rowHeight = @_rowHeight
+    cell = mazeCell(maze, i, cache)
+    mazeCol = i % maze.width
+    mazeRow = Math.floor(i / maze.width)
+    mazeWidth = (Math.floor(maze.height / 2) + maze.width) * baseWidth
+    mazeHeight = maze.height * rowHeight / 2
+
+    pointUp = mazeRow % 2
+
+    x = (mazeCol * baseWidth) +
+        Math.floor((mazeRow + 1) / 2) * (baseWidth / 2) -
+        mazeWidth / 2
+
+    y = Math.floor(mazeRow / 2) * rowHeight - mazeHeight / 2
+
+    if pointUp
+      @segmentsForCellCircuit(i, cell, [
+        [ x + baseWidth, y + rowHeight ]
+        [ x, y + rowHeight ]
+        [ x + baseWidth / 2, y ]
+      ], cache)
+    else
+      @segmentsForCellCircuit(i, cell, [
+        [ x, y ]
+        [ x + baseWidth, y ]
+        [ x + baseWidth / 2, y + rowHeight ]
+      ], cache)
+
+
 
 class Maze.Projections.FoldedHexagonCell extends BaseProjection
   project: (maze, i, cache) ->

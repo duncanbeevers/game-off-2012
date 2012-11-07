@@ -110,6 +110,13 @@ $ ->
           width: size
           height: size
 
+      when "SawTooth"
+        height = Math.floor((mazeOptions.height + 1) / 2) * 2
+        $.extend mazeOptions, Maze.Structures.SawTooth,
+          projection: new Maze.Projections.SawTooth()
+          peakAngle: 60
+          height: height
+
       when "Substrate"
         $.extend mazeOptions, Maze.Structures.Substrate,
           projection: new Maze.Projections.GraphPaper()

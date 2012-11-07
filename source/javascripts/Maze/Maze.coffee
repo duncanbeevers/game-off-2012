@@ -128,7 +128,7 @@ class @Maze
     undefined
 
   cell: (i, forceEnclose = false) ->
-    for direction in @.directions(i)
+    for direction in @directions(i)
       destination = translateDirection(@, i, direction)
       if !forceEnclose
         tunnel = hasTunnel(@, i, destination)
