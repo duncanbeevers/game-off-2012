@@ -54,7 +54,8 @@ recurse = (maze, i, didBacktrack) ->
 
 addTunnel = (maze, i1, i2) ->
   maze.tunnels ||= {}
-  maze.tunnels[normalizeTunnelName(i1, i2)] = true
+  key = normalizeTunnelName(i1, i2)
+  maze.tunnels[key] = true
 
 hasTunnel = (maze, i1, i2) ->
   tunnels = maze.tunnels
