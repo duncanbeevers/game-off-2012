@@ -14,7 +14,7 @@ section
 section
   select id="type" disabled="true"
     option value="GraphPaper" Graph Paper
-    option value="Hexagon" Hexagon
+    option value="FoldedHexagon" FoldedHexagon
     option value="SawTooth" SawTooth
     option value="Substrate" Substrate
 
@@ -27,19 +27,19 @@ section.config.GraphPaper
     label for="GraphPaper_height" Height
     input id="GraphPaper_height" type="number" name="height" min="1" value="6"
 
-section.config.Hexagon
+section.config.FoldedHexagon
   p
-    label for="Hexagon_width" Size
-    input id="Hexagon_width" type="number" name="size" step="2" min="2" value="6"
+    label for="FoldedHexagon_width" Size
+    input id="FoldedHexagon_width" type="number" name="size" step="2" min="2" value="6"
 
 section.config.SawTooth
   p
     label for="SawTooth_width" Width
-    input id="SawTooth_width" type="number" name="width" min="1" value="3"
+    input id="SawTooth_width" type="number" name="width" min="1" value="6"
 
   p
     label for="SawTooth_height" Height
-    input id="SawTooth_height" type="number" name="height" min="1" value="2"
+    input id="SawTooth_height" type="number" name="height" min="1" value="12"
 
 section.config.Substrate
   p

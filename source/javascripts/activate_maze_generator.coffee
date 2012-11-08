@@ -104,7 +104,7 @@ $ ->
         $.extend mazeOptions, Maze.Structures.GraphPaper,
           projection: new Maze.Projections.GraphPaper()
 
-      when "Hexagon"
+      when "FoldedHexagon"
         size = Math.floor((mazeOptions.size + 1) / 2) * 2
         $.extend mazeOptions, Maze.Structures.FoldedHexagon,
           projection: new Maze.Projections.FoldedHexagonCell()
