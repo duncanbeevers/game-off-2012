@@ -124,6 +124,10 @@ $ ->
           projection: new Maze.Projections.CrossTooth()
           height: height
 
+      when "Honeycomb"
+        $.extend mazeOptions, Maze.Structures.Honeycomb,
+          projection: new Maze.Projections.Honeycomb()
+
       when "Substrate"
         switch mazeOptions.projectionName
           when "GraphPaper"
@@ -135,6 +139,9 @@ $ ->
           when "CrossTooth"
             structure = Maze.Structures.CrossTooth
             projection = new Maze.Projections.CrossTooth()
+          when "Honeycomb"
+            structure = Maze.Structures.Honeycomb
+            projection = new Maze.Projections.Honeycomb()
 
         $.extend mazeOptions, Maze.Structures.Substrate,
           structure, projection: projection

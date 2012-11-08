@@ -17,6 +17,7 @@ section
     option value="FoldedHexagon" FoldedHexagon
     option value="SawTooth" SawTooth
     option value="CrossTooth" CrossTooth
+    option value="Honeycomb" Honeycomb
     option value="Substrate" Substrate
 
 section.config.GraphPaper
@@ -40,7 +41,7 @@ section.config.SawTooth
 
   p
     label for="SawTooth_height" Height
-    input id="SawTooth_height" type="number" name="height" min="1" value="12"
+    input id="SawTooth_height" type="number" name="height" step="2" min="1" value="12"
 
 section.config.CrossTooth
   p
@@ -49,7 +50,16 @@ section.config.CrossTooth
 
   p
     label for="CrossTooth_height" Height
-    input id="CrossTooth_height" type="number" name="height" min="1" value="24"
+    input id="CrossTooth_height" type="number" name="height" step="4" min="1" value="24"
+
+section.config.Honeycomb
+  p
+    label for="Honeycomb_width" Width
+    input id="Honeycomb_width" type="number" name="width" min="1" value="6"
+
+  p
+    label for="Honeycomb_height" Height
+    input id="Honeycomb_height" type="number" name="height" min="1" value="6"
 
 section.config.Substrate
   p
@@ -58,6 +68,7 @@ section.config.Substrate
       option value="GraphPaper" Graph Paper
       option value="SawTooth" SawTooth
       option value="CrossTooth" CrossTooth
+      option value="Honeycomb" Honeycomb
 
   p
     label for="Substrate_imageUrl" Image URL
