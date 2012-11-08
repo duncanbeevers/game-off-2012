@@ -118,6 +118,12 @@ $ ->
           peakAngle: 60
           height: height
 
+      when "CrossTooth"
+        height = Math.floor((mazeOptions.height + 3) / 4) * 4
+        $.extend mazeOptions, Maze.Structures.CrossTooth,
+          projection: new Maze.Projections.CrossTooth()
+          height: height
+
       when "Substrate"
         switch mazeOptions.projectionName
           when "GraphPaper"
@@ -126,6 +132,9 @@ $ ->
           when "SawTooth"
             structure = Maze.Structures.SawTooth
             projection = new Maze.Projections.SawTooth()
+          when "CrossTooth"
+            structure = Maze.Structures.CrossTooth
+            projection = new Maze.Projections.CrossTooth()
 
         $.extend mazeOptions, Maze.Structures.Substrate,
           structure, projection: projection
