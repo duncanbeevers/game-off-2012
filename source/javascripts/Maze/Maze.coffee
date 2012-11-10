@@ -104,7 +104,7 @@ projectAndDrawMazeCell = (maze, i, cache) ->
 
 class @Maze
   constructor: (options) ->
-    @_projectionEdgeCache ||= {}
+    @_projectionEdgeCache = {}
 
     defaultOptions =
       unicursal: false
@@ -128,11 +128,10 @@ class @Maze
 
     undefined
 
-  cell: (i, forceEnclose = false) ->
+  cell: (i) ->
     for direction in @directions(i)
       destination = translateDirection(@, i, direction)
-      if !forceEnclose
-        tunnel = hasTunnel(@, i, destination)
+      tunnel = hasTunnel(@, i, destination)
 
       [ destination, tunnel ]
 
