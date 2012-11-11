@@ -16,3 +16,6 @@
 [submodule "submodules/EaselJS"]
 	path = submodules/EaselJS
 	url = https://github.com/CreateJS/EaselJS.git
+[submodule "submodules/bacon.js"]
+	path = submodules/bacon.js
+	url = https://github.com/raimohanska/bacon.js.git
