@@ -13,12 +13,11 @@ class Maze.Projections.Honeycomb extends Maze.Projections.BaseProjection
     staggered = mazeY % 2
 
     xOffset = 0
-    yOffset = 0
     if staggered
       xOffset = 1
 
     x = (mazeX - maze.width / 2) * hexWidth + xOffset
-    y = (mazeY - maze.height / 2) * hexHeight + yOffset
+    y = (mazeY - maze.height / 2) * hexHeight
 
     @segmentsForCellCircuit(i, cell, [
       [ x, y + w ]

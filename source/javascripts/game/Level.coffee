@@ -377,7 +377,7 @@ createPhysicsPlayer = (world, player) ->
   fixtureDef.density = 1
   fixtureDef.friction = 0.3
   fixtureDef.restitution = 0.1
-  diameter = 0.25
+  diameter = 0.2
   fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
   bodyDef = new Box2D.Dynamics.b2BodyDef()
   bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
@@ -404,7 +404,7 @@ createPhysicsWalls = (world, segments) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef
   fixtureDef.density     = 1
   fixtureDef.friction    = 0.1
-  fixtureDef.restitution = 0.5
+  fixtureDef.restitution = 0.2
 
   bodyDef = new Box2D.Dynamics.b2BodyDef()
 

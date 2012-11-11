@@ -17,8 +17,8 @@ class @Game
     # titleScreen = new TitleScreen(@)
     # stage.addChild(titleScreen)
 
-    # data = JSON.parse(preloader.getResult("levels/cityscape.json").result)
-    data = FW.Math.sample(preloader.getLevels())
+    data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
+    # data = FW.Math.sample(preloader.getLevels())
     level = new Level(@, data)
 
     beginBacktrack = ->
@@ -27,7 +27,11 @@ class @Game
     endBacktrack = ->
       level.endBacktrack()
 
+    togglePause = ->
+      level.togglePause()
+
     keymap.subscribe FW.Input.KeyMap.SPACE, beginBacktrack, endBacktrack
+    keymap.subscribe FW.Input.KeyMap.P, togglePause
 
     stage.addChild(level)
 

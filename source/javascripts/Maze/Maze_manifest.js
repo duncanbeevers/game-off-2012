@@ -1,6 +1,5 @@
 //= require Maze/Maze
 
-//= require Maze/MazeStructures
 //= require ./Structures/GraphPaper
 //= require_tree ./Structures
 

@@ -161,6 +161,8 @@ class @Maze
       terminations: terminations
       segments: segments
 
+Maze = @Maze ||= {}
+
 Maze.createInteractive = (options) ->
   extendedOptions = $.extend({}, options)
   maze = new Maze(extendedOptions)

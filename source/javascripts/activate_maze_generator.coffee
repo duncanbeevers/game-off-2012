@@ -128,6 +128,10 @@ $ ->
         $.extend mazeOptions, Maze.Structures.Honeycomb,
           projection: new Maze.Projections.Honeycomb()
 
+      when "Casket"
+        $.extend mazeOptions, Maze.Structures.Casket,
+          projection: new Maze.Projections.Casket()
+
       when "Substrate"
         switch mazeOptions.projectionName
           when "GraphPaper"
@@ -142,6 +146,9 @@ $ ->
           when "Honeycomb"
             structure = Maze.Structures.Honeycomb
             projection = new Maze.Projections.Honeycomb()
+          when "Casket"
+            structure = Maze.Structures.Casket
+            projection = new Maze.Projections.Casket()
 
         $.extend mazeOptions, Maze.Structures.Substrate,
           structure, projection: projection

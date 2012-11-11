@@ -59,9 +59,10 @@ Maze.Structures.Casket =
               i + 2 * width
           when 2 # SW
             if staggered
-              i + 3 * width
+              if mazeRow < height - 3
+                i + 3 * width
             else
-              if mazeCol > 0
+              if mazeCol > 0 && mazeRow < height - 3
                 i + 3 * width - 1
           when 3 # W
             if staggered
@@ -107,7 +108,8 @@ Maze.Structures.Casket =
               if mazeCol < width - 1 && mazeRow < height - 2
                 i + 2 * width + 1
             else
-              i + 2 * width
+              if mazeRow < height - 2
+                i + 2 * width
       when 3 # Pointing down
         switch direction
           when 0 # SE
@@ -115,13 +117,14 @@ Maze.Structures.Casket =
               if mazeCol < width - 1 && mazeRow < height - 1
                 i + 2 * width + 1
             else
-              i + 2 * width
+              if mazeRow < height - 1
+                i + 2 * width
           when 1 # SW
             if staggered
               if mazeRow < height - 1
                 i + 3 * width
             else
-              if mazeCol > 0
+              if mazeCol > 0 && mazeRow < height - 1
                 i + 3 * width - 1
           when 2 # NW
             if staggered

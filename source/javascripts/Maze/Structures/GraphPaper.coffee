@@ -1,3 +1,6 @@
+Maze = @Maze ||= {}
+Maze.Structures ||= {}
+
 Maze.Structures.GraphPaper =
   directions: (i) ->
     [

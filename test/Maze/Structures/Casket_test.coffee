@@ -5,6 +5,30 @@ expect = chai.expect
 
 describe "Maze.Structures.Casket", ->
   describe "translations", ->
+    it "should translate as few as four rows", ->
+      maze = {}
+      for key, value of Casket
+        maze[key] = value
+
+      maze.width = 4
+      maze.height = 4
+
+      expectedTranslations = [
+        [ 4, 2, undefined ]
+        [ 4, 3, undefined ]
+        [ 4, 4, undefined ]
+        [ 6, 2, undefined ]
+        [ 8, 4, undefined ]
+        [ 12, 0, undefined ]
+        [ 12, 1, undefined ]
+        [ 15, 0, undefined ]
+        [ 15, 1, undefined ]
+      ]
+
+      for [from, direction, expectedResult ] in expectedTranslations
+        result = maze.translateDirection(from, direction)
+        expect(result, "translating from #{from} in direction #{direction} leads to #{expectedResult}").to.eql(expectedResult)
+
     it "should translate from according to the picture I drew", ->
       # Copy
       maze = {}
@@ -67,14 +91,28 @@ describe "Maze.Structures.Casket", ->
         # Boundaries
         [ 0, 0, undefined ]
         [ 0, 1, undefined ]
-        [ 32, 0, undefined ]
+        [ 1, 0, undefined ]
+        [ 1, 1, undefined ]
+        [ 2, 0, undefined ]
+        [ 2, 1, undefined ]
+        [ 3, 0, undefined ]
+        [ 3, 1, undefined ]
         [ 19, 1, undefined ]
+        [ 32, 0, undefined ]
+        [ 51, 1, undefined ]
 
         [ 4, 2, undefined ]
         [ 4, 3, undefined ]
         [ 4, 4, undefined ]
-        [ 20, 3, undefined]
         [ 5, 4, undefined ]
+        [ 7, 4, undefined ]
+        [ 20, 3, undefined]
+        [ 36, 2, undefined ]
+        [ 36, 3, undefined ]
+        [ 36, 4, undefined ]
+        [ 52, 2, undefined ]
+        [ 52, 3, undefined ]
+        [ 55, 2, undefined ]
 
         [ 8, 2, undefined ]
         [ 11, 2, undefined ]
@@ -82,12 +120,21 @@ describe "Maze.Structures.Casket", ->
         [ 27, 2, undefined ]
         [ 27, 3, undefined ]
         [ 27, 4, undefined ]
+        [ 43, 3, undefined ]
         [ 56, 4, undefined ]
+        [ 59, 2, undefined ]
+        [ 59, 3, undefined ]
+        [ 59, 4, undefined ]
 
         [ 12, 1, undefined ]
         [ 31, 0, undefined ]
+        [ 44, 1, undefined ]
         [ 60, 0, undefined ]
         [ 60, 1, undefined ]
+        [ 61, 0, undefined ]
+        [ 61, 1, undefined ]
+        [ 62, 0, undefined ]
+        [ 62, 1, undefined ]
         [ 63, 0, undefined ]
         [ 63, 1, undefined ]
       ]
