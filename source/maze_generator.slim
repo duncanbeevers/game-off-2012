@@ -82,8 +82,13 @@ section.config.Substrate
       option value="Cairo" Cairo
 
   p
-    label for="Substrate_imageUrl" Image URL
-    input id="Substrate_imageUrl" type="url" name="imageUrl" value="images/substrates/TestLevel1.png"
+    label for="Substrate_imageUrl" Image
+    select id="Substrate_imageUrl" name="imageUrl"
+      - substrate_images.each do |url, description|
+        option value=url = description
+  p
+    label for="Substrate_displaySubstrateImage" Show
+    input id="Substrate_displaySubstrateImage" type="checkbox" checked="true"
   p
     label for="Substrate_substratePixelsPerMeter" Pixels/m
     input id="Substrate_substratePixelsPerMeter" type="number" name="substratePixelsPerMeter" value="7"

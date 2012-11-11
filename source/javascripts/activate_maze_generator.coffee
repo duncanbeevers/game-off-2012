@@ -44,6 +44,9 @@ $ ->
   mazeContainer.x = halfCanvasWidth
   mazeContainer.y = halfCanvasHeight
 
+  substrateContainer = new createjs.Container()
+  mazeContainer.addChildAt(substrateContainer, 0)
+
   onMazeAvailable = (maze) ->
     updateStatus("Ready")
     updateInfo(maze)
@@ -81,12 +84,10 @@ $ ->
     maxY = Math.max(maxY, _maxY)
     targetScale = canvasSize / Math.max(maxX * 2, -minX * 2, maxY * 2, -minY * 2, maxX - minX, maxY - minY)
 
-  substrateContainer = null
   generateMaze = (type, options) ->
     resetBoundaries()
     mazeGraphics.clear()
-    if substrateContainer
-      substrateContainer.removeAllChildren()
+    substrateContainer.removeAllChildren()
 
     status = "Generating"
     disable = true
@@ -156,10 +157,6 @@ $ ->
         createMaze = next
         imageUrl = mazeOptions.imageUrl
 
-        if !substrateContainer
-          substrateContainer = new createjs.Container()
-          mazeContainer.addChildAt(substrateContainer, 0)
-
         next = ->
           preloader = new createjs.PreloadJS()
           preloader.onComplete = ->
@@ -170,7 +167,7 @@ $ ->
             bitmap.scaleY = bitmap.scaleX
 
             mazeOptions.substrateBitmap = bitmap
-            # substrateContainer.addChild(bitmap)
+            substrateContainer.addChild(bitmap)
             createMaze()
 
           preloader.loadManifest([ imageUrl ])
@@ -194,6 +191,13 @@ $ ->
     $("#serialized").append("<img src=\"#{data}\" alt=\"\" \>")
 
   $type.on "change", onTypeChange
+
+  $("#Substrate_displaySubstrateImage").on "change", (event) ->
+    if $(event.target).is(":checked")
+      substrateContainer.visible = true
+    else
+      substrateContainer.visible = false
+
 
   $("#generate").on "click", ->
     options = {}

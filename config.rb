@@ -96,4 +96,26 @@ helpers do
 
     manifest_entries.to_json
   end
+
+  def substrate_images
+    Dir.chdir("source") do
+      allnames = Dir.glob("images/substrates/**/*")
+      filenames = allnames.select { |f| !File.directory?(f) }
+
+      filenames.map do |f|
+        basename = File.basename(f, File.extname(f))
+        extra = nil
+        # if identify_dimensions
+        if false
+          identify = `identify #{f}`
+          dimensions = /\d+x\d+/.match(identify)[0]
+          extra = dimensions
+        else
+          extra = ""
+        end
+
+        [ f, "#{basename} #{extra}" ]
+      end
+    end
+  end
 end
