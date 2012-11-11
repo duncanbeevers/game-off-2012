@@ -18,7 +18,7 @@ section
     option value="SawTooth" SawTooth
     option value="CrossTooth" CrossTooth
     option value="Honeycomb" Honeycomb
-    option value="Casket" Casket
+    option value="Cairo" Cairo
     option value="Substrate" Substrate
 
 section.config.GraphPaper
@@ -62,14 +62,14 @@ section.config.Honeycomb
     label for="Honeycomb_height" Height
     input id="Honeycomb_height" type="number" name="height" min="1" value="6"
 
-section.config.Casket
+section.config.Cairo
   p
-    label for="Casket_width" Width
-    input id="Casket_width" type="number" name="width" min="1" value="4"
+    label for="Cairo_width" Width
+    input id="Cairo_width" type="number" name="width" min="1" value="4"
 
   p
-    label for="Casket_height" Height
-    input id="Casket_height" type="number" name="height" step="4" min="4" value="16"
+    label for="Cairo_height" Height
+    input id="Cairo_height" type="number" name="height" step="4" min="4" value="16"
 
 section.config.Substrate
   p
@@ -79,7 +79,7 @@ section.config.Substrate
       option value="SawTooth" SawTooth
       option value="CrossTooth" CrossTooth
       option value="Honeycomb" Honeycomb
-      option value="Casket" Casket
+      option value="Cairo" Cairo
 
   p
     label for="Substrate_imageUrl" Image URL
@@ -95,6 +95,8 @@ section
     | Optimize
   button id="serialize" disabled="true"
     | Serialize
+  button id="png" disabled="true"
+    | PNG
 
 section
   p id="serialized"

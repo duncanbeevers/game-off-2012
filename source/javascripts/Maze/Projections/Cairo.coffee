@@ -1,10 +1,9 @@
-class Maze.Projections.Casket extends Maze.Projections.BaseProjection
+class Maze.Projections.Cairo extends Maze.Projections.BaseProjection
   rowHeight: 4
   project: (maze, i, cache) ->
     cell = maze.cell(i)
     mazeCol = i % maze.width
     mazeRow = Math.floor(i / maze.width)
-    console.log "i %o @ %o,%o", i, mazeCol, mazeRow
 
     orientation = mazeRow % 4
     staggered = Math.floor(mazeRow / 4) % 2

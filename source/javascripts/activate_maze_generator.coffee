@@ -53,7 +53,7 @@ $ ->
     maze.joinedSegments = segments
 
     mazeGraphics.clear()
-    drawSegments("rgba(73, 21, 172, 0.5)", segments)
+    drawSegments("rgba(0, 186, 126, 0.6)", segments)
 
   minX = null
   maxX = null
@@ -128,9 +128,9 @@ $ ->
         $.extend mazeOptions, Maze.Structures.Honeycomb,
           projection: new Maze.Projections.Honeycomb()
 
-      when "Casket"
-        $.extend mazeOptions, Maze.Structures.Casket,
-          projection: new Maze.Projections.Casket()
+      when "Cairo"
+        $.extend mazeOptions, Maze.Structures.Cairo,
+          projection: new Maze.Projections.Cairo()
 
       when "Substrate"
         switch mazeOptions.projectionName
@@ -146,9 +146,9 @@ $ ->
           when "Honeycomb"
             structure = Maze.Structures.Honeycomb
             projection = new Maze.Projections.Honeycomb()
-          when "Casket"
-            structure = Maze.Structures.Casket
-            projection = new Maze.Projections.Casket()
+          when "Cairo"
+            structure = Maze.Structures.Cairo
+            projection = new Maze.Projections.Cairo()
 
         $.extend mazeOptions, Maze.Structures.Substrate,
           structure, projection: projection
@@ -170,7 +170,7 @@ $ ->
             bitmap.scaleY = bitmap.scaleX
 
             mazeOptions.substrateBitmap = bitmap
-            substrateContainer.addChild(bitmap)
+            # substrateContainer.addChild(bitmap)
             createMaze()
 
           preloader.loadManifest([ imageUrl ])
@@ -187,6 +187,11 @@ $ ->
   # Register event handlers
   $("#serialize").on "click", ->
     $("#serialized").text(JSON.stringify(maze.serialize()))
+
+  $("#png").on "click", ->
+    data = $canvas[0].toDataURL()
+    $("#serialized").text(data)
+    $("#serialized").append("<img src=\"#{data}\" alt=\"\" \>")
 
   $type.on "change", onTypeChange
 

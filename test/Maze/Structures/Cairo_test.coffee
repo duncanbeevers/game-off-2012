@@ -1,13 +1,13 @@
-Casket = require("../../../source/javascripts/Maze/Structures/Casket.coffee").Maze.Structures.Casket
+Cairo = require("../../../source/javascripts/Maze/Structures/Cairo.coffee").Maze.Structures.Cairo
 
 chai = require("chai")
 expect = chai.expect
 
-describe "Maze.Structures.Casket", ->
+describe "Maze.Structures.Cairo", ->
   describe "translations", ->
     it "should translate as few as four rows", ->
       maze = {}
-      for key, value of Casket
+      for key, value of Cairo
         maze[key] = value
 
       maze.width = 4
@@ -32,7 +32,7 @@ describe "Maze.Structures.Casket", ->
     it "should translate from according to the picture I drew", ->
       # Copy
       maze = {}
-      for key, value of Casket
+      for key, value of Cairo
         maze[key] = value
 
       maze.width = 4
