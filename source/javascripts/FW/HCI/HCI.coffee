@@ -31,7 +31,11 @@ class HCI.HCI
     parts = eventName.split(":")
     switch parts[0]
       when "key"
-        @_keyMap.on(parts[1], args[1], args[2])
+        onDown = args[0]
+        onUp = args[1]
+        wrappedOnDown = (args...) => onDown?.apply(@, args)
+        wrappedOnUp = (args...) => onUp?.apply(@, args)
+        @_keyMap.on(parts[1], wrappedOnUp, wrappedOnDown)
       else
         handlers = @_handlers[parts[0]] ||= []
         handlers.push [ parts, args ]

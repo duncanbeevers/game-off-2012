@@ -1,5 +1,5 @@
 class @TitleScreen extends FW.ContainerProxy
-  constructor: (game) ->
+  constructor: (game, hci) ->
     super()
 
     @_tickHandlers = []
@@ -7,7 +7,7 @@ class @TitleScreen extends FW.ContainerProxy
     preloader = game.getPreloader()
 
     createTitleBox(@)
-    createLevelPicker(@, preloader.getLevels())
+    createLevelPicker(@, preloader.getLevels(), hci)
 
   addTickHandler: (handler) ->
     @_tickHandlers.push(handler)
@@ -50,7 +50,7 @@ createTitleBox = (screen) ->
     background.scaleX = canvas.width
     background.scaleY = 48
 
-createLevelPicker = (screen, levels) ->
+createLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0
   levelPicker = new LevelPicker(screen, levels, initialLevelIndex)
 
@@ -65,3 +65,6 @@ createLevelPicker = (screen, levels) ->
     levelPicker.x = canvas.width / 2
     levelPicker.y = canvas.height / 3
     levelPicker.tick()
+
+  hci.on "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel()
+  hci.on "levelPickerFocusOnNextLevel", -> levelPicker.focusOnNextLevel()
