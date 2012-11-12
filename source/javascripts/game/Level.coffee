@@ -225,7 +225,7 @@ levelTrackPlayer = (level, player) ->
   body = player.fixture.GetBody()
 
   bodyAngle = body.GetAngle()
-  currentRotation = FW.Math.normalizeToCircle(container.rotation * FW.Math.DEG_TO_RAD)
+  currentRotation = FW.Math.wrapToCircle(container.rotation * FW.Math.DEG_TO_RAD)
 
   diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
   diff /= easers('mazeRotation')

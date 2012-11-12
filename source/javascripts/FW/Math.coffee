@@ -33,13 +33,13 @@ clamp = (value, min, max) ->
 
 # Normalizes the provided value to a 0 to 2pi radian range
 # This means original orientation is preserved
-normalizeToCircle = (value) ->
-  normalizeToCap(value, TWO_PI)
+wrapToCircle = (value) ->
+  wrapToCap(value, TWO_PI)
 
-normalizeToHalfCircle = (value) ->
-  normalizeToCap(value, PI)
+wrapToHalfCircle = (value) ->
+  wrapToCap(value, PI)
 
-normalizeToCap = (value, cap) ->
+wrapToCap = (value, cap) ->
   value % cap
   if value < 0
     value += cap
@@ -92,7 +92,7 @@ distance = (x1, y1, x2, y2) ->
 magnitude = (x, y) ->
   distance(0, 0, x, y)
 
-snap  = (x, precision) ->
+snap = (x, precision) ->
   scaleUp = x * precision
   roundDown = Math.floor(scaleUp)
   roundUp   = Math.ceil(scaleUp)
@@ -117,7 +117,7 @@ FW.Math =
   rand: rand
   clamp: clamp
   snap: snap
-  normalizeToCircle: normalizeToCircle
+  wrapToCircle: wrapToCircle
   normalizeVector: normalizeVector
   linearInterpolate: linearInterpolate
   sample: sample
