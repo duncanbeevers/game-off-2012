@@ -32,6 +32,7 @@ class @LevelPicker extends FW.ContainerProxy
     @_levelsContainer.regX += (targetRegX - @_levelsContainer.regX) / 10
     for levelContainer, i in @_levelsContainers
       if i == @_currentIndex
+        levelContainer.rotation += 0.2
         targetScale = 2.2
         targetAlpha = 1
       else
@@ -41,6 +42,8 @@ class @LevelPicker extends FW.ContainerProxy
       levelContainer.scaleX += (targetScale - levelContainer.scaleX) / 10
       levelContainer.scaleY = levelContainer.scaleX
       levelContainer.alpha += (targetAlpha - levelContainer.alpha) / 10
+
+      levelContainer.rotation += 0.5
 
   createLevelDisplayObject: (levelData) ->
     container = new createjs.Container()
