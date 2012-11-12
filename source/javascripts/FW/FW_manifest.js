@@ -9,4 +9,7 @@
 //= require FW/MouseHarness
 //= require FW/NamedContactListener
 //= require FW/CreateJS
-//= require FW/Input
+
+//= require FW/HCI/HCI
+//= require FW/HCI/jquery-HCI
+//= require FW/HCI/KeyMap

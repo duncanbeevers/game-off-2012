@@ -1,6 +1,5 @@
 FW = @FW ||= {}
-
-Input = FW.Input ||= {}
+HCI = FW.HCI ||= {}
 
 class KeyMap
   constructor: ->
@@ -28,7 +27,7 @@ class KeyMap
         if onUp
           onUp(duration)
 
-  subscribe: (code, onDown, onUp) ->
+  on: (code, onDown, onUp) ->
     @_handlers[code] ||= []
     @_handlers[code].push([ onDown, onUp ])
 
@@ -41,4 +40,4 @@ KeyMap.UP    = 38
 KeyMap.RIGHT = 39
 KeyMap.DOWN  = 40
 
-Input.KeyMap = KeyMap
+HCI.KeyMap = KeyMap

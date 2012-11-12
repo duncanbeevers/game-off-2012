@@ -1,7 +1,7 @@
 BASE_BGM_VOLUME = 0.2
 
 class @Game
-  constructor: (canvas, preloader, keymap) ->
+  constructor: (canvas, preloader, hci) ->
     createjs.Ticker.setFPS(30)
     @_preloader = preloader
 
@@ -30,10 +30,9 @@ class @Game
     togglePause = ->
       level.togglePause()
 
-    keymap.subscribe FW.Input.KeyMap.SPACE, beginBacktrack, endBacktrack
-    keymap.subscribe FW.Input.KeyMap.P, togglePause
 
-    stage.addChild(level)
+    hci.on "key:#{FW.HCI.KeyMap.SPACE}", beginBacktrack, endBacktrack
+    # keymap.subscribe FW.Input.KeyMap.P, togglePause
 
     updater = tick: -> stage.update()
 
