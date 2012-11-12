@@ -8,7 +8,9 @@
 //= require FW/ProxyProperties
 //= require FW/MouseHarness
 //= require FW/NamedContactListener
+
 //= require FW/CreateJS
+//= require FW/dat.GUI
 
 //= require FW/HCI/HCI
 //= require FW/HCI/jquery-HCI
