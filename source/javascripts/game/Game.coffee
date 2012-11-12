@@ -14,12 +14,13 @@ class @Game
 
     stage = new createjs.Stage(canvas)
 
-    # titleScreen = new TitleScreen(@)
-    # stage.addChild(titleScreen)
+    titleScreen = new TitleScreen(@, hci)
+    stage.addChild(titleScreen)
 
-    data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
+    # data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
     # data = FW.Math.sample(preloader.getLevels())
-    level = new Level(@, data)
+    # level = new Level(@, data)
+    # stage.addChild(level)
 
     beginBacktrack = ->
       level.beginBacktrack()
