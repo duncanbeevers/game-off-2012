@@ -156,6 +156,7 @@ class @Maze
       [ snap(x1), snap(y1), snap(x2), snap(y2) ]
 
     serialized =
+      name: @name
       start: start
       end: end
       terminations: terminations

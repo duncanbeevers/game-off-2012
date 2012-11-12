@@ -9,6 +9,7 @@ $ ->
     type = $type.val()
     $(".config:not(.#{type})").hide()
     $(".config.#{type}").show()
+    $(".config.Global").show()
 
   updateStatus = (status, disable) ->
     $("#status_text").text(status)
@@ -204,9 +205,12 @@ $ ->
 
     type = $type.val()
 
+    selectors = []
+    types = [ type, "Global" ]
     tags = [ "input", "select" ]
-    selectors = for tag in tags
-      ".config.#{type} #{tag}"
+    for configType in types
+      for tag in tags
+        selectors.push(".config.#{configType} #{tag}")
 
     inputs = $(selectors.join(","))
     for input in inputs
