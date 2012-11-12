@@ -26,7 +26,7 @@ class FW.ContainerProxy
           parent.addChild(container)
           onAddedAsChild(parent)
 
-    FW.ProxyProperties(instance, container, [ 'x', 'y', 'regX', 'regY' ])
+    FW.ProxyProperties(instance, container, [ 'x', 'y', 'regX', 'regY', 'scaleX', 'scaleY' ])
 
   getStage: ->
     @_container?.getStage()
