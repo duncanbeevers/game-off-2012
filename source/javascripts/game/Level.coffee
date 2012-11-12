@@ -234,10 +234,8 @@ levelTrackPlayer = (level, player) ->
     container.rotation += diff * FW.Math.RAD_TO_DEG
 
   if solved
-    [minX, minY, maxX, maxY] = level.bounds
-    width = maxX - minX
-    height = maxY - minY
-    targetScale = Math.min(canvasWidth / width, canvasHeight / height, canvasWidth / height, canvasHeight / width)
+    [_, _, _, _, maxMagnitude] = level.bounds
+    targetScale = canvasWidth / maxMagnitude
     targetRegX = 0
     targetRegY = 0
   else

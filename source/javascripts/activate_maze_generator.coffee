@@ -1,5 +1,4 @@
 createjs = @createjs
-# gui = new dat.GUI()
 
 $ ->
   maze = null
@@ -59,16 +58,10 @@ $ ->
     mazeGraphics.clear()
     drawSegments("rgba(0, 186, 126, 0.6)", segments)
 
-  minX = null
-  maxX = null
-  minY = null
-  maxY = null
+  maxMagnitude = null
   targetScale = null
   resetBoundaries = ->
-    minX = Infinity
-    maxX = -Infinity
-    minY = Infinity
-    maxY = -Infinity
+    maxMagnitude = -Infinity
     targetScale = 1
 
   drawSegments = (color, segments) ->
@@ -78,12 +71,9 @@ $ ->
     canvasSize = Math.min(canvasWidth, canvasHeight)
     canvasSize -= canvasSize / 15
 
-    [_minX, _minY, _maxX, _maxY] = FW.CreateJS.drawSegments(mazeGraphics, color, segments)
-    minX = Math.min(minX, _minX)
-    maxX = Math.max(maxX, _maxX)
-    minY = Math.min(minY, _minY)
-    maxY = Math.max(maxY, _maxY)
-    targetScale = canvasSize / Math.max(maxX * 2, -minX * 2, maxY * 2, -minY * 2, maxX - minX, maxY - minY)
+    [_, _, _, _, _maxMagnitude] = FW.CreateJS.drawSegments(mazeGraphics, color, segments)
+    maxMagnitude = Math.max(maxMagnitude, _maxMagnitude)
+    targetScale = canvasSize / (maxMagnitude * 2)
 
   generateMaze = (type, options) ->
     resetBoundaries()

@@ -10,6 +10,7 @@ drawSegments = (graphics, color, segments) ->
   minY = Infinity
   maxX = -Infinity
   maxY = -Infinity
+  maxMagnitude = -Infinity
   for [x1, y1, x2, y2] in segments
     graphics.moveTo(x1, y1)
     graphics.lineTo(x2, y2)
@@ -17,10 +18,13 @@ drawSegments = (graphics, color, segments) ->
     minY = Math.min(minY, y1, y2)
     maxX = Math.max(maxX, x1, x2)
     maxY = Math.max(maxY, y1, y2)
+    magnitude1 = FW.Math.magnitude(x1, y1)
+    magnitude2 = FW.Math.magnitude(x2, y2)
+    maxMagnitude = Math.max(maxMagnitude, magnitude1, magnitude2)
 
   graphics.endStroke()
 
-  [ minX, minY, maxX, maxY ]
+  [ minX, minY, maxX, maxY, maxMagnitude ]
 
 # Ostensibly, this should operate the same as Flash's
 # getColorBoundsRect, but I ended up needing something
