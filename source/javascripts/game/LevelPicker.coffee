@@ -14,39 +14,28 @@ class @LevelPicker extends FW.ContainerProxy
     levelsContainer.scaleX = 1 / levelsVisibleOnScreen
     levelsContainer.scaleY = levelsContainer.scaleX
 
-    levelsContainers = for levelData, i in levelsData
-      levelContainer = @createLevelDisplayObject(levelData)
-      levelContainer.x = i
-      levelsContainer.addChild(levelContainer)
+    levelsDisplayObjects = for levelData, i in levelsData
+      levelsContainer.addChild(@createLevelDisplayObject(levelData, i))
 
     # Set instance variables
     @_screen = screen
     @_levelsData = levelsData
     @_levelsContainer = levelsContainer
-    @_levelsContainers = levelsContainers
+    @_levelsDisplayObjects = levelsDisplayObjects
     @_currentIndex = currentIndex
 
   tick: ->
-    # Move the level container around...
+    # Move the camera around over the levels container
     targetRegX = @_currentIndex
     @_levelsContainer.regX += (targetRegX - @_levelsContainer.regX) / 10
-    for levelContainer, i in @_levelsContainers
-      if i == @_currentIndex
-        levelContainer.rotation += 0.2
-        targetScale = 2.2
-        targetAlpha = 1
-      else
-        targetScale = 1
-        targetAlpha = 0.2
+    # Update each child
+    for levelDisplayObject, i in @_levelsDisplayObjects
+      levelDisplayObject.tick()
 
-      levelContainer.scaleX += (targetScale - levelContainer.scaleX) / 10
-      levelContainer.scaleY = levelContainer.scaleX
-      levelContainer.alpha += (targetAlpha - levelContainer.alpha) / 10
-
-      levelContainer.rotation += 0.5
-
-  createLevelDisplayObject: (levelData) ->
+  createLevelDisplayObject: (levelData, i) ->
+    levelPicker = @
     container = new createjs.Container()
+    container.x = i
     shape = new createjs.Shape()
     graphics = shape.graphics
 
@@ -57,12 +46,31 @@ class @LevelPicker extends FW.ContainerProxy
     shape.scaleY = shape.scaleX
 
     container.addChild(shape)
+    container._levelShape = shape
+
+    new createjs.Text(levelData.name)
+
+    container.tick = ->
+      if i == levelPicker._currentIndex
+        shape.rotation += 0.02
+        targetScale = 2.2
+        targetAlpha = 1
+      else
+        targetScale = 1
+        targetAlpha = 0.2
+
+      container.scaleX += (targetScale - container.scaleX) / 10
+      container.scaleY = container.scaleX
+      container.alpha += (targetAlpha - container.alpha) / 10
+
+      shape.rotation += 0.3
+
     container
 
   focusOnNextLevel: ->
     @_currentIndex += 1
-    if @_currentIndex >= @_levelsContainers.length
-        @_currentIndex = @_levelsContainers.length - 1
+    if @_currentIndex >= @_levelsDisplayObjects.length
+        @_currentIndex = @_levelsDisplayObjects.length - 1
 
   focusOnPreviousLevel: ->
     @_currentIndex -= 1
