@@ -63,7 +63,7 @@ createLevelPicker = (screen, levels, hci) ->
     levelPicker.scaleY = levelPicker.scaleX
 
     levelPicker.x = canvas.width / 2
-    levelPicker.y = canvas.height / 3
+    levelPicker.y = canvas.width / 20 + 150
     levelPicker.tick()
 
   hci.on "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel()
