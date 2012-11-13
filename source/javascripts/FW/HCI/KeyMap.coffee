@@ -31,6 +31,7 @@ class KeyMap
     @_handlers[code] ||= []
     @_handlers[code].push([ onDown, onUp ])
 
+KeyMap.ENTER = 13
 KeyMap.SPACE = 32
 KeyMap.SHIFT = 16
 KeyMap.COMMAND = 91
