@@ -3,6 +3,7 @@ generateMaze = (maze, done) ->
 
 recurse = (maze, i, didBacktrack) ->
   cache = maze._projectionEdgeCache
+  passages = maze._passages
 
   # Track whether we are back at the beginning
   # (ie, stack is empty and no direction to turn)
@@ -22,6 +23,7 @@ recurse = (maze, i, didBacktrack) ->
 
     newI = translateDirection(maze, i, direction)
 
+    maze._passages.push(i)
     addTunnel(maze, i, newI)
   else
     projectAndDrawMazeCell(maze, i, cache)
@@ -105,6 +107,7 @@ projectAndDrawMazeCell = (maze, i, cache) ->
 class @Maze
   constructor: (options) ->
     @_projectionEdgeCache = {}
+    @_passages = []
 
     defaultOptions =
       unicursal: false
@@ -142,7 +145,10 @@ class @Maze
       [x, y] = FW.Math.centroidOfSegments(segments)
       [ snap(x), snap(y) ]
 
+    # Find the end of the maze, the furthest from the start point
     # Split out the final termination from the others
+    # TODO: Substitute configurable distance calculation
+    # TODO: Replace this nonMaximalTerminations with some kind of filter function
     nonMaximalTerminations = (i for [i, length] in @terminations when @maxTermination[0] != i)
     projection = @projection
 
@@ -155,12 +161,20 @@ class @Maze
     segments = for [x1, y1, x2, y2] in @joinedSegments || @projectedSegments
       [ snap(x1), snap(y1), snap(x2), snap(y2) ]
 
+    passages = []
+    for i in @_passages
+      passage = centroid(projection.project(@, i))
+      [x, y] = passage
+      if undefined != x && undefined != y
+        passages.push(passage)
+
     serialized =
       name: @name
       start: start
       end: end
       terminations: terminations
       segments: segments
+      passages: passages
 
 Maze = @Maze ||= {}
 
