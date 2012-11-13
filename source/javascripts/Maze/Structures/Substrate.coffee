@@ -20,7 +20,10 @@ Maze.Structures.Substrate = $.extend {},
       [x, y] = FW.Math.centroidOfRectangle(rect)
       x - imageWidth / 2
       y - imageHeight / 2
+
       @_initialIndex = @projection.infer(@, (x - imageWidth / 2) / substratePixelsPerMeter, (y - imageHeight / 2) / substratePixelsPerMeter)
+    else
+      throw("Couldn't find any blue-ish stuff to pick a starting index")
 
   initialIndex: ->
     @_initialIndex
