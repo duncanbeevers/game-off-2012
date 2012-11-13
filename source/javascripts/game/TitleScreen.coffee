@@ -7,7 +7,10 @@ class @TitleScreen extends FW.ContainerProxy
     preloader = game.getPreloader()
 
     createTitleBox(@)
-    createLevelPicker(@, preloader.getLevels(), hci)
+    levelPicker = createLevelPicker(@, preloader.getLevels(), hci)
+
+    hci.on "key:#{FW.HCI.KeyMap.ENTER}", ->
+      game.beginLevel(levelPicker.currentLevelData())
 
   addTickHandler: (handler) ->
     @_tickHandlers.push(handler)
@@ -68,3 +71,5 @@ createLevelPicker = (screen, levels, hci) ->
 
   hci.on "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel()
   hci.on "levelPickerFocusOnNextLevel", -> levelPicker.focusOnNextLevel()
+
+  levelPicker
