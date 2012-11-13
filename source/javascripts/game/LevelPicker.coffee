@@ -118,6 +118,9 @@ class @LevelPicker extends FW.ContainerProxy
 
     container
 
+  currentLevelData: ->
+    @_levelsData[@_currentIndex]
+
   focusOnNextLevel: ->
     @_currentIndex += 1
     if @_currentIndex >= @_levelsDisplayObjects.length
