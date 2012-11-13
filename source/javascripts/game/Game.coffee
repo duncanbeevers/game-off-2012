@@ -13,14 +13,17 @@ class @Game
     ])
 
     stage = new createjs.Stage(canvas)
+    sceneManager = new SceneManager(stage)
 
     titleScreen = new TitleScreen(@, hci)
-    stage.addChild(titleScreen)
+    sceneManager.addScene("titleScreen", titleScreen)
+    sceneManager.gotoScene("titleScreen")
 
     # data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
     # data = FW.Math.sample(preloader.getLevels())
     # level = new Level(@, data)
     # stage.addChild(level)
+    @_sceneManager = sceneManager
 
     beginBacktrack = ->
       level.beginBacktrack()
@@ -42,6 +45,14 @@ class @Game
     updater = tick: -> stage.update()
 
     createjs.Ticker.addListener(updater)
+
+  beginLevel: (levelData) ->
+    sceneManager = @_sceneManager
+
+    level = new Level(@, levelData)
+
+    sceneManager.addScene("level", level)
+    sceneManager.gotoScene("level")
 
   pause: () ->
     @_bgm.pause()
