@@ -165,7 +165,7 @@ class @Maze
     for i in @_passages
       passage = centroid(projection.project(@, i))
       [x, y] = passage
-      if undefined != x && undefined != y
+      if (x || x == 0) && (y || y == 0)
         passages.push(passage)
 
     serialized =
