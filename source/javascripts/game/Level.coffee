@@ -235,7 +235,10 @@ levelTrackPlayer = (level, player) ->
 
   if solved
     [_, _, _, _, maxMagnitude] = level.bounds
-    targetScale = canvasWidth / maxMagnitude
+    targetScale = Math.min(
+      canvasWidth / (maxMagnitude * 2),
+      canvasHeight / (maxMagnitude * 2)
+    )
     targetRegX = 0
     targetRegY = 0
   else
