@@ -285,7 +285,7 @@ playerAccelerateTowardsTarget = (player) ->
 
   # Clear existing forces, then accelerate towards the target
   [ thrustX, thrustY ] = FW.Math.normalizeVector(player.thrustTarget)
-  forceVectorScalar = -0.5
+  forceVectorScalar = -4 * body.GetMass()
   forceVector = new Box2D.Common.Math.b2Vec2(thrustX * forceVectorScalar, thrustY * forceVectorScalar)
   body.ClearForces()
   body.m_angularVelocity /= easers('playerRotation')
