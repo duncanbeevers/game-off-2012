@@ -1,44 +1,15 @@
 FW = @FW ||= {}
 HCI = FW.HCI ||= {}
 
-class KeyMap
-  constructor: ->
-    @_map = {}
-    @_handlers = {}
+KeyMap =
+  ENTER:   13
+  SPACE:   32
+  SHIFT:   16
+  COMMAND: 91
 
-  onKeyDown: (code) ->
-    # console.log "keyCode: %o", code
-    @_map[code] = (new Date()).getTime()
-    handlers = @_handlers[code]
-    if handlers && handlers.length
-      for [onDown, _] in handlers
-        if onDown
-          onDown()
-
-  onKeyUp: (code) ->
-    now = (new Date()).getTime()
-    start = @_map[code]
-    duration = now - start
-
-    @_map[code] = undefined
-    handlers = @_handlers[code]
-    if handlers && handlers.length
-      for [_, onUp] in handlers
-        if onUp
-          onUp(duration)
-
-  on: (code, onDown, onUp) ->
-    @_handlers[code] ||= []
-    @_handlers[code].push([ onDown, onUp ])
-
-KeyMap.ENTER = 13
-KeyMap.SPACE = 32
-KeyMap.SHIFT = 16
-KeyMap.COMMAND = 91
-
-KeyMap.LEFT  = 37
-KeyMap.UP    = 38
-KeyMap.RIGHT = 39
-KeyMap.DOWN  = 40
+  LEFT:  37
+  UP:    38
+  RIGHT: 39
+  DOWN:  40
 
 HCI.KeyMap = KeyMap

@@ -16,10 +16,31 @@ HCI = FW.HCI ||= {}
 #   windowBecameVisibile
 #   windowBecameInvisible
 
-class HCI.HCI
-  constructor: (keyMap) ->
-    @_keyMap = keyMap
+class EventSet
+  constructor: (hciInstance, eventMap) ->
+    @_hciInstance = hciInstance
     @_handlers = {}
+
+    for [eventName, handler, args...] in eventMap
+      # [ eventName, args... ] = fullEventName.split(":")
+      handlers = @_handlers[eventName] ||= []
+      handlers.push([ handler, args ])
+
+  off: ->
+    @_hciInstance.off(@)
+
+  trigger: (hci, eventName, args...) ->
+    handlers = @_handlers[eventName]
+
+    if handlers
+      for [handler, handlerArgs...] in handlers
+        # [ handler, handlerArgs... ] = handlerAndArgs
+        handler.apply(hci, handlerArgs.concat(args))
+
+
+class HCI.HCI
+  constructor: ->
+    @_eventSets = []
 
   windowBecameVisible: ->
     @trigger("windowBecameVisible")
@@ -27,23 +48,26 @@ class HCI.HCI
   windowBecameInvisible: ->
     @trigger("windowBecameInisible")
 
-  on: (eventName, args...) ->
-    parts = eventName.split(":")
-    switch parts[0]
-      when "key"
-        onDown = args[0]
-        onUp = args[1]
-        wrappedOnDown = (args...) => onDown?.apply(@, args)
-        wrappedOnUp = (args...) => onUp?.apply(@, args)
-        @_keyMap.on(parts[1], wrappedOnUp, wrappedOnDown)
-      else
-        handlers = @_handlers[parts[0]] ||= []
-        handlers.push [ parts, args ]
+  triggerKeyDown: (keyCode) ->
+    @trigger("keyDown:#{keyCode}")
+
+  triggerKeyUp: (keyCode) ->
+    @trigger("keyUp:#{keyCode}")
+
+  on: (eventMap...) ->
+    eventSet = new EventSet(@, eventMap)
+
+    eventSets = @_eventSets
+    eventSets.push(eventSet)
+
+    eventSet
+
+  off: (eventSetToRemove) ->
+    eventSets = eventSet for eventSet in @_eventSets when eventSet != eventSetToRemove
+    @_eventSets = eventSets
 
   trigger: (eventName, args...) ->
-    parts = eventName.split(":")
-    handlers = @_handlers[parts[0]]
-    if handlers
-      for [eventNameParts, handlerAndArgs] in handlers
-        [ handler, handlerArgs... ] = handlerAndArgs
-        handler.apply(@, handlerArgs)
+    eventSets = @_eventSets
+
+    for eventSet in eventSets
+      eventSet.trigger(@, eventName, args)

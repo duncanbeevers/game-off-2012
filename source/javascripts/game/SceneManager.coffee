@@ -16,3 +16,6 @@ class @SceneManager
     stage.addChild(newScene)
 
     @_currentScene = newScene
+
+    currentScene?.onLeaveScene?()
+    newScene.onEnterScene?()

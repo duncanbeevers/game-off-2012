@@ -9,8 +9,8 @@ class @TitleScreen extends FW.ContainerProxy
     createTitleBox(@)
     levelPicker = createLevelPicker(@, preloader.getLevels(), hci)
 
-    hci.on "key:#{FW.HCI.KeyMap.ENTER}", ->
-      game.beginLevel(levelPicker.currentLevelData())
+    @_hci = hci
+    @_levelPicker = levelPicker
 
   addTickHandler: (handler) ->
     @_tickHandlers.push(handler)
@@ -18,6 +18,18 @@ class @TitleScreen extends FW.ContainerProxy
   tick: ->
     for handler in @_tickHandlers
       handler()
+
+  onEnterScene: ->
+    levelPicker = @_levelPicker
+
+    @_hciSet = @_hci.on(
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}",  -> game.beginLevel(levelPicker.currentLevelData()) ]
+      [ "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel() ]
+      [ "levelPickerFocusOnNextLevel",     -> levelPicker.focusOnNextLevel() ]
+    )
+
+  onLeaveScene: ->
+    @_hciSet.off()
 
 
 createTitleBox = (screen) ->
@@ -68,8 +80,5 @@ createLevelPicker = (screen, levels, hci) ->
     levelPicker.x = canvas.width / 2
     levelPicker.y = canvas.width / 20 + 150
     levelPicker.tick()
-
-  hci.on "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel()
-  hci.on "levelPickerFocusOnNextLevel", -> levelPicker.focusOnNextLevel()
 
   levelPicker

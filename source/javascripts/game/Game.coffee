@@ -34,13 +34,12 @@ class @Game
     togglePause = ->
       level.togglePause()
 
-
-    hci.on "key:#{FW.HCI.KeyMap.SPACE}", beginBacktrack, endBacktrack
-    # keymap.subscribe FW.Input.KeyMap.P, togglePause
-    hci.on "key:#{FW.HCI.KeyMap.LEFT}", ->
-      @trigger("levelPickerFocusOnPreviousLevel")
-    hci.on "key:#{FW.HCI.KeyMap.RIGHT}", ->
-      @trigger("levelPickerFocusOnNextLevel")
+    hci.on(
+      [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
+      [ "keyUp:#{FW.HCI.KeyMap.SPACE}", endBacktrack ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}", -> @trigger("levelPickerFocusOnPreviousLevel") ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> @trigger("levelPickerFocusOnNextLevel") ]
+    )
 
     updater = tick: -> stage.update()
 

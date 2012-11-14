@@ -13,11 +13,10 @@ $ ->
   game = null
 
   hci = $.FW_HCI()
-  hci.on "windowBecameVisible", ->
-    game?.unpause()
-
-  hci.on "windowBecamseInvisible", ->
-    game?.pause()
+  hci.on(
+    [ "windowBecameVisible",    -> game?.unpause() ]
+    [ "windowBecamseInvisible", -> game?.pause() ]
+  )
 
   $progress = $("#progress")
   onPreloadProgress = (event) ->
