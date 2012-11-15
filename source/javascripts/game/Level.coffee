@@ -26,7 +26,7 @@ setupLampOilIndicator = ->
   container
 
 class @Level extends FW.ContainerProxy
-  constructor: (game, mazeData) ->
+  constructor: (game, hci, mazeData) ->
     super()
 
     levelContainer = @_container
@@ -51,6 +51,7 @@ class @Level extends FW.ContainerProxy
     @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
 
     @_game             = game
+    @_hci              = hci
     @_mazeContainer    = mazeContainer
     @_player           = player
     @_goal             = goal
@@ -121,8 +122,23 @@ class @Level extends FW.ContainerProxy
       level.completionTime ||= createjs.Ticker.getTime(true)
 
 
-  onAddedAsChild: (parent) ->
+  onEnterScene: ->
+    hci = @_hci
+    level = @
+    beginBacktrack = ->
+      level.beginBacktrack()
+
+    endBacktrack = ->
+      level.endBacktrack()
+
+    @_hciSet = hci.on(
+      [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
+      [ "keyUp:#{FW.HCI.KeyMap.SPACE}",   endBacktrack ]
+    )
     @_harness = FW.MouseHarness.outfit(@_mazeContainer)
+
+  onLeaveScene: ->
+    @_hciSet.off()
 
   setupMaze: (mazeData, mazeContainer, player, goal, onComplete) ->
     mazeShape = new createjs.Shape()
@@ -189,10 +205,11 @@ class @Level extends FW.ContainerProxy
         @endBacktrack()
 
 
-    harness = @_harness()
+    if @_harness
+      harness = @_harness()
+      playerReticleTrackMouse(player, harness)
 
     levelTrackPlayer(@, player)
-    playerReticleTrackMouse(player, harness)
     playerReticleTrackGoal(player, goal)
 
     if runSimulation

@@ -25,30 +25,19 @@ class @Game
     # stage.addChild(level)
     @_sceneManager = sceneManager
 
-    beginBacktrack = ->
-      level.beginBacktrack()
-
-    endBacktrack = ->
-      level.endBacktrack()
-
-    togglePause = ->
-      level.togglePause()
-
-    hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
-      [ "keyUp:#{FW.HCI.KeyMap.SPACE}", endBacktrack ]
-      [ "keyDown:#{FW.HCI.KeyMap.LEFT}", -> @trigger("levelPickerFocusOnPreviousLevel") ]
-      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> @trigger("levelPickerFocusOnNextLevel") ]
-    )
+    # TODO: Hook up pause
+    # togglePause = ->
+    #   level.togglePause()
 
     updater = tick: -> stage.update()
-
     createjs.Ticker.addListener(updater)
+
+    @_hci = hci
 
   beginLevel: (levelData) ->
     sceneManager = @_sceneManager
 
-    level = new Level(@, levelData)
+    level = new Level(@, @_hci, levelData)
 
     sceneManager.addScene("level", level)
     sceneManager.gotoScene("level")
