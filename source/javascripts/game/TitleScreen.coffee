@@ -23,9 +23,9 @@ class @TitleScreen extends FW.ContainerProxy
     levelPicker = @_levelPicker
 
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}",  -> game.beginLevel(levelPicker.currentLevelData()) ]
-      [ "levelPickerFocusOnPreviousLevel", -> levelPicker.focusOnPreviousLevel() ]
-      [ "levelPickerFocusOnNextLevel",     -> levelPicker.focusOnNextLevel() ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData()) ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> levelPicker.focusOnPreviousLevel() ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> levelPicker.focusOnNextLevel() ]
     )
 
   onLeaveScene: ->
