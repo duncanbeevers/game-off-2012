@@ -1,40 +1,63 @@
 maxViewportMeters = 4
 
+setupTimerText = ->
+  timerText = new createjs.Text()
+  timerText.color = "#B500FF"
+  timerText.font = "24px Upheaval"
+  timerText.textAlign = "center"
+  timerText.textBaseline = "middle"
+
+  timerText
+
+setupLampOilIndicator = ->
+  container = new createjs.Container()
+  meterShape = new createjs.Shape()
+  graphics = meterShape.graphics
+
+  graphics.beginStroke("rgba(0, 0, 0, 0)")
+  graphics.beginFill("rgba(255, 248, 62, 0.5)")
+  graphics.drawRect(-0.5, -0.5, 1, 1)
+  graphics.endFill()
+  graphics.endStroke()
+
+  container.addChild(meterShape)
+
+  container._oilLevel = 10
+  container
+
 class @Level extends FW.ContainerProxy
   constructor: (game, mazeData) ->
     super()
-    @_game = game
 
+    levelContainer = @_container
     mazeContainer = new createjs.Container()
-    player = new Player()
-    goal = new Goal()
+    player  = new Player()
+    goal    = new Goal()
     mazeContainer.addChild(player)
     mazeContainer.addChild(goal)
-    @_container.addChild(mazeContainer)
 
-    countDown = new CountDown
-
-    @_countDown = countDown
-    @_container.addChild(countDown)
-
-    @_player = player
-    @_mazeContainer = mazeContainer
-    @_goal = goal
-
-    timerText = new createjs.Text()
-    timerText.color = "#B500FF"
-    timerText.font = "24px Upheaval"
-    timerText.textAlign = "center"
-    timerText.textBaseline = "middle"
-
-    @_timerText = timerText
-    @_container.addChild(timerText)
+    countDown = new CountDown()
+    timerText = setupTimerText()
+    lampOilIndicator = setupLampOilIndicator()
 
     @setupPhysics()
 
+    levelContainer.addChild(mazeContainer)
+    levelContainer.addChild(countDown)
+    levelContainer.addChild(timerText)
+    levelContainer.addChild(lampOilIndicator)
 
     level = @
-    @setupMaze mazeData, -> level.onReady()
+    @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
+
+    @_game             = game
+    @_mazeContainer    = mazeContainer
+    @_player           = player
+    @_goal             = goal
+    @_countDown        = countDown
+    @_timerText        = timerText
+    @_lampOilIndicator = lampOilIndicator
+
 
   onReady: ->
     # @_countDown.begin()
@@ -50,7 +73,9 @@ class @Level extends FW.ContainerProxy
       new Box2D.Common.Math.b2Vec2(0, 0), # no gravity
       true                                # allow sleep
     )
-    @world = world
+
+    @_world = world
+
     world.SetContactListener(contactListener)
     contactListener.registerContactListener "Wall", "Player", ->
       src = FW.Math.sample([
@@ -97,37 +122,27 @@ class @Level extends FW.ContainerProxy
 
 
   onAddedAsChild: (parent) ->
-    @harness = FW.MouseHarness.outfit(@_mazeContainer)
+    @_harness = FW.MouseHarness.outfit(@_mazeContainer)
 
-  setupMaze: (mazeData, onComplete) ->
+  setupMaze: (mazeData, mazeContainer, player, goal, onComplete) ->
     mazeShape = new createjs.Shape()
     mazeGraphics = mazeShape.graphics
-    @_mazeShape = mazeShape
-    @_mazeContainer.addChild(mazeShape)
 
-    pathShape = new createjs.Shape()
-    pathGlowShape = new createjs.Shape()
-    pathGraphics = pathShape.graphics
+    pathShape        = new createjs.Shape()
+    pathGlowShape    = new createjs.Shape()
+    pathGraphics     = pathShape.graphics
     pathGlowGraphics = pathGlowShape.graphics
-    @_pathShape = pathShape
-    @_pathGlowShape = pathGlowShape
-    @_mazeContainer.addChild(pathGlowShape)
-    @_mazeContainer.addChild(pathShape)
 
-    world = @world
-    level = @
-    getPlayer = (fn) ->
-      # TODO: Deal with this race condition,
-      fn(level._player)
-
-    onMazeDataAvailable = (mazeData) ->
-      positionPlayerAtBeginning(mazeData.start)
-      positionGoalAtEnd(mazeData.end, level._goal)
+    onMazeDataAvailable = (mazeData, player, goal) ->
+      positionPlayerAtBeginning(mazeData.start, player)
+      positionGoalAtEnd(mazeData.end, goal)
       segments = mazeData.segments
-
-      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, "rgba(87, 21, 183, 0.3)", segments)
+      passages = mazeData.passages
 
       createPhysicsWalls(world, segments)
+      createPhysicsPassages(world, passages)
+
+      level.bounds = FW.CreateJS.drawSegments(mazeGraphics, "rgba(87, 21, 183, 0.3)", segments)
       level.walls = segments
       level.mazeGenerated = true
 
@@ -137,16 +152,24 @@ class @Level extends FW.ContainerProxy
 
     # Create physics entity
 
-    positionPlayerAtBeginning = (maze) ->
-      getPlayer (player) ->
-        positionPlayer(maze, player)
-        createPhysicsPlayer(world, player)
+    positionPlayerAtBeginning = (maze, player) ->
+      positionPlayer(maze, player)
+      createPhysicsPlayer(world, player)
 
     positionGoalAtEnd = (end, goal) ->
       [ goal.x, goal.y ] = end
       createPhysicsGoal(world, goal)
 
-    onMazeDataAvailable(mazeData)
+    mazeContainer.addChild(mazeShape)
+    mazeContainer.addChild(pathGlowShape)
+    mazeContainer.addChild(pathShape)
+
+    world = @_world
+    level = @
+    @_pathShape      = pathShape
+    @_pathGlowShape  = pathGlowShape
+
+    onMazeDataAvailable(mazeData, player, goal)
     # Invoke synchronously
     onComplete()
 
@@ -154,7 +177,7 @@ class @Level extends FW.ContainerProxy
     runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
     if runSimulation
       @_everRanSimulation = true
-      @world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
+      @_world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
 
     player = @_player
     goal = @_goal
@@ -166,7 +189,7 @@ class @Level extends FW.ContainerProxy
         @endBacktrack()
 
 
-    harness = @harness()
+    harness = @_harness()
 
     levelTrackPlayer(@, player)
     playerReticleTrackMouse(player, harness)
@@ -177,17 +200,19 @@ class @Level extends FW.ContainerProxy
       playerLeaveTrack(player, @)
       playerAccelerateTowardsTarget(player)
 
+    lampOilIndicatorTrackStage(@_lampOilIndicator)
+
     if @_everRanSimulation
       updateTimer(@_timerText, @)
 
-    @world.DrawDebugData()
+    @_world.DrawDebugData()
 
   releasePups: () ->
     mazeContainer = @_mazeContainer
     player = @_player
     pup = new Pup()
     mazeContainer.addChild(pup)
-    createPhysicsPup(@world, pup, player)
+    createPhysicsPup(@_world, pup, player)
 
   beginBacktrack: () ->
     @_backtracking = true
@@ -211,8 +236,8 @@ playerTrackFixture = (player) ->
 
 levelTrackPlayer = (level, player) ->
   solved = level.solved
-  container = level._mazeContainer
-  canvas = container.getStage().canvas
+  mazeContainer = level._mazeContainer
+  canvas = mazeContainer.getStage().canvas
   canvasWidth = canvas.width
   canvasHeight = canvas.height
   halfCanvasWidth = canvasWidth / 2
@@ -225,13 +250,13 @@ levelTrackPlayer = (level, player) ->
   body = player.fixture.GetBody()
 
   bodyAngle = body.GetAngle()
-  currentRotation = FW.Math.wrapToCircle(container.rotation * FW.Math.DEG_TO_RAD)
+  currentRotation = FW.Math.wrapToCircle(mazeContainer.rotation * FW.Math.DEG_TO_RAD)
 
   diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
   diff /= easers('mazeRotation')
 
   if !debugDraw
-    container.rotation += diff * FW.Math.RAD_TO_DEG
+    mazeContainer.rotation += diff * FW.Math.RAD_TO_DEG
 
   if solved
     [_, _, _, _, maxMagnitude] = level.bounds
@@ -249,25 +274,25 @@ levelTrackPlayer = (level, player) ->
     targetRegY = player.y
 
 
-  if targetScale > container.scaleX
+  if targetScale > mazeContainer.scaleX
     zoomEase = easers('mazeZoomIn')
   else
     zoomEase = easers('mazeZoomOut')
 
-  container.scaleX += (targetScale - container.scaleX) / zoomEase
-  container.scaleY = container.scaleX
-  container.x = halfCanvasWidth
-  container.y = halfCanvasHeight
+  mazeContainer.scaleX += (targetScale - mazeContainer.scaleX) / zoomEase
+  mazeContainer.scaleY = mazeContainer.scaleX
+  mazeContainer.x = halfCanvasWidth
+  mazeContainer.y = halfCanvasHeight
   mazePan = easers('mazePan')
-  container.regX += (targetRegX - container.regX) / mazePan
-  container.regY += (targetRegY - container.regY) / mazePan
+  mazeContainer.regX += (targetRegX - mazeContainer.regX) / mazePan
+  mazeContainer.regY += (targetRegY - mazeContainer.regY) / mazePan
 
   if debugDraw
-    scale = Math.max(container.scaleX, 0)
+    scale = Math.max(mazeContainer.scaleX, 0)
     debugDraw.SetDrawScale(scale)
     debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(
-      halfCanvasWidth / scale - container.regX
-      halfCanvasHeight / scale - container.regY
+      halfCanvasWidth / scale - mazeContainer.regX
+      halfCanvasHeight / scale - mazeContainer.regY
     ))
     # debugDraw.SetDrawTranslate(new Box2D.Common.Math.b2Vec2(player.x, player.y))
 
@@ -329,6 +354,22 @@ playerLeaveTrack = (player, level) ->
     pathGlowGraphics.lineTo(player.x, player.y)
     lastDot.Set(player.x, player.y)
 
+lampOilIndicatorTrackStage = (lampOilIndicator) ->
+  oil = lampOilIndicator._oilLevel
+  maxOil = Math.max(lampOilIndicator._maxOilLevel || 0, oil)
+
+  indicatorHeight = 24
+  canvas = lampOilIndicator.getStage().canvas
+
+  lampOilIndicator.x = (canvas.width / 2)
+  lampOilIndicator.y = canvas.height - indicatorHeight
+
+  lampOilIndicator.scaleX = canvas.width * (oil / maxOil)
+  lampOilIndicator.scaleY = indicatorHeight
+
+  lampOilIndicator._oilLevel = oil
+  lampOilIndicator._maxOilLevel = maxOil
+
 easers = (key) ->
   fps = createjs.Ticker.getMeasuredFPS()
   divisor = switch key
@@ -336,15 +377,15 @@ easers = (key) ->
     when 'mazeZoomOut'    then 6
     when 'mazeZoomIn'     then 5
     when 'mazePan'        then 4
-    when 'playerPosition' then 5
+    when 'playerPosition' then 3
     when 'playerRotation' then 2
     when 'timerText'      then 4
 
   fps / divisor
 
 computePixelsPerMeter = (level) ->
-  container = level._mazeContainer
-  canvas = container.getStage().canvas
+  mazeContainer = level._mazeContainer
+  canvas = mazeContainer.getStage().canvas
   canvasWidth = canvas.width
   canvasHeight = canvas.height
 
@@ -376,10 +417,10 @@ updateTimer = (timer, level) ->
 createPhysicsPlayer = (world, player) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1
-  fixtureDef.friction = 0.3
+  fixtureDef.friction = 0.1
   fixtureDef.restitution = 0.1
-  diameter = 0.2
-  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
+  diameter = 0.4
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 4)
   bodyDef = new Box2D.Dynamics.b2BodyDef()
   bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
   bodyDef.position.x = player.x
@@ -400,6 +441,8 @@ createPhysicsGoal = (world, goal) ->
   bodyDef.position.y = goal.y
   goal.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
   goal.fixture.SetUserData(goal)
+
+createPhysicsPassages = (word, passages) ->
 
 createPhysicsWalls = (world, segments) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef
