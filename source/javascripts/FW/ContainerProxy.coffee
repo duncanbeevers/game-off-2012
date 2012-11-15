@@ -17,19 +17,15 @@ class FW.ContainerProxy
           parent.addChild(container)
 
     FW.ProxyProperties(instance, container, [ 'x', 'y', 'regX', 'regY', 'scaleX', 'scaleY' ])
+    FW.ProxyMethods(instance, container, [ 'getStage', 'isVisible', 'addChild', 'removeChild', 'addEventListener' ])
 
-  getStage: ->
-    @_container?.getStage()
-
-  isVisible: ->
-    @_container?.isVisible()
-
-  addChild: (child) ->
-    @_container?.addChild(child)
-
-  removeChild: (child) ->
-    @_container?.removeChild(child)
-
+  # Custom overrides for a handful of methods
   updateContext: ->
 
   draw: ->
+
+  # Emulating a protected method, sorta dangerous
+  _tick: ->
+    @onTick?()
+
+  onTick: ->
