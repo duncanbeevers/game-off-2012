@@ -16,4 +16,6 @@ $.FW_HCI = ->
   $document.on "keydown", (event) -> hci.triggerKeyDown(event.keyCode)
   $document.on "keyup",   (event) -> hci.triggerKeyUp(event.keyCode)
 
+  $document.on "touchmove", (event) -> event.preventDefault()
+
   hci
