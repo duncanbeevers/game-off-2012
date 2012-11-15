@@ -1,7 +1,10 @@
 FW = @FW ||= {}
 
 FW.MouseHarness =
-  outfit: (displayObject, receiver) ->
+  outfit: (displayObject) ->
+    if displayObject._outfittedMouseHarness
+      return displayObject._outfittedMouseHarness
+
     stage = displayObject.getStage()
     originalOnMouseDown = stage.onMouseDown
     originalOnMouseUp   = stage.onMouseUp
@@ -77,8 +80,11 @@ FW.MouseHarness =
         tracker.x = point.x
         tracker.y = point.y
 
-    ->
+    harness = ->
       point = displayObject.globalToLocal(harness_x, harness_y)
       x: point.x
       y: point.y
       activated: harness_activated
+
+    displayObject._outfittedMouseHarness = harness
+    harness
