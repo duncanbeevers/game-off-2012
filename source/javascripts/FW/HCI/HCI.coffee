@@ -63,7 +63,7 @@ class HCI.HCI
     eventSet
 
   off: (eventSetToRemove) ->
-    eventSets = eventSet for eventSet in @_eventSets when eventSet != eventSetToRemove
+    eventSets = (eventSet for eventSet in @_eventSets when eventSet != eventSetToRemove)
     @_eventSets = eventSets
 
   trigger: (eventName, args...) ->
