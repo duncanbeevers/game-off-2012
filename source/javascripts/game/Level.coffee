@@ -125,15 +125,20 @@ class @Level extends FW.ContainerProxy
   onEnterScene: ->
     hci = @_hci
     level = @
+
     beginBacktrack = ->
       level.beginBacktrack()
 
     endBacktrack = ->
       level.endBacktrack()
 
+    releaseLamp = ->
+      level.releaseLamp()
+
     @_hciSet = hci.on(
       [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
       [ "keyUp:#{FW.HCI.KeyMap.SPACE}",   endBacktrack ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", releaseLamp ]
     )
     @_harness = FW.MouseHarness.outfit(@_mazeContainer)
 
@@ -224,12 +229,12 @@ class @Level extends FW.ContainerProxy
 
     @_world.DrawDebugData()
 
-  releasePups: () ->
+  releaseLamp: () ->
     mazeContainer = @_mazeContainer
     player = @_player
-    pup = new Pup()
-    mazeContainer.addChild(pup)
-    createPhysicsPup(@_world, pup, player)
+    lamp = new Lamp()
+    mazeContainer.addChild(lamp)
+    createPhysicsLamp(@_world, lamp, player)
 
   beginBacktrack: () ->
     @_backtracking = true
@@ -480,7 +485,7 @@ createPhysicsWalls = (world, segments) ->
     fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
     fixture.SetUserData name: "Wall"
 
-createPhysicsPup = (world, pup, player) ->
+createPhysicsLamp = (world, lamp, player) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1
   fixtureDef.friction = 0.1
@@ -490,10 +495,9 @@ createPhysicsPup = (world, pup, player) ->
   bodyDef = new Box2D.Dynamics.b2BodyDef()
   bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
 
-  # TODO : Distribute multiple pups about the player
   distanceFromPlayer = (player.radius - diameter)
   bodyDef.position.x = player.x - distanceFromPlayer
   bodyDef.position.y = player.y
 
-  pup.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-  pup.fixture.SetUserData(player)
+  lamp.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+  lamp.fixture.SetUserData(player)

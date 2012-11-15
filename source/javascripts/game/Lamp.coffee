@@ -1,4 +1,4 @@
-class @Pup extends FW.ParticleGenerator
+class @Lamp extends FW.ParticleGenerator
   maxParticles: 30
   numberOfParticlesToGenerate: -> FW.Math.rand(7) == 0
 
