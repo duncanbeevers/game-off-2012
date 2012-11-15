@@ -101,5 +101,5 @@ class @Player extends FW.ParticleGenerator
   setGoalAngle: (angle) ->
     @goalReticle.rotation = angle * FW.Math.RAD_TO_DEG
 
-  tick: ->
+  onTick: ->
     super()

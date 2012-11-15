@@ -1,7 +1,8 @@
-// Manifesto for easeljs dependency-order issues
+// Manifest for easeljs dependency-order issues
 
 //= require lib/easeljs/utils/UID
 //= require lib/easeljs/geom/Matrix2D
+//= require lib/easeljs/events/EventDispatcher
 
 //= require lib/easeljs/display/DisplayObject
 //= require lib/easeljs/display/Container

@@ -27,7 +27,7 @@ class @Pup extends FW.ParticleGenerator
   isParticleCullable: (particle) ->
     particle.alpha <= 0.02
 
-  tick: ->
+  onTick: ->
     super()
     body = @fixture.GetBody()
     position = body.GetPosition()

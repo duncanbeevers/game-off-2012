@@ -189,7 +189,7 @@ class @Level extends FW.ContainerProxy
     # Invoke synchronously
     onComplete()
 
-  tick: ->
+  onTick: ->
     runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
     if runSimulation
       @_everRanSimulation = true

@@ -19,7 +19,8 @@ class @CountDown extends FW.ContainerProxy
     @_text = text
     @_container.addChild(text)
 
-  tick: ->
+  onTick: ->
+    super()
     text = @_text
     canvas = @_container.getStage().canvas
     text.x = canvas.width / 2

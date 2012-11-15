@@ -17,7 +17,7 @@ class FW.ParticleGenerator extends FW.ContainerProxy
     @particleContainer().removeChild(particle)
     @_recycledParticles.push(particle)
 
-  tick: ->
+  onTick: ->
     particles = @_particles
 
     particlesToKeep = []

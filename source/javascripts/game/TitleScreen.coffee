@@ -6,18 +6,18 @@ class @TitleScreen extends FW.ContainerProxy
 
     preloader = game.getPreloader()
 
-    createTitleBox(@)
-    levelPicker = createLevelPicker(@, preloader.getLevels(), hci)
+    titleBox = setupTitleBox(@)
+    levelPicker = setupLevelPicker(@, preloader.getLevels(), hci)
+
+    screen = @
+    screen.addChild(levelPicker)
+    screen.addChild(titleBox)
 
     @_hci = hci
     @_levelPicker = levelPicker
 
   addTickHandler: (handler) ->
     @_tickHandlers.push(handler)
-
-  tick: ->
-    for handler in @_tickHandlers
-      handler()
 
   onEnterScene: ->
     levelPicker = @_levelPicker
@@ -32,7 +32,7 @@ class @TitleScreen extends FW.ContainerProxy
     @_hciSet.off()
 
 
-createTitleBox = (screen) ->
+setupTitleBox = (screen) ->
   container = new createjs.Container()
 
   background = new createjs.Shape()
@@ -58,19 +58,18 @@ createTitleBox = (screen) ->
   container.addChild(background)
   container.addChild(text)
   container.addChild(logo)
-
-  screen.addChild(container)
-  screen.addTickHandler ->
+  container.onTick = ->
     canvas = screen.getStage().canvas
     background.scaleX = canvas.width
     background.scaleY = 48
 
-createLevelPicker = (screen, levels, hci) ->
+  container
+
+setupLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0
   levelPicker = new LevelPicker(screen, levels, initialLevelIndex)
 
-  screen.addChild(levelPicker)
-  screen.addTickHandler ->
+  levelPicker.addEventListener "tick", ->
     levelsVisibleOnScreen = 3.5
 
     canvas = screen.getStage().canvas
@@ -79,6 +78,5 @@ createLevelPicker = (screen, levels, hci) ->
 
     levelPicker.x = canvas.width / 2
     levelPicker.y = canvas.width / 20 + 150
-    levelPicker.tick()
 
   levelPicker

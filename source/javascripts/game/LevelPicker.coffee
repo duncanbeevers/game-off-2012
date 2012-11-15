@@ -50,13 +50,10 @@ class @LevelPicker extends FW.ContainerProxy
     @_levelsDisplayObjects = levelsDisplayObjects
     @_currentIndex = currentIndex
 
-  tick: ->
+  onTick: ->
     # Move the camera around over the levels container
     targetRegX = @_currentIndex
     @_levelsContainer.regX += (targetRegX - @_levelsContainer.regX) / settings.slider.panningEase
-    # Update each child
-    for levelDisplayObject, i in @_levelsDisplayObjects
-      levelDisplayObject.tick()
 
   createLevelDisplayObject: (levelData, levelI) ->
     levelPicker = @
@@ -90,7 +87,7 @@ class @LevelPicker extends FW.ContainerProxy
     container.addChild(shape)
     container.addChild(nameContainer)
 
-    container.tick = ->
+    container.onTick = ->
       if levelI == levelPicker._currentIndex
         shape.rotation += settings.levelContainer.selected.rotation
         targetScale = settings.levelContainer.selected.targetScale
