@@ -2,6 +2,7 @@ BASE_BGM_VOLUME = 0.2
 
 class @Game
   constructor: (canvas, preloader, hci) ->
+    createjs.Ticker.useRAF = true
     createjs.Ticker.setFPS(30)
     @_preloader = preloader
 
