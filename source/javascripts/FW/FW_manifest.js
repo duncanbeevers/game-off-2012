@@ -6,6 +6,7 @@
 //= require FW/ContainerProxy
 //= require FW/ParticleGenerator
 //= require FW/ProxyProperties
+//= require FW/ProxyMethods
 //= require FW/MouseHarness
 //= require FW/NamedContactListener
 
