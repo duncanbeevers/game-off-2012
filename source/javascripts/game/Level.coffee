@@ -1,3 +1,12 @@
+settings =
+  mazeRotationEase   : 2
+  mazeZoomOutEase    : 6
+  mazeZoomInEase     : 5
+  mazePanEase        : 4
+  playerPositionEase : 3
+  playerRotationEase : 2
+  timerTextEase      : 4
+
 maxViewportMeters = 4
 
 setupTimerText = ->
@@ -253,9 +262,8 @@ playerTrackFixture = (player) ->
   body = player.fixture.GetBody()
   position = body.GetPosition()
 
-  playerPositionEase = easers('playerPosition')
-  player.x += (position.x - player.x) / playerPositionEase
-  player.y += (position.y - player.y) / playerPositionEase
+  player.x += (position.x - player.x) / settings.playerPositionEase
+  player.y += (position.y - player.y) / settings.playerPositionEase
 
 
 levelTrackPlayer = (level, player) ->
@@ -277,7 +285,7 @@ levelTrackPlayer = (level, player) ->
   currentRotation = FW.Math.wrapToCircle(mazeContainer.rotation * FW.Math.DEG_TO_RAD)
 
   diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
-  diff /= easers('mazeRotation')
+  diff /= settings.mazeRotationEase
 
   if !debugDraw
     mazeContainer.rotation += diff * FW.Math.RAD_TO_DEG
@@ -299,15 +307,15 @@ levelTrackPlayer = (level, player) ->
 
 
   if targetScale > mazeContainer.scaleX
-    zoomEase = easers('mazeZoomIn')
+    zoomEase = settings.mazeZoomInEase
   else
-    zoomEase = easers('mazeZoomOut')
+    zoomEase = settings.mazeZoomOutEase
 
   mazeContainer.scaleX += (targetScale - mazeContainer.scaleX) / zoomEase
   mazeContainer.scaleY = mazeContainer.scaleX
   mazeContainer.x = halfCanvasWidth
   mazeContainer.y = halfCanvasHeight
-  mazePan = easers('mazePan')
+  mazePan = settings.mazePanEase
   mazeContainer.regX += (targetRegX - mazeContainer.regX) / mazePan
   mazeContainer.regY += (targetRegY - mazeContainer.regY) / mazePan
 
@@ -337,7 +345,7 @@ playerAccelerateTowardsTarget = (player) ->
   forceVectorScalar = -4 * body.GetMass()
   forceVector = new Box2D.Common.Math.b2Vec2(thrustX * forceVectorScalar, thrustY * forceVectorScalar)
   body.ClearForces()
-  body.m_angularVelocity /= easers('playerRotation')
+  body.m_angularVelocity /= settings.playerRotationEase
   body.ApplyForce(forceVector, body.GetWorldCenter())
 
 playerReticleTrackGoal = (player, goal) ->
@@ -394,19 +402,6 @@ lampOilIndicatorTrackStage = (lampOilIndicator) ->
   lampOilIndicator._oilLevel = oil
   lampOilIndicator._maxOilLevel = maxOil
 
-easers = (key) ->
-  fps = createjs.Ticker.getFPS()
-  divisor = switch key
-    when 'mazeRotation'   then 2
-    when 'mazeZoomOut'    then 6
-    when 'mazeZoomIn'     then 5
-    when 'mazePan'        then 4
-    when 'playerPosition' then 3
-    when 'playerRotation' then 2
-    when 'timerText'      then 4
-
-  fps / divisor
-
 computePixelsPerMeter = (level) ->
   mazeContainer = level._mazeContainer
   canvas = mazeContainer.getStage().canvas
@@ -432,7 +427,7 @@ updateTimer = (timer, level) ->
     targetY = 12
     targetScale = 1
 
-  ease = easers('timerText')
+  ease = settings.timerTextEase
   timer.x += (targetX - timer.x) / ease
   timer.y += (targetY - timer.y) / ease
   timer.scaleX += (targetScale - timer.scaleX) / ease
