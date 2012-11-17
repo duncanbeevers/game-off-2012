@@ -22,7 +22,7 @@ setupLampOilIndicator = ->
 
   container.addChild(meterShape)
 
-  container._oilLevel = 10
+  container._oilLevel = 5000
   container
 
 class @Level extends FW.ContainerProxy
@@ -196,9 +196,11 @@ class @Level extends FW.ContainerProxy
 
   onTick: ->
     runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
+    lampOilIndicator = @_lampOilIndicator
     if runSimulation
       @_everRanSimulation = true
       @_world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
+      lampOilIndicator._oilLevel = Math.max(0, lampOilIndicator._oilLevel - 1)
 
     player = @_player
     goal = @_goal
@@ -222,7 +224,7 @@ class @Level extends FW.ContainerProxy
       playerLeaveTrack(player, @)
       playerAccelerateTowardsTarget(player)
 
-    lampOilIndicatorTrackStage(@_lampOilIndicator)
+    lampOilIndicatorTrackStage(lampOilIndicator)
 
     if @_everRanSimulation
       updateTimer(@_timerText, @)
