@@ -199,7 +199,7 @@ class @Level extends FW.ContainerProxy
     lampOilIndicator = @_lampOilIndicator
     if runSimulation
       @_everRanSimulation = true
-      @_world.Step(1 / createjs.Ticker.getMeasuredFPS(), 10, 10)
+      @_world.Step(1 / createjs.Ticker.getFPS(), 10, 10)
       lampOilIndicator._oilLevel = Math.max(0, lampOilIndicator._oilLevel - 1)
 
     player = @_player
@@ -395,7 +395,7 @@ lampOilIndicatorTrackStage = (lampOilIndicator) ->
   lampOilIndicator._maxOilLevel = maxOil
 
 easers = (key) ->
-  fps = createjs.Ticker.getMeasuredFPS()
+  fps = createjs.Ticker.getFPS()
   divisor = switch key
     when 'mazeRotation'   then 2
     when 'mazeZoomOut'    then 6
