@@ -2,8 +2,6 @@ class @TitleScreen extends FW.ContainerProxy
   constructor: (game, hci) ->
     super()
 
-    @_tickHandlers = []
-
     preloader = game.getPreloader()
 
     titleBox = setupTitleBox(@)
@@ -15,9 +13,6 @@ class @TitleScreen extends FW.ContainerProxy
 
     @_hci = hci
     @_levelPicker = levelPicker
-
-  addTickHandler: (handler) ->
-    @_tickHandlers.push(handler)
 
   onEnterScene: ->
     levelPicker = @_levelPicker
