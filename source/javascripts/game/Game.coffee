@@ -16,9 +16,13 @@ class @Game
     stage = new createjs.Stage(canvas)
     sceneManager = new SceneManager(stage)
 
-    titleScreen = new TitleScreen(@, hci)
-    sceneManager.addScene("titleScreen", titleScreen)
-    sceneManager.gotoScene("titleScreen")
+    profilePickerScreen = new ProfilePickerScreen(@, hci)
+    sceneManager.addScene("profilePickerScreen", profilePickerScreen)
+    sceneManager.gotoScene("profilePickerScreen")
+
+    # titleScreen = new TitleScreen(@, hci)
+    # sceneManager.addScene("titleScreen", titleScreen)
+    # sceneManager.gotoScene("titleScreen")
 
     # data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
     # data = FW.Math.sample(preloader.getLevels())
