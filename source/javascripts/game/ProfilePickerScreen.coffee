@@ -6,7 +6,7 @@ class @ProfilePickerScreen extends FW.ContainerProxy
 
     titleBox = new TitleBox()
     profilePicker = setupProfilePicker(screen)
-    addNewProfileInput = new InputOverlay("Profile Name")
+    addNewProfileInput = new InputOverlay(hci, "Profile Name")
 
     screen.addChild(profilePicker)
     screen.addChild(titleBox)

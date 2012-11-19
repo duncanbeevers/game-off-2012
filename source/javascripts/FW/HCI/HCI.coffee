@@ -9,10 +9,11 @@ HCI = FW.HCI ||= {}
 # Emits
 # -- low-level
 #   visibilitychange
-#   keyup
-#   keydown
+#   keyUp
+#   keyDown
 # -- high-level
-#   key:CODE
+#   keyUp:CODE
+#   keyDown:CODE
 #   windowBecameVisibile
 #   windowBecameInvisible
 
@@ -21,21 +22,19 @@ class EventSet
     @_hciInstance = hciInstance
     @_handlers = {}
 
-    for [eventName, handler, args...] in eventMap
-      # [ eventName, args... ] = fullEventName.split(":")
+    for [eventName, handler] in eventMap
       handlers = @_handlers[eventName] ||= []
-      handlers.push([ handler, args ])
+      handlers.push(handler)
 
   off: ->
     @_hciInstance.off(@)
 
-  trigger: (hci, eventName, args...) ->
+  trigger: (hci, eventName, args) ->
     handlers = @_handlers[eventName]
 
     if handlers
-      for [handler, handlerArgs...] in handlers
-        # [ handler, handlerArgs... ] = handlerAndArgs
-        handler.apply(hci, handlerArgs.concat(args))
+      for handler in handlers
+        handler.apply(hci, args)
 
 
 class HCI.HCI
@@ -50,15 +49,17 @@ class HCI.HCI
 
   triggerKeyDown: (keyCode) ->
     @trigger("keyDown:#{keyCode}")
+    @trigger("keyDown", keyCode)
 
   triggerKeyUp: (keyCode) ->
     @trigger("keyUp:#{keyCode}")
+    @trigger("keyUp", keyCode)
 
   on: (eventMap...) ->
     eventSet = new EventSet(@, eventMap)
 
     eventSets = @_eventSets
-    eventSets.push(eventSet)
+    setTimeout -> eventSets.push(eventSet)
 
     eventSet
 
