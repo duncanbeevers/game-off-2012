@@ -5,16 +5,13 @@ class @CountDown extends FW.ContainerProxy
     @_onComplete = onComplete
     @_duration = 3000
 
+    TextFactory.create()
     # text = new createjs.Text("Wonderful News!", "#FF4522", "36px Arial")
     # text = new createjs.Text("Wonderful News!", "#FF4522", "36px 04b_19")
-    text = new createjs.Text()
-    text.color = "#04FAFF"
+    text = TextFactory.create("", "#04FAFF")
 
     # font-style font-variant font-weight font-size/line-height font-family"
     # text.font = "bold 48px Arial"
-    text.font = "48px Upheaval"
-    text.textAlign = "center"
-    text.textBaseline = "middle"
 
     @_text = text
     @_container.addChild(text)

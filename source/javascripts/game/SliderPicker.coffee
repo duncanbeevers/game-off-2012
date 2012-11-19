@@ -110,10 +110,7 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement) ->
   nameContainer = new createjs.Container()
   words = text.split(/\s+/)
   texts = for word, i in words
-    text = new createjs.Text(word)
-    text.font = "48px Upheaval"
-    text.textAlign = "center"
-    text.textBaseline = "middle"
+    text = TextFactory.create(word)
     nameContainer.addChild(text)
 
   # Setup the transition animations

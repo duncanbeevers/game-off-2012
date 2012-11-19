@@ -10,11 +10,7 @@ settings =
 maxViewportMeters = 4
 
 setupTimerText = ->
-  timerText = new createjs.Text()
-  timerText.color = "#B500FF"
-  timerText.font = "24px Upheaval"
-  timerText.textAlign = "center"
-  timerText.textBaseline = "middle"
+  timerText = TextFactory.create("", "#B500FF")
 
   timerText
 
@@ -422,11 +418,11 @@ updateTimer = (timer, level) ->
   if level.solved
     targetX = canvas.width / 2
     targetY = canvas.height / 2 - 25
-    targetScale = canvas.width / 105
+    targetScale = canvas.width / 210
   else
     targetX = canvas.width / 2
     targetY = 12
-    targetScale = 1
+    targetScale = 0.5
 
   ease = settings.timerTextEase
   timer.x += (targetX - timer.x) / ease

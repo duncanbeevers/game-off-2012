@@ -109,18 +109,10 @@ setupBackdrop = ->
 setupGui = (prompt, defaultValue) ->
   container = new createjs.Container()
 
-  promptText = new createjs.Text(prompt)
-  promptText.font = "48px Upheaval"
-  promptText.textAlign = "center"
-  promptText.textBaseline = "middle"
-  promptText.color = "#FFFFFF"
+  promptText = TextFactory.create(prompt)
   promptText.y = -24
 
-  inputText = new createjs.Text(defaultValue)
-  inputText.font = "48px Upheaval"
-  inputText.textAlign = "center"
-  inputText.textBaseline = "middle"
-  inputText.color = "#FFFFFF"
+  inputText = TextFactory.create(defaultValue)
   inputText.y = 24
 
   container.addChild(promptText)

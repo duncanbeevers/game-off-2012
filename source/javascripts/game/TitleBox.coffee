@@ -12,11 +12,10 @@ class @TitleBox extends FW.ContainerProxy
     graphics.endFill()
     graphics.endStroke()
 
-    text = new createjs.Text("Mazeoid")
-    text.font = "48px Upheaval"
+    text = TextFactory.create("Mazeoid", "#eee")
     text.textAlign = "left"
-    text.color = "#eee"
     text.x = 64
+    text.y = 23
 
     logo = new createjs.Bitmap("images/Logo.png")
     logo.x = 4
