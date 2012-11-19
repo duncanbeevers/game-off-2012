@@ -28,9 +28,12 @@ class @TitleScreen extends FW.ContainerProxy
   onLeaveScene: ->
     @_hciSet.off()
 
+  loadProfile: (profileData) ->
+    console.log "loaded profile: %o", profileData
+
 setupLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0
-  levelPicker = new LevelPicker(screen, levels, initialLevelIndex)
+  levelPicker = new LevelPicker(levels, initialLevelIndex)
 
   levelPicker.addEventListener "tick", ->
     levelsVisibleOnScreen = 3.5

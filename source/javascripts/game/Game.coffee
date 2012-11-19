@@ -17,19 +17,17 @@ class @Game
     sceneManager = new SceneManager(stage)
 
     profilePickerScreen = new ProfilePickerScreen(@, hci, sceneManager)
-    sceneManager.addScene("profilePickerScreen", profilePickerScreen)
-    sceneManager.gotoScene("profilePickerScreen")
+    titleScreen = new TitleScreen(@, hci)
 
-    # titleScreen = new TitleScreen(@, hci)
-    # sceneManager.addScene("titleScreen", titleScreen)
-    # sceneManager.gotoScene("titleScreen")
+    sceneManager.addScene("profilePickerScreen", profilePickerScreen)
+    sceneManager.addScene("titleScreen", titleScreen)
+
+    sceneManager.gotoScene("profilePickerScreen")
 
     # data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
     # data = FW.Math.sample(preloader.getLevels())
     # level = new Level(@, data)
     # stage.addChild(level)
-    @_sceneManager = sceneManager
-
     # TODO: Hook up pause
     # togglePause = ->
     #   level.togglePause()
@@ -39,6 +37,8 @@ class @Game
     createjs.Ticker.addListener(updater)
 
     @_hci = hci
+    @_sceneManager = sceneManager
+    @_titleScreen = titleScreen
 
   beginLevel: (levelData) ->
     sceneManager = @_sceneManager
@@ -55,6 +55,11 @@ class @Game
   unpause: () ->
     @_bgm.resume()
     createjs.Ticker.setPaused(false)
+
+  loadProfile: (profileData) ->
+    titleScreen = @_titleScreen
+    titleScreen.loadProfile(profileData)
+    @_sceneManager.gotoScene("titleScreen")
 
   setBgmTracks: (tracks) ->
     @_bgmTracks = tracks

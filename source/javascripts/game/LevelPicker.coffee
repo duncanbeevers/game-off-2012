@@ -12,6 +12,7 @@ class @LevelPicker extends SliderPicker
       sliderElement = {}
       sliderElement.text = levelData.name
       sliderElement.displayObject = createLevelDisplayObject(@, levelData, sliderElement)
+      sliderElement
 
     super(sliderElements, currentIndex)
 

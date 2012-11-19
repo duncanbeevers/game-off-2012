@@ -20,12 +20,11 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     @_addNewProfileInput = addNewProfileInput
 
   onEnterScene: ->
+    screen = @
     profilePicker = @_profilePicker
-    sceneManager = @_sceneManager
-    addNewProfileInput = @_addNewProfileInput
 
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(sceneManager, profilePicker, addNewProfileInput) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(screen) ]
       [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> profilePicker.selectPrevious() ]
       [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> profilePicker.selectNext() ]
     )
@@ -33,8 +32,15 @@ class @ProfilePickerScreen extends FW.ContainerProxy
   onLeaveScene: ->
     @_hciSet.off()
 
-onPressedEnter = (sceneManager, profilePicker, addNewProfileInput) ->
-  index = profilePicker.getCurrentIndex()
+  loadProfile: (profileData) ->
+    @_game.loadProfile(profileData)
+
+onPressedEnter = (screen) ->
+  profilePicker      = screen._profilePicker
+  sceneManager       = screen._sceneManager
+  addNewProfileInput = screen._addNewProfileInput
+
+  index  = profilePicker.getCurrentIndex()
   length = profilePicker.getLength()
 
   if index == length - 1
@@ -42,7 +48,8 @@ onPressedEnter = (sceneManager, profilePicker, addNewProfileInput) ->
     sceneManager.pushScene("newProfileInput")
   else
     # Otherwise we're loading an existing profile
-
+    profileData = profilePicker.getCurrentProfileData()
+    screen.loadProfile(profileData)
 
 setupProfilePicker = (screen) ->
   profilePicker = new ProfilePicker([], 0)
