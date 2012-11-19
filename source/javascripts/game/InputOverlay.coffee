@@ -2,7 +2,7 @@ settings =
   cursorBlinkRate: 530
 
 class @InputOverlay extends FW.ContainerProxy
-  constructor: (hci, prompt, defaultValue) ->
+  constructor: (hci, prompt, defaultValue, onSubmit, onDismiss) ->
     super()
 
     defaultValue ||= ""
@@ -16,6 +16,8 @@ class @InputOverlay extends FW.ContainerProxy
     @addChild(cursor)
 
     @_hci = hci
+    @_onSubmit = onSubmit
+    @_onDismiss = onDismiss
     @_backdrop = backdrop
     @_gui = gui
     @_cursor = cursor
@@ -42,13 +44,15 @@ class @InputOverlay extends FW.ContainerProxy
   onTick: ->
     super()
 
+    stage = @getStage()
+    return unless stage
+
     backdrop       = @_backdrop
     gui            = @_gui
     cursor         = @_cursor
     cursorPosition = @_cursorPosition
     value          = @_value
 
-    stage = @getStage()
     canvas = stage.canvas
 
     backdrop.scaleX = canvas.width
@@ -76,12 +80,21 @@ class @InputOverlay extends FW.ContainerProxy
 
   setValue: (value) ->
     @_value = value
+    length = value.length
+    if @_cursorPosition > length
+      @_cursorPosition = length
 
   getCursorPosition: ->
     return @_cursorPosition
 
   setCursorPosition: (cursorPosition) ->
     @_cursorPosition = cursorPosition
+
+  submit: ->
+    @_onSubmit(@_value)
+
+  dismiss: ->
+    @_onDismiss()
 
 setupBackdrop = ->
   shape = new createjs.Shape()
@@ -147,9 +160,11 @@ setupCursor = ->
 
   shape
 
-
 onPressedEnter = (inputOverlay) ->
-  # debugger
+  inputOverlay.submit()
+
+onPressedEscape = (inputOverlay) ->
+  inputOverlay.dismiss()
 
 onPressedDelete = (inputOverlay) ->
   value = inputOverlay.getValue()
@@ -163,8 +178,6 @@ onPressedDelete = (inputOverlay) ->
   if newValue != value
     inputOverlay.setCursorPosition(cursorPosition - 1)
     inputOverlay.setValue(newValue)
-
-onPressedEscape = (inputOverlay) ->
 
 onPressedLeft = (inputOverlay) ->
   value = inputOverlay.getValue()
