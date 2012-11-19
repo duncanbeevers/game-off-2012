@@ -1,5 +1,5 @@
 settings =
-  mazeRotationEase   : 2
+  mazeRotationEase   : 100
   mazeZoomOutEase    : 6
   mazeZoomInEase     : 5
   mazePanEase        : 4
@@ -280,11 +280,12 @@ levelTrackPlayer = (level, player) ->
   debugDraw = level.debugDraw
 
   body = player.fixture.GetBody()
+  position = body.GetPosition()
 
-  bodyAngle = body.GetAngle()
+  targetRotation = Math.atan2(position.y, position.x)
   currentRotation = FW.Math.wrapToCircle(mazeContainer.rotation * FW.Math.DEG_TO_RAD)
 
-  diff = FW.Math.radiansDiff(currentRotation, bodyAngle)
+  diff = FW.Math.radiansDiff(currentRotation, targetRotation)
   diff /= settings.mazeRotationEase
 
   if !debugDraw
