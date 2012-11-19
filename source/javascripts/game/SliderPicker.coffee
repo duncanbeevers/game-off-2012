@@ -36,15 +36,14 @@ class @SliderPicker extends FW.ContainerProxy
     sliderContainer.scaleX = 1 / settings.slider.itemsVisibleOnScreen
     sliderContainer.scaleY = sliderContainer.scaleX
 
-    displayObjects = for sliderElement, i in sliderElements
+    for sliderElement, i in sliderElements
       displayObject = sliderElementDisplayObject(@, sliderContainer, sliderElement, i)
       sliderContainer.addChild(displayObject)
-      displayObject
 
     # Set instance variables
     @_sliderContainer = sliderContainer
-    @_displayObjects = displayObjects
     @_currentIndex = currentIndex
+    @_length = sliderElements.length
 
     @addChild(sliderContainer)
 
@@ -54,7 +53,7 @@ class @SliderPicker extends FW.ContainerProxy
     sliderContainer = @_sliderContainer
     sliderContainer.regX += (targetRegX - sliderContainer.regX) / settings.slider.panningEase
 
-  currentIndex: () ->
+  getCurrentIndex: () ->
     @_currentIndex
 
   selectNext: ->
@@ -64,11 +63,7 @@ class @SliderPicker extends FW.ContainerProxy
     @select(@_currentIndex - 1)
 
   select: (i) ->
-    @_currentIndex = FW.Math.clamp(i, 0, @_displayObjects.length - 1)
-
-  checkSelected: (displayObject) ->
-    @_currentIndex == @_displayObjects.indexOf(displayObject.parent)
-
+    @_currentIndex = FW.Math.clamp(i, 0, @_length - 1)
 
 sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, index) ->
   text = sliderElement.text
@@ -80,7 +75,7 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, inde
   container.scaleX = settings.slider.intraSliderScale
   container.scaleY = container.scaleX
 
-  # Add the level name
+  # Create the text label
   nameContainer = new createjs.Container()
   words = text.split(/\s+/)
   texts = for word, i in words
@@ -90,32 +85,35 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, inde
     text.textBaseline = "middle"
     nameContainer.addChild(text)
 
+  # Setup the transition animations
   container.addEventListener "tick", ->
     for text, i in texts
-      text.y = i * settings.nameContainer.wordVerticalSpacing + settings.nameContainer.wordVerticalOffset
+      text.y     = i * settings.nameContainer.wordVerticalSpacing + settings.nameContainer.wordVerticalOffset
       text.color = settings.nameContainer.wordColor
 
     # TODO: Make this more robust, deal with dynamic inserted and removed elements
-    if sliderPicker.currentIndex() == index
+    if sliderPicker.getCurrentIndex() == index
       targetScale = settings.sliderContainer.selected.targetScale
       targetAlpha = settings.sliderContainer.selected.targetAlpha
-      targetY = settings.sliderContainer.selected.targetY
+      targetY     = settings.sliderContainer.selected.targetY
     else
       targetScale = settings.sliderContainer.unselected.targetScale
       targetAlpha = settings.sliderContainer.unselected.targetAlpha
-      targetY = settings.sliderContainer.unselected.targetY
+      targetY     = settings.sliderContainer.unselected.targetY
 
     container.scaleX += (targetScale - container.scaleX) / settings.sliderContainer.zoomEase
     container.scaleY = container.scaleX
-    container.y += (targetY - container.y) / settings.sliderContainer.verticalMoveEase
-    container.alpha += (targetAlpha - container.alpha) / settings.sliderContainer.alphaEase
+    container.y      += (targetY - container.y) / settings.sliderContainer.verticalMoveEase
+    container.alpha  += (targetAlpha - container.alpha) / settings.sliderContainer.alphaEase
 
     nameContainer.scaleX = 1 / settings.nameContainer.scale
     nameContainer.scaleY = nameContainer.scaleX
-    nameContainer.regY = (words.length * settings.nameContainer.wordVerticalSpacing) / 2
-    nameContainer.alpha = settings.nameContainer.alpha
+    nameContainer.regY   = (words.length * settings.nameContainer.wordVerticalSpacing) / 2
+    nameContainer.alpha  = settings.nameContainer.alpha
 
+  # Add the display object and label to a single container
   container.addChild(displayObject)
   container.addChild(nameContainer)
 
+  # Hand the assembled container back
   container
