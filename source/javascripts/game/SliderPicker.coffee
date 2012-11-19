@@ -25,7 +25,7 @@ settings =
 # FW.dat.GUI.addSettings(settings)
 
 class @SliderPicker extends FW.ContainerProxy
-  constructor: (screen, sliderElements, currentIndex) ->
+  constructor: (sliderElements, currentIndex) ->
     super()
 
     # This container holds the horizontally-arranged set of levels
@@ -42,7 +42,6 @@ class @SliderPicker extends FW.ContainerProxy
       displayObject
 
     # Set instance variables
-    @_screen = screen
     @_sliderContainer = sliderContainer
     @_displayObjects = displayObjects
     @_currentIndex = currentIndex

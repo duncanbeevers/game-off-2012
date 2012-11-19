@@ -16,11 +16,11 @@ class @Game
     stage = new createjs.Stage(canvas)
     sceneManager = new SceneManager(stage)
 
-    profilePickerScreen = new ProfilePickerScreen(@, hci)
+    profilePickerScreen = new ProfilePickerScreen(hci)
     sceneManager.addScene("profilePickerScreen", profilePickerScreen)
     sceneManager.gotoScene("profilePickerScreen")
 
-    # titleScreen = new TitleScreen(@, hci)
+    # titleScreen = new TitleScreen(hci)
     # sceneManager.addScene("titleScreen", titleScreen)
     # sceneManager.gotoScene("titleScreen")
 

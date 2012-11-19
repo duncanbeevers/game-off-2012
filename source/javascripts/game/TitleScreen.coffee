@@ -1,13 +1,13 @@
 class @TitleScreen extends FW.ContainerProxy
   constructor: (game, hci) ->
     super()
+    screen = @
 
     preloader = game.getPreloader()
 
     titleBox = new TitleBox()
-    levelPicker = setupLevelPicker(@, preloader.getLevels(), hci)
+    levelPicker = setupLevelPicker(screen, preloader.getLevels(), hci)
 
-    screen = @
     screen.addChild(levelPicker)
     screen.addChild(titleBox)
 
