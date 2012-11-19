@@ -1,24 +1,31 @@
 class @ProfilePickerScreen extends FW.ContainerProxy
-  constructor: (game, hci) ->
+  constructor: (game, hci, sceneManager) ->
     super()
 
     screen = @
 
     titleBox = new TitleBox()
     profilePicker = setupProfilePicker(screen)
+    addNewProfileInput = new InputOverlay("Profile Name")
 
     screen.addChild(profilePicker)
     screen.addChild(titleBox)
 
+    sceneManager.addScene("newProfileInput", addNewProfileInput)
+
     @_game = game
     @_hci = hci
+    @_sceneManager = sceneManager
     @_profilePicker = profilePicker
+    @_addNewProfileInput = addNewProfileInput
 
   onEnterScene: ->
     profilePicker = @_profilePicker
+    sceneManager = @_sceneManager
+    addNewProfileInput = @_addNewProfileInput
 
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(profilePicker) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(sceneManager, profilePicker, addNewProfileInput) ]
       [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> profilePicker.selectPrevious() ]
       [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> profilePicker.selectNext() ]
     )
@@ -26,12 +33,13 @@ class @ProfilePickerScreen extends FW.ContainerProxy
   onLeaveScene: ->
     @_hciSet.off()
 
-onPressedEnter = (profilePicker) ->
+onPressedEnter = (sceneManager, profilePicker, addNewProfileInput) ->
   index = profilePicker.getCurrentIndex()
   length = profilePicker.getLength()
 
   if index == length - 1
     # Last item is Add New Profile
+    sceneManager.gotoScene("newProfileInput")
   else
     # Otherwise we're loading an existing profile
 
