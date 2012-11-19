@@ -14,6 +14,28 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     @_hci = hci
     @_profilePicker = profilePicker
 
+  onEnterScene: ->
+    profilePicker = @_profilePicker
+
+    @_hciSet = @_hci.on(
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(profilePicker) ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> profilePicker.selectPrevious() ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> profilePicker.selectNext() ]
+    )
+
+  onLeaveScene: ->
+    @_hciSet.off()
+
+onPressedEnter = (profilePicker) ->
+  index = profilePicker.getCurrentIndex()
+  length = profilePicker.getLength()
+
+  if index == length - 1
+    # Last item is Add New Profile
+  else
+    # Otherwise we're loading an existing profile
+
+
 setupProfilePicker = (screen) ->
   profilePicker = new ProfilePicker([], 0)
   profilePicker.addEventListener "tick", ->

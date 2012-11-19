@@ -56,6 +56,9 @@ class @SliderPicker extends FW.ContainerProxy
   getCurrentIndex: () ->
     @_currentIndex
 
+  getLength: () ->
+    @_length
+
   selectNext: ->
     @select(@_currentIndex + 1)
 
