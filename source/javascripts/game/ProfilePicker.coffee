@@ -21,7 +21,7 @@ class @ProfilePicker extends SliderPicker
     @_profilesData = profilesData
 
   # currentProfileData: ->
-  #   @_profilesData[@currentIndex()]
+  #   @_profilesData[@getCurrentIndex()]
 
 createProfileDisplayObject = (profilePicker, profileData) ->
   # Draw the preview image of the maze

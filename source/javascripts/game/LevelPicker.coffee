@@ -18,7 +18,7 @@ class @LevelPicker extends SliderPicker
     @_levelsData = levelsData
 
   currentLevelData: ->
-    @_levelsData[@currentIndex()]
+    @_levelsData[@getCurrentIndex()]
 
 createLevelDisplayObject = (levelPicker, levelData, index) ->
   # Draw the preview image of the maze
@@ -36,7 +36,7 @@ createLevelDisplayObject = (levelPicker, levelData, index) ->
 
   # Specific SliderPicker changes for child display objects
   shape.addEventListener "tick", ->
-    if levelPicker.currentIndex() == index
+    if levelPicker.getCurrentIndex() == index
       shape.rotation += settings.selected.rotation
     else
       shape.rotation += settings.unselected.rotation

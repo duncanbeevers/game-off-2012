@@ -11,10 +11,12 @@ class @TitleScreen extends FW.ContainerProxy
     screen.addChild(levelPicker)
     screen.addChild(titleBox)
 
+    @_game = game
     @_hci = hci
     @_levelPicker = levelPicker
 
   onEnterScene: ->
+    game = @_game
     levelPicker = @_levelPicker
 
     @_hciSet = @_hci.on(
