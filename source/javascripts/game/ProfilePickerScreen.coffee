@@ -6,7 +6,7 @@ class @ProfilePickerScreen extends FW.ContainerProxy
 
     titleBox = new TitleBox()
     profilePicker = setupProfilePicker(screen)
-    addNewProfileInput = new InputOverlay(hci, "Profile Name")
+    addNewProfileInput = setupAddNewProfileInput(hci, sceneManager)
 
     screen.addChild(profilePicker)
     screen.addChild(titleBox)
@@ -39,7 +39,7 @@ onPressedEnter = (sceneManager, profilePicker, addNewProfileInput) ->
 
   if index == length - 1
     # Last item is Add New Profile
-    sceneManager.gotoScene("newProfileInput")
+    sceneManager.pushScene("newProfileInput")
   else
     # Otherwise we're loading an existing profile
 
@@ -57,3 +57,16 @@ setupProfilePicker = (screen) ->
     profilePicker.y = canvas.width / 20 + 150
 
   profilePicker
+
+setupAddNewProfileInput = (hci, sceneManager) ->
+  createNewProfile = (profileName) ->
+    sceneManager.popScene()
+
+    inputOverlay.setValue("")
+
+  cancelAddNewProfile = ->
+    sceneManager.popScene()
+
+  inputOverlay = new InputOverlay(hci, "Profile Name", "", createNewProfile, cancelAddNewProfile)
+
+  inputOverlay
