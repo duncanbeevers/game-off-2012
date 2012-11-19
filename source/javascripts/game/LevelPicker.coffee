@@ -9,8 +9,9 @@ settings =
 class @LevelPicker extends SliderPicker
   constructor: (levelsData, currentIndex) ->
     sliderElements = for levelData, i in levelsData
-      text: levelData.name
-      displayObject: createLevelDisplayObject(@, levelData, i)
+      sliderElement = {}
+      sliderElement.text = levelData.name
+      sliderElement.displayObject = createLevelDisplayObject(@, levelData, sliderElement)
 
     super(sliderElements, currentIndex)
 
@@ -20,7 +21,7 @@ class @LevelPicker extends SliderPicker
   currentLevelData: ->
     @_levelsData[@getCurrentIndex()]
 
-createLevelDisplayObject = (levelPicker, levelData, index) ->
+createLevelDisplayObject = (levelPicker, levelData, sliderElement) ->
   # Draw the preview image of the maze
   shape = new createjs.Shape()
   graphics = shape.graphics
@@ -36,7 +37,7 @@ createLevelDisplayObject = (levelPicker, levelData, index) ->
 
   # Specific SliderPicker changes for child display objects
   shape.addEventListener "tick", ->
-    if levelPicker.getCurrentIndex() == index
+    if levelPicker.checkIsSelected(sliderElement)
       shape.rotation += settings.selected.rotation
     else
       shape.rotation += settings.unselected.rotation

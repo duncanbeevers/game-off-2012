@@ -23,22 +23,32 @@ class @ProfilePicker extends SliderPicker
   # currentProfileData: ->
   #   @_profilesData[@getCurrentIndex()]
 
+  unshiftNewProfile: (profileName) ->
+    profileData = { name: profileName }
+
+    sliderElement =
+      text: profileName
+      displayObject: createProfileDisplayObject(@, profileData)
+
+    @unshiftElement(sliderElement)
+    @_currentIndex = 0
+
 createProfileDisplayObject = (profilePicker, profileData) ->
   # Draw the preview image of the maze
   shape = new createjs.Shape()
   graphics = shape.graphics
 
-  graphics.setStrokeStyle(0.25, "round", "bevel")
-  graphics.beginStroke(settings.color)
+  graphics.setStrokeStyle(0.001, "round", "bevel")
+  graphics.beginStroke("rgba(0, 0, 0, 0)")
   graphics.beginFill(settings.color)
   # Head
-  graphics.drawCircle(0, -0.5, 0.5, 0.25)
+  graphics.drawCircle(0, -0.5, 0.25)
   # Shoulders
-  graphics.drawCircle(-0.25, 0.25, 0.25)
-  graphics.drawCircle(0.25, 0.25, 0.25)
+  graphics.drawCircle(-0.25, 0, 0.25)
+  graphics.drawCircle(0.25, 0, 0.25)
   # Fill in torso
-  graphics.drawRect(-0.25, 0, 0.5, 0.25)
-  graphics.drawRect(-0.5, -0.25, 1, 0.25)
+  graphics.drawRect(-0.25, -0.25, 0.5, 0.25)
+  graphics.drawRect(-0.5, 0, 1, 0.5)
 
   graphics.endStroke()
   graphics.endFill()

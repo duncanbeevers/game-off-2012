@@ -36,16 +36,15 @@ class @SliderPicker extends FW.ContainerProxy
     sliderContainer.scaleX = 1 / settings.slider.itemsVisibleOnScreen
     sliderContainer.scaleY = sliderContainer.scaleX
 
-    for sliderElement, i in sliderElements
-      displayObject = sliderElementDisplayObject(@, sliderContainer, sliderElement, i)
-      sliderContainer.addChild(displayObject)
-
     # Set instance variables
     @_sliderContainer = sliderContainer
+    @_sliderElements = []
     @_currentIndex = currentIndex
-    @_length = sliderElements.length
 
     @addChild(sliderContainer)
+
+    for sliderElement in sliderElements
+      @pushElement(sliderElement)
 
   onTick: ->
     # Move the camera around over the levels container
@@ -59,6 +58,9 @@ class @SliderPicker extends FW.ContainerProxy
   getLength: () ->
     @_length
 
+  checkIsSelected: (sliderElement) ->
+    @_sliderElements[@_currentIndex] == sliderElement
+
   selectNext: ->
     @select(@_currentIndex + 1)
 
@@ -68,13 +70,39 @@ class @SliderPicker extends FW.ContainerProxy
   select: (i) ->
     @_currentIndex = FW.Math.clamp(i, 0, @_length - 1)
 
-sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, index) ->
+  unshiftElement: (sliderElement) ->
+    sliderContainer = @_sliderContainer
+    sliderElements = @_sliderElements
+
+    displayObject = sliderElementDisplayObject(@, sliderContainer, sliderElement)
+    sliderElement.sliderDisplayObject = displayObject
+    sliderContainer.addChild(displayObject)
+
+    sliderElements.unshift(sliderElement)
+    for sliderElement, i in sliderElements
+      sliderElement.sliderDisplayObject.x = i
+    @_length = sliderElements.length
+
+  pushElement: (sliderElement) ->
+    sliderContainer = @_sliderContainer
+    sliderElements = @_sliderElements
+
+    displayObject = sliderElementDisplayObject(@, sliderContainer, sliderElement)
+    sliderElement.sliderDisplayObject = displayObject
+    displayObject.x = sliderElements.length
+
+    sliderContainer.addChild(displayObject)
+
+    sliderElements.push(sliderElement)
+    @_length = sliderElements.length
+
+
+sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement) ->
   text = sliderElement.text
   displayObject = sliderElement.displayObject
 
   # Make a new container for this slider element
   container = new createjs.Container()
-  container.x = index
   container.scaleX = settings.slider.intraSliderScale
   container.scaleY = container.scaleX
 
@@ -95,7 +123,7 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, inde
       text.color = settings.nameContainer.wordColor
 
     # TODO: Make this more robust, deal with dynamic inserted and removed elements
-    if sliderPicker.getCurrentIndex() == index
+    if sliderPicker.checkIsSelected(sliderElement)
       targetScale = settings.sliderContainer.selected.targetScale
       targetAlpha = settings.sliderContainer.selected.targetAlpha
       targetY     = settings.sliderContainer.selected.targetY
