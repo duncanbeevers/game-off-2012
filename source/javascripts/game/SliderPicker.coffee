@@ -78,6 +78,8 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement, inde
   # Make a new container for this slider element
   container = new createjs.Container()
   container.x = index
+  container.scaleX = settings.slider.intraSliderScale
+  container.scaleY = container.scaleX
 
   # Add the level name
   nameContainer = new createjs.Container()

@@ -5,7 +5,6 @@ settings =
     unselected:
       rotation: 0.3
     mazeColor: "#0FFFFA"
-    intraSliderScale: 0.8
 # FW.dat.GUI.addSettings(settings)
 
 class @LevelPicker extends SliderPicker
@@ -29,7 +28,7 @@ createLevelDisplayObject = (levelPicker, levelData, index) ->
   [ _, _, _, _, radius ] = FW.CreateJS.drawSegments(graphics, settings.levelContainer.mazeColor, levelData.segments)
 
   # Scale it down to fit based on drawing boundaries
-  shape.scaleX = settings.levelContainer.intraSliderScale / (radius * 2)
+  shape.scaleX = 1 / (radius * 2)
   shape.scaleY = shape.scaleX
 
   # TODO: Cache bitmap here? It acts funny,
