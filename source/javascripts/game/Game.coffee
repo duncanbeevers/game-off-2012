@@ -30,6 +30,7 @@ class @Game
     # togglePause = ->
     #   level.togglePause()
 
+    # Maybe don't need this?
     updater = tick: -> stage.update()
     createjs.Ticker.addListener(updater)
 
