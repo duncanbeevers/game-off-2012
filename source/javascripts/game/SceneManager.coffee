@@ -15,6 +15,7 @@ class @SceneManager
     newScene     = @_scenes[sceneName]
 
     @_currentScene = newScene
+    @_currentSceneName = sceneName
 
     # TODO: Add scene transitions
 
@@ -23,3 +24,13 @@ class @SceneManager
 
     stage.addChild(newScene)
     newScene.onEnterScene?()
+
+  pushScene: (sceneName) ->
+    sceneStack = @_sceneStack ||= []
+    sceneStack.push(@_currentSceneName)
+    @gotoScene(sceneName)
+
+  popScene: ->
+    sceneStack = @_sceneStack
+    restoreSceneName = sceneStack.pop()
+    @gotoScene(restoreSceneName)
