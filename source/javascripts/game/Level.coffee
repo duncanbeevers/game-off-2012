@@ -34,6 +34,9 @@ class @Level extends FW.ContainerProxy
   constructor: (game, hci, mazeData) ->
     super()
 
+    pauseMenu = new PauseMenu(game, hci)
+    game.getSceneManager().addScene("pauseMenu", pauseMenu)
+
     levelContainer = @_container
     mazeContainer = new createjs.Container()
     player  = new Player()
@@ -144,6 +147,7 @@ class @Level extends FW.ContainerProxy
       [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
       [ "keyUp:#{FW.HCI.KeyMap.SPACE}",   endBacktrack ]
       [ "keyDown:#{FW.HCI.KeyMap.ENTER}", releaseLamp ]
+      [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", -> onActivatedPauseMenu(level) ]
     )
     @_harness = FW.MouseHarness.outfit(@_mazeContainer)
 
@@ -200,6 +204,9 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   onTick: ->
+    stage = @getStage()
+    return unless stage
+
     runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
     lampOilIndicator = @_lampOilIndicator
     if runSimulation
@@ -495,3 +502,6 @@ createPhysicsLamp = (world, lamp, player) ->
 
   lamp.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
   lamp.fixture.SetUserData(player)
+
+onActivatedPauseMenu = (level) ->
+  level._game.getSceneManager().pushScene("pauseMenu")
