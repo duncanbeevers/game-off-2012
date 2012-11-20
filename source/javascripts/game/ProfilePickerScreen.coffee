@@ -75,6 +75,6 @@ setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   cancelAddNewProfile = ->
     sceneManager.popScene()
 
-  inputOverlay = new InputOverlay(hci, "Profile Name", "", createNewProfile, cancelAddNewProfile)
+  inputOverlay = new InputOverlay(hci, "What's your name?", "", createNewProfile, cancelAddNewProfile)
 
   inputOverlay
