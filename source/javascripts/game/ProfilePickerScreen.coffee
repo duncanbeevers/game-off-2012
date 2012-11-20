@@ -1,9 +1,10 @@
 class @ProfilePickerScreen extends FW.ContainerProxy
-  constructor: (game, hci, sceneManager) ->
+  constructor: (game, hci) ->
     super()
 
     screen = @
 
+    sceneManager = game.getSceneManager()
     titleBox = new TitleBox()
     profilePicker = setupProfilePicker(screen)
     addNewProfileInput = setupAddNewProfileInput(hci, sceneManager, profilePicker)
@@ -13,10 +14,10 @@ class @ProfilePickerScreen extends FW.ContainerProxy
 
     sceneManager.addScene("newProfileInput", addNewProfileInput)
 
-    @_game = game
-    @_hci = hci
-    @_sceneManager = sceneManager
-    @_profilePicker = profilePicker
+    @_game               = game
+    @_hci                = hci
+    @_sceneManager       = sceneManager
+    @_profilePicker      = profilePicker
     @_addNewProfileInput = addNewProfileInput
 
   onEnterScene: ->

@@ -16,7 +16,11 @@ class @Game
     stage = new createjs.Stage(canvas)
     sceneManager = new SceneManager(stage)
 
-    profilePickerScreen = new ProfilePickerScreen(@, hci, sceneManager)
+    @_hci = hci
+    # Declare this early since its accessed by getSceneManager
+    @_sceneManager = sceneManager
+
+    profilePickerScreen = new ProfilePickerScreen(@, hci)
     titleScreen = new TitleScreen(@, hci)
 
     sceneManager.addScene("profilePickerScreen", profilePickerScreen)
@@ -32,13 +36,11 @@ class @Game
     # togglePause = ->
     #   level.togglePause()
 
+    @_titleScreen = titleScreen
+
     # Maybe don't need this?
     updater = tick: -> stage.update()
     createjs.Ticker.addListener(updater)
-
-    @_hci = hci
-    @_sceneManager = sceneManager
-    @_titleScreen = titleScreen
 
   beginLevel: (levelData) ->
     sceneManager = @_sceneManager
