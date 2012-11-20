@@ -13,6 +13,7 @@ class @TitleScreen extends FW.ContainerProxy
 
     @_game = game
     @_hci = hci
+    @_titleBox = titleBox
     @_levelPicker = levelPicker
 
   onEnterScene: ->
@@ -30,6 +31,9 @@ class @TitleScreen extends FW.ContainerProxy
 
   loadProfile: (profileData) ->
     console.log "loaded profile: %o", profileData
+    titleBox = @_titleBox
+    titleBox.setTitle(profileData.name)
+
 
 setupLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0
