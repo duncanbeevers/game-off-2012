@@ -83,3 +83,6 @@ createAddNewProfileDisplayObject = ->
   shape.scaleY = shape.scaleX
 
   shape
+
+# Export the function to create the profile picture display object
+ProfilePicker.createAddNewProfileDisplayObject = createAddNewProfileDisplayObject
