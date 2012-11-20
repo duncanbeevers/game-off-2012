@@ -3,7 +3,7 @@ FW = @FW ||= {}
 FW.CreateJS ||= {}
 
 drawSegments = (graphics, color, segments) ->
-  graphics.setStrokeStyle(0.25, "round", "bevel")
+  graphics.setStrokeStyle(0.2, 2, 0, 15)
   graphics.beginStroke(color)
 
   minX = Infinity
@@ -11,6 +11,7 @@ drawSegments = (graphics, color, segments) ->
   maxX = -Infinity
   maxY = -Infinity
   maxMagnitude = -Infinity
+
   for [x1, y1, x2, y2] in segments
     graphics.moveTo(x1, y1)
     graphics.lineTo(x2, y2)
