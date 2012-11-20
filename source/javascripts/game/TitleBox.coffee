@@ -1,5 +1,7 @@
+height = 48
+
 class @TitleBox extends FW.ContainerProxy
-  constructor: ->
+  constructor: (title) ->
     super()
 
     background = new createjs.Shape()
@@ -12,10 +14,13 @@ class @TitleBox extends FW.ContainerProxy
     graphics.endFill()
     graphics.endStroke()
 
-    text = TextFactory.create("Mazeoid", "#eee")
+    title ||= "Mazeoid"
+
+    text = TextFactory.create(title, "#eee")
     text.textAlign = "left"
+    text.textBaseline = "top"
     text.x = 64
-    text.y = 23
+    text.y = height / 2 - text.getMeasuredHeight() / 2 - 2
 
     logo = new createjs.Bitmap("images/Logo.png")
     logo.x = 4
@@ -26,10 +31,14 @@ class @TitleBox extends FW.ContainerProxy
     @addChild(logo)
 
     @_background = background
+    @_text = text
+
+  setTitle: (title) ->
+    @_text.text = title
 
   onTick: ->
     background = @_background
 
     canvas = @getStage().canvas
     background.scaleX = canvas.width
-    background.scaleY = 48
+    background.scaleY = height
