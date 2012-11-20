@@ -11,7 +11,7 @@ class @ProfilePicker extends SliderPicker
 
     addNewProfileDisplayObject = createAddNewProfileDisplayObject()
     sliderElements.push(
-      text: "Add New Profile"
+      text: "Begin New Game"
       displayObject: addNewProfileDisplayObject
     )
 
