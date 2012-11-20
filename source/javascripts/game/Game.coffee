@@ -78,5 +78,8 @@ class @Game
 
     game._bgm = newBgm
 
+  getSceneManager: ->
+    @_sceneManager
+
   getPreloader: ->
     @_preloader
