@@ -46,10 +46,13 @@ wrapToCap = (value, cap) ->
 
   return value
 
-normalizeVector = (vector) ->
-  [x, y] = vector
+normalizeVector = (vector, scalar = 1) ->
+  [ x, y ] = vector
+  normalizeCoordinates(x, y, scalar)
+
+normalizeCoordinates = (x, y, scalar = 1) ->
   length = magnitude(x, y)
-  [ x / length, y / length ]
+  [ x * scalar / length, y * scalar / length ]
 
 # Does a linear interpolation between one range and another
 # The first two arguments indicate the target range
@@ -89,6 +92,7 @@ radiansDiff = (radians1, radians2) ->
 
 distance = (x1, y1, x2, y2) ->
   Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
+
 magnitude = (x, y) ->
   distance(0, 0, x, y)
 
@@ -109,20 +113,21 @@ snap = (x, precision) ->
   newX / precision
 
 FW.Math =
-  PI_AND_A_HALF: PI + PI / 2
-  TWO_PI: TWO_PI
-  RAD_TO_DEG: 180 / PI
-  DEG_TO_RAD: PI / 180
-  random: random
-  rand: rand
-  clamp: clamp
-  snap: snap
-  wrapToCircle: wrapToCircle
-  normalizeVector: normalizeVector
-  linearInterpolate: linearInterpolate
-  sample: sample
-  centroidOfSegments: centroidOfSegments
-  centroidOfRectangle: centroidOfRectangle
-  distance: distance
-  magnitude: magnitude
-  radiansDiff: radiansDiff
+  PI_AND_A_HALF        : PI + PI / 2
+  TWO_PI               : TWO_PI
+  RAD_TO_DEG           : 180 / PI
+  DEG_TO_RAD           : PI / 180
+  random               : random
+  rand                 : rand
+  clamp                : clamp
+  snap                 : snap
+  wrapToCircle         : wrapToCircle
+  normalizeVector      : normalizeVector
+  normalizeCoordinates : normalizeCoordinates
+  linearInterpolate    : linearInterpolate
+  sample               : sample
+  centroidOfSegments   : centroidOfSegments
+  centroidOfRectangle  : centroidOfRectangle
+  distance             : distance
+  magnitude            : magnitude
+  radiansDiff          : radiansDiff
