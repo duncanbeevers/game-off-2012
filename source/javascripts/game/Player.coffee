@@ -95,7 +95,7 @@ class @Player extends FW.ParticleGenerator
   isParticleCullable: (particle) ->
     particle.alpha <= 0.02
 
-  setThrustAngle: (angle) ->
+  setThrustReticleAngle: (angle) ->
     @thrustReticle.rotation = angle * FW.Math.RAD_TO_DEG
 
   setGoalAngle: (angle) ->

@@ -338,7 +338,7 @@ playerReticleTrackMouse = (player, harness) ->
   targetY = player.y - harness.y
 
   angleToMouse = Math.atan2(targetY, targetX)
-  player.setThrustAngle(angleToMouse)
+  player.setThrustReticleAngle(angleToMouse)
   player.thrustTarget = [ targetX, targetY ]
 
 playerAccelerateTowardsTarget = (player) ->
