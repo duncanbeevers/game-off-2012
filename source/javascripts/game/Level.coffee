@@ -6,6 +6,11 @@ settings =
   playerPositionEase : 3
   playerRotationEase : 2
   timerTextEase      : 4
+  motion:
+    amplification: 7
+    clamp: 0.5
+
+# FW.dat.GUI.addSettings(settings)
 
 maxViewportMeters = 4
 
@@ -346,12 +351,12 @@ playerAccelerateTowardsTarget = (player) ->
   body = player.fixture.GetBody()
 
   # Clear existing forces, then accelerate towards the target
-  [ thrustX, thrustY ] = FW.Math.normalizeVector(player.thrustTarget)
-  forceVectorScalar = -4 * body.GetMass()
-  forceVector = new Box2D.Common.Math.b2Vec2(thrustX * forceVectorScalar, thrustY * forceVectorScalar)
-  body.ClearForces()
-  body.m_angularVelocity /= settings.playerRotationEase
-  body.ApplyForce(forceVector, body.GetWorldCenter())
+  [ thrustX, thrustY ] = player.thrustTarget
+  length = FW.Math.clamp(FW.Math.magnitude(thrustX, thrustY), 0, settings.motion.clamp) * settings.motion.amplification
+  [ forceVectorX, forceVectorY ] = FW.Math.normalizeCoordinates(thrustX, thrustY, -length)
+
+  forceVector = new Box2D.Common.Math.b2Vec2(forceVectorX, forceVectorY)
+  body.SetLinearVelocity(forceVector)
 
 playerReticleTrackGoal = (player, goal) ->
   # Align the goal reticle graphic towards the goal
