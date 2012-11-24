@@ -211,7 +211,8 @@ class @Level extends FW.ContainerProxy
     lampOilIndicator = @_lampOilIndicator
     if runSimulation
       @_everRanSimulation = true
-      @_world.Step(1 / createjs.Ticker.getFPS(), 10, 10)
+      fps = createjs.Ticker.getFPS()
+      @_world.Step(1 / fps, 10, 10)
       lampOilIndicator._oilLevel = Math.max(0, lampOilIndicator._oilLevel - 1)
 
     player = @_player
