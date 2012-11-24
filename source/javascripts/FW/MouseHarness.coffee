@@ -74,7 +74,7 @@ FW.MouseHarness =
       # debugger
       originalOnClick && originalOnClick.call(@, event)
 
-    stage.onTick  = ->
+    stage.onTick = ->
       point = displayObject.globalToLocal(harness_x, harness_y)
       tracker.x = point.x
       tracker.y = point.y
