@@ -25,9 +25,10 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     profilePicker = @_profilePicker
 
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(screen) ]
-      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> profilePicker.selectPrevious() ]
-      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> profilePicker.selectNext() ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}",  -> onPressedEnter(screen) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", -> onPressedEscape(screen) ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",   -> profilePicker.selectPrevious() ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}",  -> profilePicker.selectNext() ]
     )
 
   onLeaveScene: ->
@@ -51,6 +52,9 @@ onPressedEnter = (screen) ->
     # Otherwise we're loading an existing profile
     profileData = profilePicker.getCurrentProfileData()
     screen.loadProfile(profileData)
+
+onPressedEscape = (screen) ->
+  # Something?
 
 setupProfilePicker = (screen) ->
   profilePicker = new ProfilePicker([], 0)

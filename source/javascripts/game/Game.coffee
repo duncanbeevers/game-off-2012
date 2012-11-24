@@ -48,7 +48,7 @@ class @Game
     level = new Level(@, @_hci, levelData)
 
     sceneManager.addScene("level", level)
-    sceneManager.gotoScene("level")
+    sceneManager.pushScene("level")
 
   pause: () ->
     @_bgm.pause()
@@ -61,6 +61,9 @@ class @Game
   loadProfile: (profileData) ->
     titleScreen = @_titleScreen
     titleScreen.loadProfile(profileData)
+    @_sceneManager.gotoScene("titleScreen")
+
+  returnToTitleScreen: ->
     @_sceneManager.gotoScene("titleScreen")
 
   setBgmTracks: (tracks) ->
