@@ -88,7 +88,7 @@ setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
     profileData = {
       name: profileName
-      created_at: FW.Date.Now()
+      created_at: FW.Time.now()
     }
     hci.saveProfile(profileName, profileData)
 
