@@ -25,7 +25,7 @@ class @ProfilePicker extends SliderPicker
     super(sliderElementsToAdd, currentIndex)
 
     # Set instance variables
-    @_profilesData = []
+    @_profilesData = profilesArrayData
 
   getCurrentProfileData: ->
     @_profilesData[@getCurrentIndex()]
