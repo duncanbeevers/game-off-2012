@@ -59,28 +59,17 @@ onPressedEscape = (screen) ->
   # Something?
 
 setupProfilePicker = (screen, profilesData) ->
-  profilesDataByCreatedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'created_at')
+  profilesDataByCreatedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'created_at', true)
   profilePicker = new ProfilePicker(profilesDataByCreatedAt, 0)
   profilePicker.addEventListener "tick", ->
-    profilesVisibleOnScreen = 3.5
+    profilesVisibleOnScreen = 2
 
     canvas = screen.getStage().canvas
-    profilePicker.scaleX = canvas.width / profilesVisibleOnScreen
+    profilePicker.scaleX = Math.min(canvas.width, canvas.height) / profilesVisibleOnScreen
     profilePicker.scaleY = profilePicker.scaleX
 
     profilePicker.x = canvas.width / 2
-    profilePicker.y = canvas.width / 20 + 150
-
-    profilePicker.addEventListener "tick", ->
-      profilesVisibleOnScreen = 1
-
-      canvas = screen.getStage().canvas
-      profilePicker.scaleX = canvas.width / profilesVisibleOnScreen
-      profilePicker.scaleY = profilePicker.scaleX
-
-      profilePicker.x = canvas.width / 2
-      profilePicker.y = canvas.width / 20 + 150
-
+    profilePicker.y = canvas.width / 20 + canvas.height / 10
 
   profilePicker
 
