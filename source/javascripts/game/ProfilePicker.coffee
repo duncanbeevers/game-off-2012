@@ -13,7 +13,7 @@ class @ProfilePicker extends SliderPicker
     super([ addNewProfileSliderElement ], currentIndex)
 
     # Set instance variables
-    @_profilesData = profilesData
+    @_profilesData = []
 
   getCurrentProfileData: ->
     @_profilesData[@getCurrentIndex()]
@@ -25,7 +25,7 @@ class @ProfilePicker extends SliderPicker
 
     @unshiftElement(sliderElement)
     @_currentIndex = 0
-    @_profilesData.unshift(profileData)
+    @_profilesData.unshift([ profileName, profileData])
 
 createProfileDisplayObject = (profilePicker, profileData) ->
   # Draw the preview image of the maze

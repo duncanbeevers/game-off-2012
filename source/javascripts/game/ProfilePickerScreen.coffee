@@ -34,8 +34,8 @@ class @ProfilePickerScreen extends FW.ContainerProxy
   onLeaveScene: ->
     @_hciSet.off()
 
-  loadProfile: (profileData) ->
-    @_game.loadProfile(profileData)
+  setProfileData: (profileName, profileData) ->
+    @_game.setProfileData(profileName, profileData)
 
 onPressedEnter = (screen) ->
   profilePicker      = screen._profilePicker
@@ -50,8 +50,8 @@ onPressedEnter = (screen) ->
     sceneManager.pushScene("newProfileInput")
   else
     # Otherwise we're loading an existing profile
-    profileData = profilePicker.getCurrentProfileData()
-    screen.loadProfile(profileData)
+    [ profileName, profileData ] = profilePicker.getCurrentProfileData()
+    screen.setProfileData(profileName, profileData)
 
 onPressedEscape = (screen) ->
   # Something?
@@ -73,6 +73,8 @@ setupProfilePicker = (screen) ->
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
     profileData = { name: profileName }
+    hci.saveProfile(profileName, profileData)
+
     profilePicker.unshiftNewProfile(profileName, profileData)
     sceneManager.popScene()
 

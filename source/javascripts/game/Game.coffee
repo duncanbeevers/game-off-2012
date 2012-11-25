@@ -58,9 +58,9 @@ class @Game
     @_bgm.resume()
     createjs.Ticker.setPaused(false)
 
-  loadProfile: (profileData) ->
+  setProfileData: (profileName, profileData) ->
     titleScreen = @_titleScreen
-    titleScreen.loadProfile(profileData)
+    titleScreen.setProfileData(profileName, profileData)
     @_sceneManager.gotoScene("titleScreen")
 
   returnToTitleScreen: ->

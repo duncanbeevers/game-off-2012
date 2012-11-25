@@ -29,11 +29,9 @@ class @TitleScreen extends FW.ContainerProxy
   onLeaveScene: ->
     @_hciSet.off()
 
-  loadProfile: (profileData) ->
-    console.log "loaded profile: %o", profileData
+  setProfileData: (profileName, profileData) ->
     titleBox = @_titleBox
-    titleBox.setTitle(profileData.name)
-
+    titleBox.setTitle(profileName)
 
 setupLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0

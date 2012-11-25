@@ -1,3 +1,7 @@
+window = @
+localStorage = window.localStorage
+localStorageProfilesKey = "mazeoid:profiles"
+
 # Generate an HCI instance bound to DOM events by jQuery
 $.FW_HCI = ->
   hci = new FW.HCI.HCI()
@@ -13,9 +17,34 @@ $.FW_HCI = ->
   $document = $(document)
   $document.on "visibilitychange",       onVisibilityChange
   $document.on "webkitvisibilitychange", onVisibilityChange
-  $document.on "keydown", (event) -> hci.triggerKeyDown(event.keyCode)
-  $document.on "keyup",   (event) -> hci.triggerKeyUp(event.keyCode)
+
+  $document.on "keydown", (event) ->
+    keyCode = event.keyCode
+
+    hci.triggerKeyDown(event.keyCode)
+    if keyCode != 91
+      event.preventDefault()
+
+  $document.on "keyup",   (event) ->
+    keyCode = event.keyCode
+
+    hci.triggerKeyUp(event.keyCode)
+    if keyCode != 91
+      event.preventDefault()
 
   $document.on "touchmove", (event) -> event.preventDefault()
 
-  hci
+  hci.saveProfile = (profileName, profileData) ->
+    # Get the current profiles
+    profilesData = getProfileData()
+    profilesData[profileName] = profileData
+    localStorage.setItem(localStorageProfilesKey, JSON.stringify(profilesData))
+
+  return hci
+
+getProfileData = () ->
+  try
+    JSON.parse(localStorage.getItem(localStorageProfilesKey)) || {}
+  catch _
+    {}
+
