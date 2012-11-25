@@ -71,6 +71,17 @@ setupProfilePicker = (screen, profilesData) ->
     profilePicker.x = canvas.width / 2
     profilePicker.y = canvas.width / 20 + 150
 
+    profilePicker.addEventListener "tick", ->
+      profilesVisibleOnScreen = 1
+
+      canvas = screen.getStage().canvas
+      profilePicker.scaleX = canvas.width / profilesVisibleOnScreen
+      profilePicker.scaleY = profilePicker.scaleX
+
+      profilePicker.x = canvas.width / 2
+      profilePicker.y = canvas.width / 20 + 150
+
+
   profilePicker
 
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
