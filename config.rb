@@ -81,6 +81,7 @@ configure :build do
 end
 
 helpers do
+  # Generate the manifest of files for the preloader to load
   def assets_manifest_json
     assets = nil
     Dir.chdir("source") do
@@ -101,6 +102,8 @@ helpers do
     manifest_entries.to_json
   end
 
+  # Maze generator specific dropdown
+  # Move this out of generate config helpers
   def substrate_images
     Dir.chdir("source") do
       allnames = Dir.glob("images/substrates/**/*")
