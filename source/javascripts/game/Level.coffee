@@ -36,7 +36,7 @@ setupLampOilIndicator = ->
   container
 
 class @Level extends FW.ContainerProxy
-  constructor: (game, hci, mazeData) ->
+  constructor: (game, hci, mazeData, onMazeSolved) ->
     super()
 
     pauseMenu = new PauseMenu(game, hci)
@@ -65,6 +65,7 @@ class @Level extends FW.ContainerProxy
 
     @_game             = game
     @_hci              = hci
+    @_onMazeSolved     = onMazeSolved
     @_mazeContainer    = mazeContainer
     @_player           = player
     @_goal             = goal
