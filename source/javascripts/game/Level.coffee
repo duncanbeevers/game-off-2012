@@ -91,6 +91,8 @@ class @Level extends FW.ContainerProxy
     @_world = world
 
     world.SetContactListener(contactListener)
+    # TODO: Make a directory, dynamically-loaded plinkplonk sounds
+    # TODO: Differentiate sounds based on impact severity, plinks and PLONKS
     contactListener.registerContactListener "Wall", "Player", ->
       src = FW.Math.sample([
         "sounds/plink1.mp3"
