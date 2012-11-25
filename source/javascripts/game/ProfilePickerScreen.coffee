@@ -86,7 +86,10 @@ setupProfilePicker = (screen, profilesData) ->
 
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
-    profileData = { name: profileName }
+    profileData = {
+      name: profileName
+      created_at: FW.Date.Now()
+    }
     hci.saveProfile(profileName, profileData)
 
     profilePicker.unshiftNewProfile(profileName, profileData)
