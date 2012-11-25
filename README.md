@@ -28,6 +28,7 @@ TODO
     * bgm   |=======---|
   * Favicon
   * Launch screen / popup with good game dimensions
+  * Make add new player plus symbol traced path
 
 Gameplay Ideas
 --
