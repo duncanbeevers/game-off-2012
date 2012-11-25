@@ -34,6 +34,11 @@ formatPart = (n) ->
   else
     i
 
+# Monotonically increasing time source
+# No units are specified or guaranteed
+now = -> +(new Date())
+
 FW.Time =
+  now: now
   chop: chop
   clockFormat: clockFormat
