@@ -132,6 +132,7 @@ class @Level extends FW.ContainerProxy
       world.SetDebugDraw(debugDraw)
 
     contactListener.registerContactListener "Player", "Goal", ->
+      level._onMazeSolved()
       level.solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
