@@ -148,11 +148,14 @@ class @Level extends FW.ContainerProxy
     releaseLamp = ->
       level.releaseLamp()
 
+    onUtilityKey = ->
+      onActivatedPauseMenu(level)
+
     @_hciSet = hci.on(
       [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
       [ "keyUp:#{FW.HCI.KeyMap.SPACE}",   endBacktrack ]
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", releaseLamp ]
-      [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", -> onActivatedPauseMenu(level) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", onUtilityKey ]
+      [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", onUtilityKey ]
     )
     @_harness = FW.MouseHarness.outfit(@_mazeContainer)
 
