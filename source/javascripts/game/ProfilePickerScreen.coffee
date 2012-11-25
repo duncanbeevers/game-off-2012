@@ -57,7 +57,7 @@ onPressedEscape = (screen) ->
   # Something?
 
 setupProfilePicker = (screen) ->
-  profilePicker = new ProfilePicker([], 0)
+  profilePicker = new ProfilePicker(0)
   profilePicker.addEventListener "tick", ->
     profilesVisibleOnScreen = 3.5
 
@@ -72,7 +72,8 @@ setupProfilePicker = (screen) ->
 
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
-    profilePicker.unshiftNewProfile(profileName)
+    profileData = { name: profileName }
+    profilePicker.unshiftNewProfile(profileName, profileData)
     sceneManager.popScene()
 
     inputOverlay.setValue("")

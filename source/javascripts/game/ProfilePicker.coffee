@@ -4,18 +4,13 @@ settings =
 # FW.dat.GUI.addSettings(settings)
 
 class @ProfilePicker extends SliderPicker
-  constructor: (profilesData, currentIndex) ->
-    sliderElements = for profileData, i in profilesData
-      text: profileData.name
-      displayObject: createProfileDisplayObject(@, profileData, i)
-
+  constructor: (currentIndex) ->
     addNewProfileDisplayObject = createAddNewProfileDisplayObject()
-    sliderElements.push(
+    addNewProfileSliderElement =
       text: "Begin New Game"
       displayObject: addNewProfileDisplayObject
-    )
 
-    super(sliderElements, currentIndex)
+    super([ addNewProfileSliderElement ], currentIndex)
 
     # Set instance variables
     @_profilesData = profilesData
@@ -23,9 +18,7 @@ class @ProfilePicker extends SliderPicker
   getCurrentProfileData: ->
     @_profilesData[@getCurrentIndex()]
 
-  unshiftNewProfile: (profileName) ->
-    profileData = { name: profileName }
-
+  unshiftNewProfile: (profileName, profileData) ->
     sliderElement =
       text: profileName
       displayObject: createProfileDisplayObject(@, profileData)
