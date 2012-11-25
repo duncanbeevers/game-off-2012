@@ -26,6 +26,8 @@ TODO
     * calibrate your input (keyboard, kinect, mouse, touch, gamepad, ...)
     * sound |====------|
     * bgm   |=======---|
+  * Favicon
+  * Launch screen / popup with good game dimensions
 
 Gameplay Ideas
 --
