@@ -12,7 +12,7 @@ settings =
 
 # FW.dat.GUI.addSettings(settings)
 
-maxViewportMeters = 4
+maxViewportMeters = 6
 
 setupTimerText = ->
   timerText = TextFactory.create("", "#B500FF")
