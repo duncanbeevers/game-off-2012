@@ -3,7 +3,7 @@ FW = @FW ||= {}
 FW.CreateJS ||= {}
 
 drawSegments = (graphics, color, segments) ->
-  graphics.setStrokeStyle(0.2, 2, 0, 15)
+  graphics.setStrokeStyle(0.2, 1, 0)
   graphics.beginStroke(color)
 
   minX = Infinity
