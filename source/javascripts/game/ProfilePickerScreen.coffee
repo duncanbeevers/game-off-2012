@@ -3,10 +3,11 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     super()
 
     screen = @
+    profilesData = hci.loadProfilesData()
 
     sceneManager = game.getSceneManager()
     titleBox = new TitleBox()
-    profilesData = hci.getProfilesData()
+    profilesData = hci.loadProfilesData()
     profilePicker = setupProfilePicker(screen, profilesData)
     addNewProfileInput = setupAddNewProfileInput(hci, sceneManager, profilePicker)
 
@@ -57,8 +58,9 @@ onPressedEnter = (screen) ->
 onPressedEscape = (screen) ->
   # Something?
 
-setupProfilePicker = (screen) ->
-  profilePicker = new ProfilePicker(0)
+setupProfilePicker = (screen, profilesData) ->
+  profilesDataByCreatedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'created_at')
+  profilePicker = new ProfilePicker(profilesDataByCreatedAt, 0)
   profilePicker.addEventListener "tick", ->
     profilesVisibleOnScreen = 3.5
 
