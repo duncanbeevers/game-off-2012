@@ -1,4 +1,5 @@
 //= require require_shim
+//= require FW/Util
 //= require FW/Math
 //= require FW/Time
 //= require FW/SortedArray

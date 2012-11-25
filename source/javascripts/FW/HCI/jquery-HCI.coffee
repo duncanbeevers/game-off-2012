@@ -36,13 +36,22 @@ $.FW_HCI = ->
 
   hci.saveProfile = (profileName, profileData) ->
     # Get the current profiles
-    profilesData = getProfileData()
+    profilesData = getProfilesData()
     profilesData[profileName] = profileData
     localStorage.setItem(localStorageProfilesKey, JSON.stringify(profilesData))
 
+  # hci.loadProfile = (profileName, onLoaded) ->
+  #   profileData = getProfilesData()[profileName]
+  #   setTimeout -> onLoaded(profileName, profileData)
+
+  #   # We want people to use the onLoaded callback, so don't return anything useful
+  #   return undefined
+
+  hci.getProfilesData = getProfilesData
+
   return hci
 
-getProfileData = () ->
+getProfilesData = () ->
   try
     JSON.parse(localStorage.getItem(localStorageProfilesKey)) || {}
   catch _

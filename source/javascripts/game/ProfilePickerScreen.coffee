@@ -6,7 +6,8 @@ class @ProfilePickerScreen extends FW.ContainerProxy
 
     sceneManager = game.getSceneManager()
     titleBox = new TitleBox()
-    profilePicker = setupProfilePicker(screen)
+    profilesData = hci.getProfilesData()
+    profilePicker = setupProfilePicker(screen, profilesData)
     addNewProfileInput = setupAddNewProfileInput(hci, sceneManager, profilePicker)
 
     screen.addChild(profilePicker)
