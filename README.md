@@ -18,10 +18,11 @@ Thanks
 
 TODO
 =
-  * Isolate keystroke mappings between scenes
+  * Save / Load profile
+  * Track completion times
+  * Stop timing during pause screen
   * Pause / unpause
   * Pause menu
-    * return to title screen
     * calibrate your input (keyboard, kinect, mouse, touch, gamepad, ...)
     * sound |====------|
     * bgm   |=======---|
