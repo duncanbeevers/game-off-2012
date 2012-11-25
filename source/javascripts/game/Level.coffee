@@ -479,18 +479,34 @@ createPhysicsWalls = (world, segments) ->
   fixtureDef.friction    = 0.1
   fixtureDef.restitution = 0.2
 
-  bodyDef = new Box2D.Dynamics.b2BodyDef()
-
-  bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
-  fixtureDef.shape = new Box2D.Collision.Shapes.b2PolygonShape()
   wallThickness = 0.1
+
+  bodyDef      = new Box2D.Dynamics.b2BodyDef()
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_staticBody
+  rectangle    = new Box2D.Collision.Shapes.b2PolygonShape()
+  circle       = new Box2D.Collision.Shapes.b2CircleShape(wallThickness)
+
   for [x1, y1, x2, y2] in segments
     length = FW.Math.distance(x1, y1, x2, y2)
-    fixtureDef.shape.SetAsBox(length / 2, wallThickness)
+    rectangle.SetAsBox(length / 2, wallThickness)
+    fixtureDef.shape = rectangle
+    # Center rectangle
     bodyDef.position.Set((x2 - x1) / 2 + x1, (y2 - y1) / 2 + y1)
     bodyDef.angle = Math.atan2(y2 - y1, x2 - x1)
     fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
     fixture.SetUserData name: "Wall"
+
+    # Round caps
+    bodyDef.position.Set(x1, y1)
+    bodyDef.angle = 0
+    fixtureDef.shape = circle
+    fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+    fixture.SetUserData name: "Wall"
+
+    bodyDef.position.Set(x2, y2)
+    fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+    fixture.SetUserData name: "Wall"
+
 
 createPhysicsLamp = (world, lamp, player) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
