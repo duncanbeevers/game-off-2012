@@ -1,6 +1,6 @@
 FW = @FW ||= {}
 
-mapToArraySortedByAttribute = (map, attribute) ->
+mapToArraySortedByAttribute = (map, attribute, reverse) ->
   # Convert map to array
   unsortedResults = for key, value of map
     [ key, value ]
@@ -12,11 +12,16 @@ mapToArraySortedByAttribute = (map, attribute) ->
     valA = a[attribute]
     valB = b[attribute]
 
+    if reverse
+      reverseScalar = -1
+    else
+      reverseScalar = 1
+
     # TODO: Generalize
     if valA < valB
-      -1
+      -1 * reverseScalar
     else if valA > valB
-      1
+      1 * reverseScalar
     else
       0
 
