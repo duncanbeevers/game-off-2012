@@ -122,4 +122,9 @@ helpers do
       end
     end
   end
+
+  def favicon_link_tag(src)
+    tag(:link, rel: 'icon', type: 'image/png', href: image_path(File.join('favicon', src)))
+  end
+
 end
