@@ -72,7 +72,7 @@ class @Level extends FW.ContainerProxy
     @_countDown        = countDown
     @_timerText        = timerText
     @_lampOilIndicator = lampOilIndicator
-
+    @_wallImpactsCount = 0
 
   onReady: ->
     # @_countDown.begin()
@@ -108,6 +108,7 @@ class @Level extends FW.ContainerProxy
         "sounds/plonk5.mp3"
       ])
       createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
+      level.incrementWallImpacts()
 
     debugCanvas = document.getElementById("debugCanvas")
     if debugCanvas
@@ -255,6 +256,9 @@ class @Level extends FW.ContainerProxy
       updateTimer(@_timerText, @)
 
     @_world.DrawDebugData()
+
+  incrementWallImpacts: ->
+    @_wallImpactsCount += 1
 
   releaseLamp: () ->
     mazeContainer = @_mazeContainer
