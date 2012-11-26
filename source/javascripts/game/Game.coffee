@@ -42,10 +42,21 @@ class @Game
     updater = tick: -> stage.update()
     createjs.Ticker.addListener(updater)
 
-  beginLevel: (levelData) ->
+  beginLevel: (levelData, profileName, profileData) ->
     sceneManager = @_sceneManager
+    hci = @_hci
 
-    level = new Level(@, @_hci, levelData)
+    level = new Level @, hci, levelData, (completionTime, wallImpactsCount) ->
+      profileLevelData = profileData[levelData.name] ||= {}
+      profileLevelData.lastCompletionTime = completionTime
+      previousBestCompletionTime = profileLevelData.bestCompletionTime || Infinity
+      profileLevelData.bestCompletionTime = Math.min(previousBestCompletionTime, completionTime)
+
+      profileLevelData.lastWallImpactsCount = wallImpactsCount
+      previousBestWallImpactsCount = profileLevelData.bestWallImpactsCount || Infinity
+      profileLevelData.bestWallImpactsCount = Math.min(previousBestWallImpactsCount, wallImpactsCount)
+
+      hci.saveProfile(profileName, profileData)
 
     sceneManager.addScene("level", level)
     sceneManager.pushScene("level")

@@ -36,7 +36,7 @@ setupLampOilIndicator = ->
   container
 
 class @Level extends FW.ContainerProxy
-  constructor: (game, hci, mazeData) ->
+  constructor: (game, hci, mazeData, onMazeSolved) ->
     super()
 
     pauseMenu = new PauseMenu(game, hci)
@@ -65,6 +65,7 @@ class @Level extends FW.ContainerProxy
 
     @_game             = game
     @_hci              = hci
+    @_onMazeSolved     = onMazeSolved
     @_mazeContainer    = mazeContainer
     @_player           = player
     @_goal             = goal
@@ -107,7 +108,7 @@ class @Level extends FW.ContainerProxy
         "sounds/plonk5.mp3"
       ])
       createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
-      level.incrementWallImpacts()
+      level.incrementWallImpactsCount()
 
     debugCanvas = document.getElementById("debugCanvas")
     if debugCanvas
@@ -133,8 +134,9 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Goal", ->
       completionTime = level.completionTime ||= createjs.Ticker.getTime(true)
+      wallImpactsCount = level._wallImpactsCount
 
-      level._onMazeSolved?(completionTime)
+      level._onMazeSolved(completionTime, wallImpactsCount)
       level.solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
@@ -258,7 +260,7 @@ class @Level extends FW.ContainerProxy
 
     @_world.DrawDebugData()
 
-  incrementWallImpacts: ->
+  incrementWallImpactsCount: ->
     @_wallImpactsCount += 1
 
   releaseLamp: () ->
@@ -322,7 +324,7 @@ levelTrackPlayer = (level, player) ->
     targetRegY = 0
   else
     velocity = body.GetLinearVelocity()
-    velocityBoost = FW.Math.magnitude(velocity.x, velocity.y) * 6
+    velocityBoost = FW.Math.magnitude(velocity.x, velocity.y) / Math.min(canvasHeight, canvasWidth) * 500
     targetScale = pixelsPerMeter - velocityBoost
     targetRegX = player.x
     targetRegY = player.y

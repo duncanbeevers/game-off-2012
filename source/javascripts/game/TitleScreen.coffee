@@ -19,9 +19,10 @@ class @TitleScreen extends FW.ContainerProxy
   onEnterScene: ->
     game = @_game
     levelPicker = @_levelPicker
+    [ profileName, profileData ] = @_profile
 
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData()) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData(), profileName, profileData) ]
       [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> levelPicker.selectPrevious() ]
       [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> levelPicker.selectNext() ]
     )
@@ -30,6 +31,7 @@ class @TitleScreen extends FW.ContainerProxy
     @_hciSet.off()
 
   setProfileData: (profileName, profileData) ->
+    @_profile = [ profileName, profileData ]
     titleBox = @_titleBox
     titleBox.setTitle(profileName)
 
