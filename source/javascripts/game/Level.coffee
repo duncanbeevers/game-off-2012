@@ -36,7 +36,7 @@ setupLampOilIndicator = ->
   container
 
 class @Level extends FW.ContainerProxy
-  constructor: (game, hci, mazeData, onMazeSolved) ->
+  constructor: (game, hci, mazeData) ->
     super()
 
     pauseMenu = new PauseMenu(game, hci)
@@ -65,7 +65,6 @@ class @Level extends FW.ContainerProxy
 
     @_game             = game
     @_hci              = hci
-    @_onMazeSolved     = onMazeSolved
     @_mazeContainer    = mazeContainer
     @_player           = player
     @_goal             = goal
@@ -133,7 +132,9 @@ class @Level extends FW.ContainerProxy
       world.SetDebugDraw(debugDraw)
 
     contactListener.registerContactListener "Player", "Goal", ->
-      level._onMazeSolved()
+      completionTime = level.completionTime ||= createjs.Ticker.getTime(true)
+
+      level._onMazeSolved?(completionTime)
       level.solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
