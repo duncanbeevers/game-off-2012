@@ -1,8 +1,3 @@
-instance = undefined
-
-getSingletonInstance = ->
-  instance ||= new dat.GUI()
-
 FW = @FW ||= {}
 
 addOne = (instance, receiver, property) ->
@@ -22,10 +17,11 @@ addSettings = (instance, receiver) ->
 
 
 gui =
-  add: (receiver, property) ->
-    addOne(getSingletonInstance(), receiver, property)
+  # add: (receiver, property) ->
+  #   addOne(getSingletonInstance(), receiver, property)
 
   addSettings: (receiver) ->
-    addSettings(getSingletonInstance(), receiver)
+    gui = new dat.GUI()
+    addSettings(gui, receiver)
 
 FW.dat = GUI: gui
