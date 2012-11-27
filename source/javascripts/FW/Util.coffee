@@ -25,5 +25,20 @@ mapToArraySortedByAttribute = (map, attribute, reverse) ->
     else
       0
 
+indexOf = (collection, comparator) ->
+  length = collection.length
+  result = -1
+
+  i = 0
+  while i < length
+    if comparator(collection[i])
+      # Found it, break
+      result = i
+      i = length
+    i += 1
+
+  result
+
 FW.Util =
   mapToArraySortedByAttribute: mapToArraySortedByAttribute
+  indexOf: indexOf
