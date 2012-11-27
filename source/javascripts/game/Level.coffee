@@ -6,7 +6,7 @@ settings =
   playerPositionEase : 3
   playerRotationEase : 2
   timerTextEase      : 4
-  solvedMazeRotationDelta: 0.0035
+  solvedMazeRotationDelta: 0.01
   solvedMazeRotationEase: 1
   motion:
     amplification: 7
@@ -253,7 +253,7 @@ class @Level extends FW.ContainerProxy
       harness = @_harness()
       playerReticleTrackMouse(player, harness)
 
-    levelTrackPlayer(@, player)
+    levelTrackPlayer(@, player, harness)
     playerReticleTrackGoal(player, goal)
 
     if runSimulation
@@ -297,7 +297,7 @@ playerTrackFixture = (player) ->
   player.y += (position.y - player.y) / settings.playerPositionEase
 
 
-levelTrackPlayer = (level, player) ->
+levelTrackPlayer = (level, player, harness) ->
   solved = level._solved
   mazeContainer = level._mazeContainer
   canvas = mazeContainer.getStage().canvas
@@ -317,7 +317,9 @@ levelTrackPlayer = (level, player) ->
 
   if level._solved
     rotationEase = settings.solvedMazeRotationEase
-    targetRotation = currentRotation + settings.solvedMazeRotationDelta
+    scalar = (harness.stageX - halfCanvasWidth) / halfCanvasWidth
+
+    targetRotation = currentRotation + settings.solvedMazeRotationDelta * scalar
   else
     rotationEase = settings.mazeRotationEase
     targetRotation = Math.atan2(position.y, position.x)
