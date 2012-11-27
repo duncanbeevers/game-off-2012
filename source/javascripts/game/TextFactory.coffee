@@ -7,3 +7,9 @@
     t.color        = color || "#FFFFFF"
 
     t
+
+  pluralize: (word, count) ->
+    if count == 1
+      word
+    else
+      "#{word}s"
