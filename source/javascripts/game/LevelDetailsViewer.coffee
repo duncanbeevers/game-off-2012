@@ -37,12 +37,9 @@ class @LevelDetailsViewer extends FW.ContainerProxy
       profileLevelsData        = profileData.levels || {}
       profileLevelData         = profileLevelsData[levelData.name]
       if profileLevelData
-        bestCompletionTime            = profileLevelData.bestCompletionTime
-        bestWallImpactsCount          = profileLevelData.bestWallImpactsCount
-        if bestWallImpactsCount == 1
-          hitText = "hit"
-        else
-          hitText = "hits"
+        bestCompletionTime   = profileLevelData.bestCompletionTime
+        bestWallImpactsCount = profileLevelData.bestWallImpactsCount
+        hitText              = TextFactory.pluralize("hit", bestWallImpactsCount)
 
         bestText.text                 = "Best"
         bestCompletionTimeText.text   = FW.Time.clockFormat(bestCompletionTime)
