@@ -309,7 +309,10 @@ levelTrackPlayer = (level, player) ->
   currentRotation = FW.Math.wrapToCircle(mazeContainer.rotation * FW.Math.DEG_TO_RAD)
 
   diff = FW.Math.radiansDiff(currentRotation, targetRotation)
-  diff /= settings.mazeRotationEase
+  if !level._everRotatedMaze
+    level._everRotatedMaze = true
+  else
+    diff /= settings.mazeRotationEase
 
   if !debugDraw
     mazeContainer.rotation += diff * FW.Math.RAD_TO_DEG
