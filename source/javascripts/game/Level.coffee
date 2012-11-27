@@ -144,6 +144,7 @@ class @Level extends FW.ContainerProxy
 
         # Spawn an impact particle
 
+
     debugCanvas = document.getElementById("debugCanvas")
     if debugCanvas
       b2DebugDraw = Box2D.Dynamics.b2DebugDraw
@@ -192,7 +193,10 @@ class @Level extends FW.ContainerProxy
       level.releaseLamp()
 
     onUtilityKey = ->
-      onActivatedPauseMenu(level)
+      if level._solved
+        level._game.getSceneManager().popScene()
+      else
+        onActivatedPauseMenu(level)
 
     @_hciSet = hci.on(
       [ "keyDown:#{FW.HCI.KeyMap.SPACE}", beginBacktrack ]
