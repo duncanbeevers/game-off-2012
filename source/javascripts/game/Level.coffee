@@ -6,6 +6,8 @@ settings =
   playerPositionEase : 3
   playerRotationEase : 2
   timerTextEase      : 4
+  solvedMazeRotationDelta: 0.0035
+  solvedMazeRotationEase: 1
   motion:
     amplification: 7
     clamp: 0.5
@@ -49,10 +51,15 @@ class @Level extends FW.ContainerProxy
     mazeContainer.addChild(player)
     mazeContainer.addChild(goal)
 
-    countDown = new CountDown()
+    level = @
+
+    countDown = new CountDown ->
+      level._inProgress = true
+
     timerText = setupTimerText()
     lampOilIndicator = setupLampOilIndicator()
 
+    @_inProgress = false
     @setupPhysics()
 
     levelContainer.addChild(mazeContainer)
@@ -136,8 +143,9 @@ class @Level extends FW.ContainerProxy
       completionTime = level.completionTime ||= createjs.Ticker.getTime(true)
       wallImpactsCount = level._wallImpactsCount
 
+      level._inProgress = false
       level._onMazeSolved(completionTime, wallImpactsCount)
-      level.solved = true
+      level._solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
       level.completionTime ||= createjs.Ticker.getTime(true)
@@ -223,7 +231,7 @@ class @Level extends FW.ContainerProxy
     stage = @getStage()
     return unless stage
 
-    runSimulation = !@solved && @_countDown.getCompleted() && !@_backtracking
+    runSimulation = @_inProgress && !@_backtracking
     lampOilIndicator = @_lampOilIndicator
     if runSimulation
       @_everRanSimulation = true
@@ -290,7 +298,7 @@ playerTrackFixture = (player) ->
 
 
 levelTrackPlayer = (level, player) ->
-  solved = level.solved
+  solved = level._solved
   mazeContainer = level._mazeContainer
   canvas = mazeContainer.getStage().canvas
   canvasWidth = canvas.width
@@ -305,14 +313,22 @@ levelTrackPlayer = (level, player) ->
   body = player.fixture.GetBody()
   position = body.GetPosition()
 
-  targetRotation = Math.atan2(position.y, position.x)
   currentRotation = FW.Math.wrapToCircle(mazeContainer.rotation * FW.Math.DEG_TO_RAD)
 
-  diff = FW.Math.radiansDiff(currentRotation, targetRotation)
-  if !level._everRotatedMaze
-    level._everRotatedMaze = true
+  if level._solved
+    rotationEase = settings.solvedMazeRotationEase
+    targetRotation = currentRotation + settings.solvedMazeRotationDelta
   else
-    diff /= settings.mazeRotationEase
+    rotationEase = settings.mazeRotationEase
+    targetRotation = Math.atan2(position.y, position.x)
+
+  diff = FW.Math.radiansDiff(currentRotation, targetRotation)
+  if !level._everTrackedPlayer
+    # Initial rotation doesn't split different,
+    # camera immediately orients to player position
+    level._everTrackedPlayer = true
+  else
+    diff /= rotationEase
 
   if !debugDraw
     mazeContainer.rotation += diff * FW.Math.RAD_TO_DEG
@@ -444,8 +460,9 @@ updateTimer = (timer, level) ->
   elapsed = (level.completionTime || now) - level.startTime
   canvas = timer.getStage().canvas
 
+  solved = level._solved
   timer.text = FW.Time.clockFormat(elapsed)
-  if level.solved
+  if solved
     targetX = canvas.width / 2
     targetY = canvas.height / 2 - 25
     targetScale = canvas.width / 210
