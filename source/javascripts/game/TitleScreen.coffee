@@ -48,12 +48,15 @@ class @TitleScreen extends FW.ContainerProxy
     @_hciSet.off()
 
   setProfileData: (profileName, profileData) ->
-    @_profile = [ profileName, profileData ]
-    titleBox = @_titleBox
-    levelDetailsViewer = @_levelDetailsViewer
+    profileData.lastLoadedAt = FW.Time.now()
+    @_profile                = [ profileName, profileData ]
+    titleBox                 = @_titleBox
+    levelDetailsViewer       = @_levelDetailsViewer
+    hci                      = @_hci
 
     titleBox.setTitle(profileName)
     levelDetailsViewer.setProfileData(profileData)
+    hci.saveProfile(profileName, profileData)
 
   onTick: ->
     stage = @getStage()

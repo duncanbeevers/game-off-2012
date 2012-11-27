@@ -9,8 +9,8 @@ mapToArraySortedByAttribute = (map, attribute, reverse) ->
   unsortedResults.sort (a, b) ->
     [ keyA, valueA ] = a
     [ keyB, valueB ] = b
-    valA = a[attribute]
-    valB = b[attribute]
+    valA = valueA[attribute]
+    valB = valueB[attribute]
 
     if reverse
       reverseScalar = -1

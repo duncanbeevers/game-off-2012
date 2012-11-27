@@ -61,8 +61,16 @@ onPressedEscape = (screen) ->
   # Something?
 
 setupProfilePicker = (screen, profilesData) ->
-  profilesDataByCreatedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'created_at', true)
-  profilePicker = new ProfilePicker(profilesDataByCreatedAt, 0)
+  profilesDataByCreatedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'createdAt', true)
+  profilesDataByLastLoadedAt = FW.Util.mapToArraySortedByAttribute(profilesData, 'lastLoadedAt', true)
+  mostRecentlyLoaded = profilesDataByLastLoadedAt[0]
+
+  initialIndex = FW.Util.indexOf profilesDataByCreatedAt, (other) ->
+    other[0] == mostRecentlyLoaded[0]
+  if initialIndex == -1
+    initialIndex = 0
+
+  profilePicker = new ProfilePicker(profilesDataByCreatedAt, initialIndex)
   profilePicker.addEventListener "tick", ->
     profilesVisibleOnScreen = 2
 
@@ -79,7 +87,8 @@ setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
     profileData = {
       name: profileName
-      created_at: FW.Time.now()
+      createdAt: FW.Time.now()
+      lastLoadedAt: FW.Time.now()
     }
     hci.saveProfile(profileName, profileData)
 
