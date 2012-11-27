@@ -99,23 +99,39 @@ class @Level extends FW.ContainerProxy
     @_world = world
 
     world.SetContactListener(contactListener)
+
+    maxImpactsPerWallPerSecond = 3
+    minImpactInterval = 1000 / maxImpactsPerWallPerSecond
+
     # TODO: Make a directory, dynamically-loaded plinkplonk sounds
     # TODO: Differentiate sounds based on impact severity, plinks and PLONKS
-    contactListener.registerContactListener "Wall", "Player", ->
-      src = FW.Math.sample([
-        "sounds/plink1.mp3"
-        "sounds/plink2.mp3"
-        "sounds/plink3.mp3"
-        "sounds/plink4.mp3"
-        "sounds/plink5.mp3"
-        "sounds/plonk1.mp3"
-        "sounds/plonk2.mp3"
-        "sounds/plonk3.mp3"
-        "sounds/plonk4.mp3"
-        "sounds/plonk5.mp3"
-      ])
-      createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
-      level.incrementWallImpactsCount()
+    contactListener.registerContactListener "Wall", "Player", (impact, wall, player) ->
+
+      # Throttle impact events
+      wallUserData = wall.GetUserData()
+      lastImpactedAt = wallUserData._lastImpactedAt || 0
+      now = FW.Time.now()
+
+      if now - lastImpactedAt > minImpactInterval
+        wallUserData._lastImpactedAt = now
+        level._wallImpactsCount += 1
+
+        # Play a sound
+        src = FW.Math.sample([
+          "sounds/plink1.mp3"
+          "sounds/plink2.mp3"
+          "sounds/plink3.mp3"
+          "sounds/plink4.mp3"
+          "sounds/plink5.mp3"
+          "sounds/plonk1.mp3"
+          "sounds/plonk2.mp3"
+          "sounds/plonk3.mp3"
+          "sounds/plonk4.mp3"
+          "sounds/plonk5.mp3"
+        ])
+        createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
+
+        # Spawn an impact particle
 
     debugCanvas = document.getElementById("debugCanvas")
     if debugCanvas
@@ -267,9 +283,6 @@ class @Level extends FW.ContainerProxy
       updateTimer(@_timerText, @)
 
     @_world.DrawDebugData()
-
-  incrementWallImpactsCount: ->
-    @_wallImpactsCount += 1
 
   releaseLamp: () ->
     mazeContainer = @_mazeContainer
