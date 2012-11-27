@@ -54,6 +54,8 @@ onPressedEnter = (screen) ->
     # Otherwise we're loading an existing profile
     [ profileName, profileData ] = profilePicker.getCurrentProfileData()
     screen.setProfileData(profileName, profileData)
+    sceneManager.pushScene("titleScreen")
+
 
 onPressedEscape = (screen) ->
   # Something?

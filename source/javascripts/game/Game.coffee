@@ -73,7 +73,6 @@ class @Game
   setProfileData: (profileName, profileData) ->
     titleScreen = @_titleScreen
     titleScreen.setProfileData(profileName, profileData)
-    @_sceneManager.gotoScene("titleScreen")
 
   returnToTitleScreen: ->
     @_sceneManager.gotoScene("titleScreen")

@@ -20,9 +20,10 @@ class @TitleScreen extends FW.ContainerProxy
     @_levelDetailsViewer = levelDetailsViewer
 
   onEnterScene: ->
-    game = @_game
-    levelPicker = @_levelPicker
+    game               = @_game
+    levelPicker        = @_levelPicker
     levelDetailsViewer = @_levelDetailsViewer
+    sceneManager       = game.getSceneManager()
 
     [ profileName, profileData ] = @_profile
 
@@ -36,6 +37,7 @@ class @TitleScreen extends FW.ContainerProxy
 
     @_hciSet = @_hci.on(
       [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData(), profileName, profileData) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", -> sceneManager.popScene() ]
       [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  selectPreviousLevel ]
       [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", selectNextLevel ]
     )
