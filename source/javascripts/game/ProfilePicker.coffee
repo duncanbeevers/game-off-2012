@@ -72,6 +72,8 @@ createProfileDisplayObject = (profilePicker, profileData) ->
   shape
 
 createAddNewProfileDisplayObject = ->
+  # TODO: Actually trace the plus symbol rather than draw
+  # overlapping rectangles
   shape = new createjs.Shape()
   graphics = shape.graphics
 
