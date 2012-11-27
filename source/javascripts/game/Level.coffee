@@ -8,18 +8,26 @@ settings =
   timerTextEase      : 4
   solvedMazeRotationDelta: 0.01
   solvedMazeRotationEase: 1
+  hud :
+    impactTextScalar: 26.5
+    textColor: "rgba(182,255,49,0.6)"
   motion:
     amplification: 7
     clamp: 0.5
 
-# FW.dat.GUI.addSettings(settings)
+FW.dat.GUI.addSettings(settings)
 
 maxViewportMeters = 6
 
 setupTimerText = ->
-  timerText = TextFactory.create("", "#B500FF")
+  timerText = TextFactory.create("", settings.hud.textColor)
 
   timerText
+
+setupImpactsCountText = ->
+  impactsCountText = TextFactory.create("", settings.hud.textColor)
+
+  impactsCountText
 
 setupLampOilIndicator = ->
   container = new createjs.Container()
@@ -56,7 +64,8 @@ class @Level extends FW.ContainerProxy
     countDown = new CountDown ->
       level._inProgress = true
 
-    timerText = setupTimerText()
+    timerText        = setupTimerText()
+    impactsCountText = setupImpactsCountText()
     lampOilIndicator = setupLampOilIndicator()
 
     @_inProgress = false
@@ -65,6 +74,7 @@ class @Level extends FW.ContainerProxy
     levelContainer.addChild(mazeContainer)
     levelContainer.addChild(countDown)
     levelContainer.addChild(timerText)
+    levelContainer.addChild(impactsCountText)
     levelContainer.addChild(lampOilIndicator)
 
     level = @
@@ -78,6 +88,7 @@ class @Level extends FW.ContainerProxy
     @_goal             = goal
     @_countDown        = countDown
     @_timerText        = timerText
+    @_impactsCountText = impactsCountText
     @_lampOilIndicator = lampOilIndicator
     @_wallImpactsCount = 0
 
@@ -280,7 +291,7 @@ class @Level extends FW.ContainerProxy
     lampOilIndicatorTrackStage(lampOilIndicator)
 
     if @_everRanSimulation
-      updateTimer(@_timerText, @)
+      updateTimer(@_timerText, @_impactsCountText, @)
 
     @_world.DrawDebugData()
 
@@ -468,7 +479,7 @@ computePixelsPerMeter = (level) ->
 
   Math.min(canvasWidth / maxViewportMeters, canvasHeight / maxViewportMeters)
 
-updateTimer = (timer, level) ->
+updateTimer = (timer, impactsCountText, level) ->
   now = createjs.Ticker.getTime(true)
   if !level.startTime
     level.startTime = now
@@ -477,9 +488,12 @@ updateTimer = (timer, level) ->
 
   solved = level._solved
   timer.text = FW.Time.clockFormat(elapsed)
+  impactsCount = level._wallImpactsCount
+  impactsCountText.text = impactsCount + " " + TextFactory.pluralize("hit", impactsCount)
+
   if solved
     targetX = canvas.width / 2
-    targetY = canvas.height / 2 - 25
+    targetY = canvas.height / 2 - (timer.scaleY * settings.hud.impactTextScalar / 2)
     targetScale = canvas.width / 210
   else
     targetX = canvas.width / 2
@@ -491,6 +505,11 @@ updateTimer = (timer, level) ->
   timer.y += (targetY - timer.y) / ease
   timer.scaleX += (targetScale - timer.scaleX) / ease
   timer.scaleY = timer.scaleX
+
+  impactsCountText.x += (targetX - impactsCountText.x) / ease
+  impactsCountText.y += ((targetY + timer.scaleY * settings.hud.impactTextScalar) - impactsCountText.y) / ease
+  impactsCountText.scaleX += (targetScale - impactsCountText.scaleX) / ease
+  impactsCountText.scaleY = impactsCountText.scaleX
 
 createPhysicsPlayer = (world, player) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
