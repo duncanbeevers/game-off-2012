@@ -19,7 +19,7 @@ settings =
     scale: 150
     alpha: 0.8
     wordVerticalSpacing: 25
-    wordVerticalOffset: 10
+    wordVerticalOffset: -52
     wordColor: "#FFFFFF"
 
 # FW.dat.GUI.addSettings(settings)
@@ -103,8 +103,6 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement) ->
 
   # Make a new container for this slider element
   container = new createjs.Container()
-  container.scaleX = settings.slider.intraSliderScale
-  container.scaleY = container.scaleX
 
   # Create the text label
   nameContainer = new createjs.Container()
@@ -112,6 +110,9 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement) ->
   texts = for word, i in words
     text = TextFactory.create(word)
     nameContainer.addChild(text)
+
+  container.scaleX = settings.slider.intraSliderScale
+  container.scaleY = container.scaleX
 
   # Setup the transition animations
   container.addEventListener "tick", ->
@@ -136,7 +137,6 @@ sliderElementDisplayObject = (sliderPicker, sliderContainer, sliderElement) ->
 
     nameContainer.scaleX = 1 / settings.nameContainer.scale
     nameContainer.scaleY = nameContainer.scaleX
-    nameContainer.regY   = (words.length * settings.nameContainer.wordVerticalSpacing) / 2
     nameContainer.alpha  = settings.nameContainer.alpha
 
   # Add the display object and label to a single container

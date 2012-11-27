@@ -69,7 +69,7 @@ setupProfilePicker = (screen, profilesData) ->
     profilePicker.scaleY = profilePicker.scaleX
 
     profilePicker.x = canvas.width / 2
-    profilePicker.y = canvas.width / 20 + canvas.height / 10
+    profilePicker.y = 200
 
   profilePicker
 
