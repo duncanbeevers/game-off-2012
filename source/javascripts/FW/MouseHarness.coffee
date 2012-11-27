@@ -83,6 +83,8 @@ FW.MouseHarness =
       point = displayObject.globalToLocal(harness_x, harness_y)
       x: point.x
       y: point.y
+      stageX: harness_x
+      stageY: harness_y
       activated: harness_activated
 
     displayObject._outfittedMouseHarness = harness
