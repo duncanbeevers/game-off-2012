@@ -141,14 +141,14 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Goal", ->
       completionTime = level.completionTime ||= createjs.Ticker.getTime(true)
-      wallImpactsCount = level._wallImpactsCount
+      completionDuration = level.completionTime - level.startTime
 
+      wallImpactsCount = level._wallImpactsCount
       level._inProgress = false
-      level._onMazeSolved(completionTime, wallImpactsCount)
+      level._onMazeSolved(completionDuration, wallImpactsCount)
       level._solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
-      level.completionTime ||= createjs.Ticker.getTime(true)
 
 
   onEnterScene: ->

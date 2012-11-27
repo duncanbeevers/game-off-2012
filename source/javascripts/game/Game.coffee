@@ -47,7 +47,8 @@ class @Game
     hci = @_hci
 
     level = new Level @, hci, levelData, (completionTime, wallImpactsCount) ->
-      profileLevelData = profileData[levelData.name] ||= {}
+      profileLevelsData = profileData.levels ||= {}
+      profileLevelData = profileLevelsData[levelData.name] ||= {}
       profileLevelData.lastCompletionTime = completionTime
       previousBestCompletionTime = profileLevelData.bestCompletionTime || Infinity
       profileLevelData.bestCompletionTime = Math.min(previousBestCompletionTime, completionTime)

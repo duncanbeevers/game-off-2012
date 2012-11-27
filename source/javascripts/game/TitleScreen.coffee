@@ -7,25 +7,40 @@ class @TitleScreen extends FW.ContainerProxy
 
     titleBox = new TitleBox()
     levelPicker = setupLevelPicker(screen, preloader.getLevels(), hci)
+    levelDetailsViewer = setupLevelDetailsViewer(screen)
 
     screen.addChild(levelPicker)
     screen.addChild(titleBox)
+    screen.addChild(levelDetailsViewer)
 
-    @_game = game
-    @_hci = hci
-    @_titleBox = titleBox
-    @_levelPicker = levelPicker
+    @_game               = game
+    @_hci                = hci
+    @_titleBox           = titleBox
+    @_levelPicker        = levelPicker
+    @_levelDetailsViewer = levelDetailsViewer
 
   onEnterScene: ->
     game = @_game
     levelPicker = @_levelPicker
+    levelDetailsViewer = @_levelDetailsViewer
+
     [ profileName, profileData ] = @_profile
+
+    selectPreviousLevel = ->
+      levelPicker.selectPrevious()
+      levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
+
+    selectNextLevel = ->
+      levelPicker.selectNext()
+      levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
 
     @_hciSet = @_hci.on(
       [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData(), profileName, profileData) ]
-      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> levelPicker.selectPrevious() ]
-      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> levelPicker.selectNext() ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  selectPreviousLevel ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", selectNextLevel ]
     )
+
+    levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
 
   onLeaveScene: ->
     @_hciSet.off()
@@ -33,7 +48,18 @@ class @TitleScreen extends FW.ContainerProxy
   setProfileData: (profileName, profileData) ->
     @_profile = [ profileName, profileData ]
     titleBox = @_titleBox
+    levelDetailsViewer = @_levelDetailsViewer
+
     titleBox.setTitle(profileName)
+    levelDetailsViewer.setProfileData(profileData)
+
+  onTick: ->
+    stage = @getStage()
+    if stage
+      canvas = stage.canvas
+      levelDetailsViewer = @_levelDetailsViewer
+      levelDetailsViewer.x = canvas.width / 2
+      levelDetailsViewer.y = canvas.height / 3 + canvas.height / 2
 
 setupLevelPicker = (screen, levels, hci) ->
   initialLevelIndex = 0
@@ -47,6 +73,10 @@ setupLevelPicker = (screen, levels, hci) ->
     levelPicker.scaleY = levelPicker.scaleX
 
     levelPicker.x = canvas.width / 2
-    levelPicker.y = canvas.width / 20 + 150
+    levelPicker.y = canvas.height / 3
 
   levelPicker
+
+setupLevelDetailsViewer = (screen) ->
+  new LevelDetailsViewer()
+
