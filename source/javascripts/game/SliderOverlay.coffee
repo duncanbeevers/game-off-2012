@@ -89,12 +89,10 @@ class @SliderOverlay extends FW.ContainerProxy
 
 drawAtRestOverlay = (graphics) ->
   graphics.clear()
-  graphics.beginFill("rgba(255, 0, 0, 0.5)")
-  graphics.drawRect(0, 0, 1, 1)
-  graphics.endFill()
 
 drawHoverOverlay = (graphics) ->
   graphics.clear()
-  graphics.beginFill("rgba(0, 255, 0, 0.5)")
+  # graphics.beginFill("rgba(0, 255, 0, 0.5)")
+  graphics.beginLinearGradientFill( [ "rgba(22,134,255,0.5)", "rgba(22,134,255,0)" ], [ 0, 1 ], 0, 0, 1, 0)
   graphics.drawRect(0, 0, 1, 1)
   graphics.endFill()
