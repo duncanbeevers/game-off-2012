@@ -90,7 +90,10 @@ setupProfilePicker = (screen, profilesData) ->
   profilePicker
 
 setupSliderMouseOverlay = (screen, hci, profilePicker) ->
-  overlay = new SliderOverlay()
+  goPrev = -> profilePicker.selectPrevious()
+  goNext = -> profilePicker.selectNext()
+  goSelect = -> onPressedEnter(screen)
+  overlay = new SliderOverlay(goPrev, goNext, goSelect)
   overlay
 
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->

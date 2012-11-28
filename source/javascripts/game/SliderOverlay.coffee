@@ -1,45 +1,79 @@
 class @SliderOverlay extends FW.ContainerProxy
-  constructor: ->
+  constructor: (goPrev, goNext, goSelect) ->
     super()
 
-    leftShape          = new createjs.Shape()
-    rightShape         = new createjs.Shape()
+    leftShape = new createjs.Shape()
+    rightShape = new createjs.Shape()
+    centerShape = new createjs.Shape()
+
+    hitArea = new createjs.Shape()
+    hitArea.graphics.beginFill("#000").drawRect(-0.5, -0.5, 1, 1).endFill()
+
+    leftShape.hitArea = hitArea
+    rightShape.hitArea = hitArea
+    centerShape.hitArea = hitArea
+
+    leftShape.addEventListener "press", goPrev
+    rightShape.addEventListener "press", goNext
+    centerShape.addEventListener "press", goSelect
 
     @addChild(leftShape)
     @addChild(rightShape)
+    @addChild(centerShape)
 
-    leftShape.regY      = 0.5
-    leftShape.x         = 0
-    leftShape.y         = 0.5
-    rightShape.regY     = 0.5
     rightShape.rotation = 180
-    rightShape.x        = 1
-    rightShape.y        = 0.5
 
-    @_harness    = FW.MouseHarness.outfit(@)
-    @_rightShape = rightShape
-    @_leftShape  = leftShape
+    @_harness     = FW.MouseHarness.outfit(@)
+    @_leftShape   = leftShape
+    @_rightShape  = rightShape
+    @_centerShape = centerShape
 
   onTick: ->
     container = @
     stage = container.getStage()
     if stage
-      canvas = stage.canvas
-      container.scaleX = canvas.width
-      container.scaleY = canvas.height
-      container.x = 0
-      container.y = 0
-
-      leftShape = @_leftShape
-      rightShape = @_rightShape
-      leftShapeGraphics  = leftShape.graphics
-      rightShapeGraphics = rightShape.graphics
-
       sliderMargin = 1 / 3.8
+      canvas       = stage.canvas
+      canvasWidth  = canvas.width
+      canvasHeight = canvas.height
+
+      leftShape   = @_leftShape
+      rightShape  = @_rightShape
+      centerShape = @_centerShape
+
+      # canvasSliderMargin = sliderMargin * canvasWidth
+      # leftContainer.x   = 0
+      # centerContainer.x = sliderMargin
+      # rightContainer.x  = canvasWidth - canvasSliderMargin
+
+      leftShape.x = sliderMargin / 2
+      leftShape.y = 0.5
       leftShape.scaleX = sliderMargin
+      leftShape.scaleY = 1
+      leftShape.regX = 0.5
+      leftShape.regY = 0.5
+
+      rightShape.x = 1 - sliderMargin / 2
+      rightShape.y = 0.5
       rightShape.scaleX = sliderMargin
+      rightShape.scaleY = 1
+      rightShape.regX = 0.5
+      rightShape.regY = 0.5
+
+      centerShape.x = 0.5
+      centerShape.y = 0.5
+      centerShape.scaleX = 1 - (sliderMargin * 2)
+      centerShape.scaleY = 1
+      centerShape.regX = 0.5
+      centerShape.regY = 0.5
+
+      @scaleX = canvas.width
+      @scaleY = canvas.height
 
       mouse = @_harness()
+
+      leftShapeGraphics = leftShape.graphics
+      rightShapeGraphics = rightShape.graphics
 
       if mouse.x < sliderMargin
         # Do something with the left one
@@ -52,7 +86,6 @@ class @SliderOverlay extends FW.ContainerProxy
       else
         drawAtRestOverlay(leftShapeGraphics)
         drawAtRestOverlay(rightShapeGraphics)
-
 
 drawAtRestOverlay = (graphics) ->
   graphics.clear()
