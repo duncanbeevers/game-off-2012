@@ -355,9 +355,9 @@ levelTrackPlayer = (level, player, harness) ->
 
   if level._solved
     rotationEase = settings.solvedMazeRotationEase
-    scalar = (harness.stageX - halfCanvasWidth) / halfCanvasWidth
+    # scalar = (harness.stageX - halfCanvasWidth) / halfCanvasWidth
 
-    targetRotation = currentRotation + settings.solvedMazeRotationDelta * scalar
+    targetRotation = 0
   else
     rotationEase = settings.mazeRotationEase
     targetRotation = Math.atan2(position.y, position.x)
@@ -375,12 +375,21 @@ levelTrackPlayer = (level, player, harness) ->
 
   if solved
     [_, _, _, _, maxMagnitude] = level.bounds
+
+    viewportScalar = 1.2
+    scopedViewportWidth = canvasWidth / viewportScalar
+    scopedViewportHeight = canvasHeight / viewportScalar
+
+    regXOffset = canvasWidth - scopedViewportWidth
+    regYOffset = canvasHeight - scopedViewportHeight
+
     targetScale = Math.min(
-      canvasWidth / (maxMagnitude * 2),
-      canvasHeight / (maxMagnitude * 2)
+      canvasWidth * viewportScalar / (maxMagnitude * 2),
+      canvasHeight * viewportScalar / (maxMagnitude * 2)
     )
-    targetRegX = 0
-    targetRegY = 0
+
+    targetRegX = (harness.stageX - (canvasWidth / 2)) / targetScale
+    targetRegY = (harness.stageY - (canvasHeight / 2)) / targetScale
   else
     velocity = body.GetLinearVelocity()
     velocityBoost = FW.Math.magnitude(velocity.x, velocity.y) / Math.min(canvasHeight, canvasWidth) * 500
