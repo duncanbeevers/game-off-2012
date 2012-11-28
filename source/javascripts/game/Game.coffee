@@ -28,17 +28,8 @@ class @Game
 
     sceneManager.gotoScene("profilePickerScreen")
 
-    # data = JSON.parse(preloader.getResult("levels/crackedice.json").result)
-    # data = FW.Math.sample(preloader.getLevels())
-    # level = new Level(@, data)
-    # stage.addChild(level)
-    # TODO: Hook up pause
-    # togglePause = ->
-    #   level.togglePause()
-
     @_titleScreen = titleScreen
 
-    # Maybe don't need this?
     updater = tick: -> stage.update()
     createjs.Ticker.addListener(updater)
 
