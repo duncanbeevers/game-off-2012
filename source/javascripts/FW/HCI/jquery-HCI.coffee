@@ -21,15 +21,15 @@ $.FW_HCI = ->
   $document.on "keydown", (event) ->
     keyCode = event.keyCode
 
-    hci.triggerKeyDown(event.keyCode)
-    if keyCode != 91
+    hci.triggerKeyDown(keyCode)
+    if keyCode == FW.HCI.KeyMap.ESCAPE || keyCode == FW.HCI.KeyMap.DELETE
       event.preventDefault()
 
   $document.on "keyup",   (event) ->
     keyCode = event.keyCode
 
     hci.triggerKeyUp(event.keyCode)
-    if keyCode != 91
+    if keyCode == FW.HCI.KeyMap.ESCAPE || keyCode == FW.HCI.KeyMap.DELETE
       event.preventDefault()
 
   $document.on "touchmove", (event) -> event.preventDefault()
