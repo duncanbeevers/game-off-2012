@@ -39,6 +39,13 @@ class @ProfilePicker extends SliderPicker
     @_currentIndex = 0
     @_profilesData.unshift([ profileName, profileData])
 
+  selectProfile: (profileName) ->
+    index = FW.Util.indexOf @_profilesData, (other) ->
+      other[0] == profileName
+
+    @select(index)
+
+
 sliderElementForProfileData = (profileName, profileData) ->
   text: profileName
   displayObject: createProfileDisplayObject(@, profileData)

@@ -35,18 +35,25 @@ $.FW_HCI = ->
   $document.on "touchmove", (event) -> event.preventDefault()
 
   hci.saveProfile = (profileName, profileData) ->
-    # Get the current profiles
     profilesData = loadProfilesData()
     profilesData[profileName] = profileData
     localStorage.setItem(localStorageProfilesKey, JSON.stringify(profilesData))
+    loadProfilesCached = profilesData
 
-  hci.loadProfilesData = loadProfilesData
+  hci.loadProfile = (profileName) ->
+    loadProfilesData()[profileName]
+
+  hci.loadProfileNames = ->
+    Object.keys(loadProfilesData())
 
   return hci
 
+loadProfilesCached = false
 loadProfilesData = () ->
-  try
-    JSON.parse(localStorage.getItem(localStorageProfilesKey)) || {}
-  catch _
-    {}
+  if !loadProfilesCached
+    try
+      loadProfilesCached = JSON.parse(localStorage.getItem(localStorageProfilesKey)) || {}
+    catch _
+      loadProfilesCached = {}
 
+  loadProfilesCached

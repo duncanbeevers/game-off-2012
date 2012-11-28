@@ -3,11 +3,14 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     super()
 
     screen = @
-    profilesData = hci.loadProfilesData()
 
     sceneManager = game.getSceneManager()
     titleBox = new TitleBox()
-    profilesData = hci.loadProfilesData()
+    profileNames = hci.loadProfileNames()
+    profilesData = {}
+    for profileName in profileNames
+      profilesData[profileName] = hci.loadProfile(profileName)
+
     profilePicker = setupProfilePicker(screen, profilesData)
     addNewProfileInput = setupAddNewProfileInput(hci, sceneManager, profilePicker)
 
@@ -85,14 +88,20 @@ setupProfilePicker = (screen, profilesData) ->
 
 setupAddNewProfileInput = (hci, sceneManager, profilePicker) ->
   createNewProfile = (profileName) ->
-    profileData = {
-      name: profileName
-      createdAt: FW.Time.now()
-      lastLoadedAt: FW.Time.now()
-    }
-    hci.saveProfile(profileName, profileData)
+    extantProfile = hci.loadProfile(profileName)
+    if extantProfile
+      profileData = extantProfile
+      profilePicker.selectProfile(profileName)
+    else
+      now = FW.Time.now()
+      profileData = {
+        name         : profileName
+        createdAt    : now
+        lastLoadedAt : now
+      }
+      hci.saveProfile(profileName, profileData)
+      profilePicker.unshiftNewProfile(profileName, profileData)
 
-    profilePicker.unshiftNewProfile(profileName, profileData)
     sceneManager.popScene()
 
     inputOverlay.setValue("")
