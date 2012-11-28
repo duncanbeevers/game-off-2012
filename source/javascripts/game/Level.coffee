@@ -29,22 +29,6 @@ setupImpactsCountText = ->
 
   impactsCountText
 
-setupLampOilIndicator = ->
-  container = new createjs.Container()
-  meterShape = new createjs.Shape()
-  graphics = meterShape.graphics
-
-  graphics.beginStroke("rgba(0, 0, 0, 0)")
-  graphics.beginFill("rgba(255, 248, 62, 0.5)")
-  graphics.drawRect(-0.5, -0.5, 1, 1)
-  graphics.endFill()
-  graphics.endStroke()
-
-  container.addChild(meterShape)
-
-  container._oilLevel = 5000
-  container
-
 class @Level extends FW.ContainerProxy
   constructor: (game, hci, mazeData, onMazeSolved) ->
     super()
@@ -69,7 +53,6 @@ class @Level extends FW.ContainerProxy
 
     timerText        = setupTimerText()
     impactsCountText = setupImpactsCountText()
-    lampOilIndicator = setupLampOilIndicator()
 
     @_inProgress = false
     @setupPhysics()
@@ -78,7 +61,6 @@ class @Level extends FW.ContainerProxy
     levelContainer.addChild(countDown)
     levelContainer.addChild(timerText)
     levelContainer.addChild(impactsCountText)
-    levelContainer.addChild(lampOilIndicator)
 
     level = @
     @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
@@ -93,7 +75,6 @@ class @Level extends FW.ContainerProxy
     @_countDown               = countDown
     @_timerText               = timerText
     @_impactsCountText        = impactsCountText
-    @_lampOilIndicator        = lampOilIndicator
     @_wallImpactsCount        = 0
 
   onReady: ->
@@ -199,9 +180,6 @@ class @Level extends FW.ContainerProxy
     endBacktrack = ->
       level.endBacktrack()
 
-    releaseLamp = ->
-      level.releaseLamp()
-
     onUtilityKey = ->
       if level._solved
         level._game.getSceneManager().popScene()
@@ -273,12 +251,10 @@ class @Level extends FW.ContainerProxy
     return unless stage
 
     runSimulation = @_inProgress && !@_backtracking
-    lampOilIndicator = @_lampOilIndicator
     if runSimulation
       @_everRanSimulation = true
       fps = createjs.Ticker.getFPS()
       @_world.Step(1 / fps, 10, 10)
-      lampOilIndicator._oilLevel = Math.max(0, lampOilIndicator._oilLevel - 1)
 
     player = @_player
     goal = @_goal
@@ -302,19 +278,10 @@ class @Level extends FW.ContainerProxy
       playerLeaveTrack(player, @)
       playerAccelerateTowardsTarget(player)
 
-    lampOilIndicatorTrackStage(lampOilIndicator)
-
     if @_everRanSimulation
       updateTimer(@_timerText, @_impactsCountText, @)
 
     @_world.DrawDebugData()
-
-  releaseLamp: () ->
-    mazeContainer = @_mazeContainer
-    player = @_player
-    lamp = new Lamp()
-    mazeContainer.addChild(lamp)
-    createPhysicsLamp(@_world, lamp, player)
 
   beginBacktrack: () ->
     @_backtracking = true
@@ -478,22 +445,6 @@ playerLeaveTrack = (player, level) ->
     pathGlowGraphics.lineTo(player.x, player.y)
     lastDot.Set(player.x, player.y)
 
-lampOilIndicatorTrackStage = (lampOilIndicator) ->
-  oil = lampOilIndicator._oilLevel
-  maxOil = Math.max(lampOilIndicator._maxOilLevel || 0, oil)
-
-  indicatorHeight = 24
-  canvas = lampOilIndicator.getStage().canvas
-
-  lampOilIndicator.x = (canvas.width / 2)
-  lampOilIndicator.y = canvas.height - indicatorHeight
-
-  lampOilIndicator.scaleX = canvas.width * (oil / maxOil)
-  lampOilIndicator.scaleY = indicatorHeight
-
-  lampOilIndicator._oilLevel = oil
-  lampOilIndicator._maxOilLevel = maxOil
-
 computePixelsPerMeter = (level) ->
   mazeContainer = level._mazeContainer
   canvas = mazeContainer.getStage().canvas
@@ -597,24 +548,6 @@ createPhysicsWalls = (world, segments) ->
     bodyDef.position.Set(x2, y2)
     fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
     fixture.SetUserData name: "Wall"
-
-
-createPhysicsLamp = (world, lamp, player) ->
-  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
-  fixtureDef.density = 1
-  fixtureDef.friction = 0.1
-  fixtureDef.restitution = 0.1
-  diameter = 0.1
-  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(diameter / 2)
-  bodyDef = new Box2D.Dynamics.b2BodyDef()
-  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
-
-  distanceFromPlayer = (player.radius - diameter)
-  bodyDef.position.x = player.x - distanceFromPlayer
-  bodyDef.position.y = player.y
-
-  lamp.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-  lamp.fixture.SetUserData(player)
 
 onActivatedPauseMenu = (level) ->
   level._game.getSceneManager().pushScene("pauseMenu")
