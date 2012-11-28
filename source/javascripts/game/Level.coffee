@@ -15,7 +15,7 @@ settings =
     amplification: 7
     clamp: 0.5
 
-FW.dat.GUI.addSettings(settings)
+# FW.dat.GUI.addSettings(settings)
 
 maxViewportMeters = 6
 
@@ -52,12 +52,15 @@ class @Level extends FW.ContainerProxy
     pauseMenu = new PauseMenu(game, hci)
     game.getSceneManager().addScene("pauseMenu", pauseMenu)
 
-    levelContainer = @_container
-    mazeContainer = new createjs.Container()
-    player  = new Player()
-    goal    = new Goal()
+    levelContainer          = @_container
+    mazeContainer           = new createjs.Container()
+    player                  = new Player()
+    goal                    = new Goal()
+    impactParticleGenerator = new ImpactParticleGenerator()
+
     mazeContainer.addChild(player)
     mazeContainer.addChild(goal)
+    mazeContainer.addChild(impactParticleGenerator)
 
     level = @
 
@@ -80,17 +83,18 @@ class @Level extends FW.ContainerProxy
     level = @
     @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
 
-    @_game             = game
-    @_hci              = hci
-    @_onMazeSolved     = onMazeSolved
-    @_mazeContainer    = mazeContainer
-    @_player           = player
-    @_goal             = goal
-    @_countDown        = countDown
-    @_timerText        = timerText
-    @_impactsCountText = impactsCountText
-    @_lampOilIndicator = lampOilIndicator
-    @_wallImpactsCount = 0
+    @_game                    = game
+    @_hci                     = hci
+    @_onMazeSolved            = onMazeSolved
+    @_mazeContainer           = mazeContainer
+    @_player                  = player
+    @_goal                    = goal
+    @_impactParticleGenerator = impactParticleGenerator
+    @_countDown               = countDown
+    @_timerText               = timerText
+    @_impactsCountText        = impactsCountText
+    @_lampOilIndicator        = lampOilIndicator
+    @_wallImpactsCount        = 0
 
   onReady: ->
     # @_countDown.begin()
@@ -116,15 +120,18 @@ class @Level extends FW.ContainerProxy
 
     # TODO: Make a directory, dynamically-loaded plinkplonk sounds
     # TODO: Differentiate sounds based on impact severity, plinks and PLONKS
-    contactListener.registerContactListener "Wall", "Player", (impact, wall, player) ->
+    contactListener.registerContactListener "Wall", "Player", (impact, wallFixture, playerFixture) ->
+      impactParticleGenerator = level._impactParticleGenerator
 
-      # Throttle impact events
-      wallUserData = wall.GetUserData()
-      lastImpactedAt = wallUserData._lastImpactedAt || 0
-      now = FW.Time.now()
+      # Throttle impact events per-wall
+      wall           = wallFixture.GetUserData()
+      lastImpactedAt = wall._lastImpactedAt || 0
+      now            = FW.Time.now()
 
+      # If the last impact event happened long-enough ago
+      # register a new impact
       if now - lastImpactedAt > minImpactInterval
-        wallUserData._lastImpactedAt = now
+        wall._lastImpactedAt = now
         level._wallImpactsCount += 1
 
         # Play a sound
@@ -143,6 +150,9 @@ class @Level extends FW.ContainerProxy
         createjs.SoundJS.play(src, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
 
         # Spawn an impact particle
+        player = playerFixture.GetUserData()
+        impactParticleGenerator.queueParticle(player.x, player.y)
+
 
 
     debugCanvas = document.getElementById("debugCanvas")
