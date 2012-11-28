@@ -82,10 +82,10 @@ getFullColorBoundsRect = (bitmap, match) ->
     null
 
 getColorWithinSegments = (segments, bitmap) ->
-  xOffset = bitmap.regX
-  yOffset = bitmap.regY
   xScale = bitmap.scaleX
   yScale = bitmap.scaleY
+  xOffset = bitmap.regX
+  yOffset = bitmap.regY
 
   # Naive AABB approach for now, should be decent
   minX = Infinity
@@ -98,17 +98,19 @@ getColorWithinSegments = (segments, bitmap) ->
     minY = Math.min(minY, y1, y2)
     maxY = Math.max(maxY, y1, y2)
 
-  x1 = Math.floor(minX / xScale) + xOffset
-  y1 = Math.floor(minY / yScale) + yOffset
-  x2 = Math.floor(maxX / xScale) + xOffset
-  y2 = Math.floor(maxY / yScale) + yOffset
+  imageData   = bitmap.cachedImageData
+  imageWidth  = bitmap.image.width
+  imageHeight = imageData.height
+  data        = imageData.data
+  redSum      = 0
+  greenSum    = 0
+  blueSum     = 0
+  alphaSum    = 0
 
-  imageData = bitmap.cachedImageData
-  data      = imageData.data
-  redSum    = 0
-  greenSum  = 0
-  blueSum   = 0
-  alphaSum  = 0
+  x1 = FW.Math.clamp(Math.floor(minX / xScale + xOffset), 0, imageWidth)
+  y1 = FW.Math.clamp(Math.floor(minY / yScale + yOffset), 0, imageHeight)
+  x2 = FW.Math.clamp(Math.floor(maxX / xScale + xOffset), 0, imageWidth)
+  y2 = FW.Math.clamp(Math.floor(maxY / yScale + yOffset), 0, imageHeight)
 
   if segments.length
     for x in [x1..x2]

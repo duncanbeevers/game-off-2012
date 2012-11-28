@@ -18,10 +18,10 @@ Maze.Structures.Substrate = $.extend {},
     rect = FW.CreateJS.getFuzzyColorBoundsRect(bitmap, 0, 0, 255, 255, 32)
     if rect
       [x, y] = FW.Math.centroidOfRectangle(rect)
-      x - imageWidth / 2
-      y - imageHeight / 2
+      x -= imageWidth / 2
+      y -= imageHeight / 2
 
-      @_initialIndex = @projection.infer(@, (x - imageWidth / 2) / substratePixelsPerMeter, (y - imageHeight / 2) / substratePixelsPerMeter)
+      @_initialIndex = @projection.infer(@, x / substratePixelsPerMeter, y / substratePixelsPerMeter)
     else
       throw("Couldn't find any blue-ish stuff to pick a starting index")
 
