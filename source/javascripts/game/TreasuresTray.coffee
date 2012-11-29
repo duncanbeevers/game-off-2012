@@ -3,7 +3,7 @@ class @TreasuresTray extends FW.ContainerProxy
     super()
 
     treasures = for originalTreasure in originalTreasures
-      treasure = originalTreasure.clone()
+      originalTreasure.clone()
 
     tray = @
     numTreasures = treasures.length

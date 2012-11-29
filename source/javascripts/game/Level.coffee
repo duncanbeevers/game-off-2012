@@ -44,6 +44,7 @@ class @Level extends FW.ContainerProxy
     @setupPhysics()
 
     treasures = setupTreasures(level, mazeData)
+    treasuresTray = new TreasuresTray(treasures)
 
     mazeContainer.addChild(player)
     mazeContainer.addChild(goal)
@@ -55,6 +56,7 @@ class @Level extends FW.ContainerProxy
     levelContainer.addChild(countDown)
     levelContainer.addChild(timerText)
     levelContainer.addChild(impactsCountText)
+    levelContainer.addChild(treasuresTray)
 
     level = @
     @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
@@ -71,6 +73,7 @@ class @Level extends FW.ContainerProxy
     @_impactsCountText        = impactsCountText
     @_wallImpactsCount        = 0
     @_treasures               = treasures
+    @_treasuresTray           = treasuresTray
 
   onReady: ->
     # @_countDown.begin()
@@ -288,11 +291,9 @@ class @Level extends FW.ContainerProxy
     if @_everRanSimulation
       updateTimer(@_timerText, @_impactsCountText, @)
 
-    # mazeContainer = @_mazeContainer
     for treasure in treasures
       if treasure._collected && treasure.parent
-        # mazeContainer.removeChild(treasure)
-        # treasure.removeFromParent()
+        # TODO: Fancy sparkle-out!
         treasure.visible = false
         world.DestroyBody(treasure.fixture.GetBody())
 
