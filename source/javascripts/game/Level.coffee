@@ -628,6 +628,4 @@ setupTreasure = (world, index, numTreasures, termination) ->
   treasure.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
   treasure.fixture.SetUserData(treasure)
 
-  treasure.x = -index
-  treasure.y = 0
   treasure

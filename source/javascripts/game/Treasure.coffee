@@ -21,12 +21,12 @@ class @Treasure extends FW.ContainerProxy
     points2  = points1 + 0.3
 
     hsv1 = {
-      h: (360 / (numTreasures - 1)) * index
+      h: 360 / numTreasures * index
       s: 1
       v: 0.7
     }
     hsv2 = {
-      h: (360 / (numTreasures - 1)) * (index + 0.1)
+      h: 360 / numTreasures * (index + 0.1)
       s: 1
       v: 0.6
     }
