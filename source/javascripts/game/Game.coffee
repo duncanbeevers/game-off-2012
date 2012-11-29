@@ -7,13 +7,21 @@ class @Game
     @_preloader = preloader
 
     @playBgm([
-      "sounds/BGM1.mp3"
-      "sounds/BGM2.mp3"
-      "sounds/BGM3.mp3"
-      "sounds/BGM4.mp3"
+      "sounds/BGM1-1.mp3"
+      "sounds/BGM1-2.mp3"
+      "sounds/BGM1-3.mp3"
+      "sounds/BGM1-4.mp3"
     ])
 
+    # @playBgm([
+    #   "sounds/BGM2-1.mp3"
+    #   "sounds/BGM2-2.mp3"
+    #   "sounds/BGM2-3.mp3"
+    #   "sounds/BGM2-4.mp3"
+    # ])
+
     stage = new createjs.Stage(canvas)
+
     sceneManager = new SceneManager(stage)
 
     @_hci = hci
