@@ -41,11 +41,6 @@ class @SliderOverlay extends FW.ContainerProxy
       rightShape  = @_rightShape
       centerShape = @_centerShape
 
-      # canvasSliderMargin = sliderMargin * canvasWidth
-      # leftContainer.x   = 0
-      # centerContainer.x = sliderMargin
-      # rightContainer.x  = canvasWidth - canvasSliderMargin
-
       leftShape.x = sliderMargin / 2
       leftShape.y = 0.5
       leftShape.scaleX = sliderMargin
@@ -92,7 +87,6 @@ drawAtRestOverlay = (graphics) ->
 
 drawHoverOverlay = (graphics) ->
   graphics.clear()
-  # graphics.beginFill("rgba(0, 255, 0, 0.5)")
-  graphics.beginLinearGradientFill( [ "rgba(22,134,255,0.5)", "rgba(22,134,255,0)" ], [ 0, 1 ], 0, 0, 1, 0)
+  graphics.beginLinearGradientFill( [ "rgba(192,0,192,0.3)", "rgba(192,0,192,0)" ], [ 0, 0.25 ], 0, 0, 1, 0)
   graphics.drawRect(0, 0, 1, 1)
   graphics.endFill()
