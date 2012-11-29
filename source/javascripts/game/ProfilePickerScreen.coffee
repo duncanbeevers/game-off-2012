@@ -13,11 +13,11 @@ class @ProfilePickerScreen extends FW.ContainerProxy
 
     profilePicker      = setupProfilePicker(screen, profilesData)
     addNewProfileInput = setupAddNewProfileInput(hci, sceneManager, profilePicker)
-    sliderMouseOverlay = setupSliderMouseOverlay(screen, hci, profilePicker)
+    sliderOverlay      = setupSliderOverlay(screen, hci, profilePicker)
 
     screen.addChild(profilePicker)
     screen.addChild(titleBox)
-    screen.addChild(sliderMouseOverlay)
+    screen.addChild(sliderOverlay)
 
     sceneManager.addScene("newProfileInput", addNewProfileInput)
 
@@ -26,7 +26,6 @@ class @ProfilePickerScreen extends FW.ContainerProxy
     @_sceneManager       = sceneManager
     @_profilePicker      = profilePicker
     @_addNewProfileInput = addNewProfileInput
-    @_sliderMouseOverlay = sliderMouseOverlay
 
   onEnterScene: ->
     screen = @
@@ -89,7 +88,7 @@ setupProfilePicker = (screen, profilesData) ->
 
   profilePicker
 
-setupSliderMouseOverlay = (screen, hci, profilePicker) ->
+setupSliderOverlay = (screen, hci, profilePicker) ->
   goPrev = -> profilePicker.selectPrevious()
   goNext = -> profilePicker.selectNext()
   goSelect = -> onPressedEnter(screen)

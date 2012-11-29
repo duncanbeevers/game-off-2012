@@ -8,10 +8,12 @@ class @TitleScreen extends FW.ContainerProxy
     titleBox = new TitleBox()
     levelPicker = setupLevelPicker(screen, preloader.getLevels(), hci)
     levelDetailsViewer = setupLevelDetailsViewer(screen)
+    sliderOverlay = setupSliderOverlay(screen, game, levelPicker, levelDetailsViewer)
 
     screen.addChild(levelPicker)
     screen.addChild(titleBox)
     screen.addChild(levelDetailsViewer)
+    screen.addChild(sliderOverlay)
 
     @_game               = game
     @_hci                = hci
@@ -25,21 +27,12 @@ class @TitleScreen extends FW.ContainerProxy
     levelDetailsViewer = @_levelDetailsViewer
     sceneManager       = game.getSceneManager()
 
-    [ profileName, profileData ] = @_profile
-
-    selectPreviousLevel = ->
-      levelPicker.selectPrevious()
-      levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
-
-    selectNextLevel = ->
-      levelPicker.selectNext()
-      levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
-
+    screen = @
     @_hciSet = @_hci.on(
-      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> game.beginLevel(levelPicker.currentLevelData(), profileName, profileData) ]
+      [ "keyDown:#{FW.HCI.KeyMap.ENTER}", -> onPressedEnter(screen, game, levelPicker) ]
       [ "keyDown:#{FW.HCI.KeyMap.ESCAPE}", -> sceneManager.popScene() ]
-      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  selectPreviousLevel ]
-      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", selectNextLevel ]
+      [ "keyDown:#{FW.HCI.KeyMap.LEFT}",  -> selectPreviousLevel(levelPicker, levelDetailsViewer) ]
+      [ "keyDown:#{FW.HCI.KeyMap.RIGHT}", -> selectNextLevel(levelPicker, levelDetailsViewer) ]
     )
 
     levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
@@ -84,4 +77,23 @@ setupLevelPicker = (screen, levels, hci) ->
 
 setupLevelDetailsViewer = (screen) ->
   new LevelDetailsViewer()
+
+setupSliderOverlay = (screen, game, levelPicker, levelDetailsViewer) ->
+  goPrev = -> selectPreviousLevel(levelPicker, levelDetailsViewer)
+  goNext = -> selectNextLevel(levelPicker, levelDetailsViewer)
+  goSelect = -> onPressedEnter(screen, game, levelPicker)
+  overlay = new SliderOverlay(goPrev, goNext, goSelect)
+  overlay
+
+onPressedEnter = (screen, game, levelPicker) ->
+  [ profileName, profileData ] = screen._profile
+  game.beginLevel(levelPicker.currentLevelData(), profileName, profileData)
+
+selectPreviousLevel = (levelPicker, levelDetailsViewer) ->
+  levelPicker.selectPrevious()
+  levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
+
+selectNextLevel = (levelPicker, levelDetailsViewer) ->
+  levelPicker.selectNext()
+  levelDetailsViewer.setLevelData(levelPicker.currentLevelData())
 
