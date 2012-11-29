@@ -17,7 +17,7 @@ class FW.ContainerProxy
           parent.addChild(container)
 
     FW.ProxyProperties(instance, container, [ 'x', 'y', 'rotation', 'regX', 'regY', 'scaleX', 'scaleY', 'visible' ])
-    FW.ProxyMethods(instance, container, [ 'getStage', 'isVisible', 'addChild', 'removeChild', 'addEventListener', 'dispatchEvent', 'globalToLocal', 'clone' ])
+    FW.ProxyMethods(instance, container, [ 'getStage', 'isVisible', 'addChild', 'removeChild', 'addEventListener', 'dispatchEvent', 'globalToLocal' ])
 
   # Custom overrides for a handful of methods
   updateContext: ->

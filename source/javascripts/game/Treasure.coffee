@@ -71,3 +71,12 @@ class @Treasure extends FW.ContainerProxy
     seed         = @_seed
 
     @rotation = FW.Math.wrapToCircleDegrees(@rotation + 1 / seed)
+
+  clone: ->
+    super()
+
+    numTreasures = @_numTreasures
+    index        = @_index
+    seed         = @_seed
+
+    new Treasure(index, numTreasures, seed)
