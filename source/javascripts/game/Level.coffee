@@ -614,7 +614,7 @@ setupTreasure = (world, index, numTreasures, termination) ->
   [ x, y ] = termination
 
   seed = x + y
-  treasure = new Treasure(index, numTreasures, seed)
+  treasure = new Treasure(numTreasures, index, seed)
 
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1

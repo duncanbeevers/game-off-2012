@@ -6,7 +6,7 @@ settings =
 FW.dat.GUI.addSettings(settings)
 
 class @Treasure extends FW.ContainerProxy
-  constructor: (index, numTreasures, seed) ->
+  constructor: (numTreasures, index, seed) ->
     super()
 
     shape = new createjs.Shape()
@@ -50,8 +50,8 @@ class @Treasure extends FW.ContainerProxy
     # Assign instance variables
     @_numTreasures = numTreasures
     @_index        = index
-    @_shape        = shape
     @_seed         = seed
+    @_shape        = shape
 
   # For collisions
   name: "Treasure"
@@ -73,10 +73,8 @@ class @Treasure extends FW.ContainerProxy
     @rotation = FW.Math.wrapToCircleDegrees(@rotation + 1 / seed)
 
   clone: ->
-    super()
-
     numTreasures = @_numTreasures
     index        = @_index
     seed         = @_seed
 
-    new Treasure(index, numTreasures, seed)
+    new Treasure(numTreasures, index, seed)
