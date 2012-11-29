@@ -39,6 +39,9 @@ wrapToCircle = (value) ->
 wrapToHalfCircle = (value) ->
   wrapToCap(value, PI)
 
+wrapToCircleDegrees = (value) ->
+  wrapToCap(value, 360)
+
 wrapToCap = (value, cap) ->
   value % cap
   if value < 0
@@ -122,6 +125,7 @@ FW.Math =
   clamp                : clamp
   snap                 : snap
   wrapToCircle         : wrapToCircle
+  wrapToCircleDegrees  : wrapToCircleDegrees
   normalizeVector      : normalizeVector
   normalizeCoordinates : normalizeCoordinates
   linearInterpolate    : linearInterpolate
