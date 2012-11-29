@@ -613,7 +613,8 @@ setupTreasures = (level, mazeData) ->
 setupTreasure = (world, index, numTreasures, termination) ->
   [ x, y ] = termination
 
-  treasure = new Treasure(index, numTreasures)
+  seed = x + y
+  treasure = new Treasure(index, numTreasures, seed)
 
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1
@@ -627,4 +628,6 @@ setupTreasure = (world, index, numTreasures, termination) ->
   treasure.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
   treasure.fixture.SetUserData(treasure)
 
+  treasure.x = -index
+  treasure.y = 0
   treasure
