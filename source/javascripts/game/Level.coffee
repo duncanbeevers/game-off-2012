@@ -19,16 +19,6 @@ settings =
 
 maxViewportMeters = 6
 
-setupTimerText = ->
-  timerText = TextFactory.create("", settings.hud.textColor)
-
-  timerText
-
-setupImpactsCountText = ->
-  impactsCountText = TextFactory.create("", settings.hud.textColor)
-
-  impactsCountText
-
 class @Level extends FW.ContainerProxy
   constructor: (game, hci, mazeData, onMazeSolved) ->
     super()
@@ -42,10 +32,6 @@ class @Level extends FW.ContainerProxy
     goal                    = new Goal()
     impactParticleGenerator = new ImpactParticleGenerator()
 
-    mazeContainer.addChild(player)
-    mazeContainer.addChild(goal)
-    mazeContainer.addChild(impactParticleGenerator)
-
     level = @
 
     countDown = new CountDown ->
@@ -56,6 +42,14 @@ class @Level extends FW.ContainerProxy
 
     @_inProgress = false
     @setupPhysics()
+
+    treasures = setupTreasures(level, mazeData)
+
+    mazeContainer.addChild(player)
+    mazeContainer.addChild(goal)
+    mazeContainer.addChild(impactParticleGenerator)
+    for treasure in treasures
+      mazeContainer.addChild(treasure)
 
     levelContainer.addChild(mazeContainer)
     levelContainer.addChild(countDown)
@@ -76,6 +70,7 @@ class @Level extends FW.ContainerProxy
     @_timerText               = timerText
     @_impactsCountText        = impactsCountText
     @_wallImpactsCount        = 0
+    @_treasures               = treasures
 
   onReady: ->
     # @_countDown.begin()
@@ -169,6 +164,16 @@ class @Level extends FW.ContainerProxy
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])
 
+    contactListener.registerContactListener "Player", "Treasure", (impact, playerFixture, treasureFixture) ->
+      treasure = treasureFixture.GetUserData()
+      treasure._collected = true
+
+      treasureSound = FW.Math.sample([
+        "sounds/Treasure1.mp3"
+        "sounds/Treasure2.mp3"
+      ])
+      createjs.SoundJS.play(treasureSound, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
+
 
   onEnterScene: ->
     hci = @_hci
@@ -256,8 +261,10 @@ class @Level extends FW.ContainerProxy
       fps = createjs.Ticker.getFPS()
       @_world.Step(1 / fps, 10, 10)
 
-    player = @_player
-    goal = @_goal
+    world     = @_world
+    player    = @_player
+    goal      = @_goal
+    treasures = @_treasures
 
     if @_backtracking
       if @_playerPositionStack.length
@@ -280,6 +287,14 @@ class @Level extends FW.ContainerProxy
 
     if @_everRanSimulation
       updateTimer(@_timerText, @_impactsCountText, @)
+
+    # mazeContainer = @_mazeContainer
+    for treasure in treasures
+      if treasure._collected && treasure.parent
+        # mazeContainer.removeChild(treasure)
+        # treasure.removeFromParent()
+        treasure.visible = false
+        world.DestroyBody(treasure.fixture.GetBody())
 
     @_world.DrawDebugData()
 
@@ -549,5 +564,67 @@ createPhysicsWalls = (world, segments) ->
     fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
     fixture.SetUserData name: "Wall"
 
+createPhysicsTreasure = (world, treasure) ->
+
 onActivatedPauseMenu = (level) ->
   level._game.getSceneManager().pushScene("pauseMenu")
+
+setupTimerText = ->
+  timerText = TextFactory.create("", settings.hud.textColor)
+
+  timerText
+
+setupImpactsCountText = ->
+  impactsCountText = TextFactory.create("", settings.hud.textColor)
+
+  impactsCountText
+
+setupTreasures = (level, mazeData) ->
+  terminations = mazeData.terminations
+  # 0-1    : 0
+  # 2-5    : 1
+  # 6-24   : 2
+  # 25-55  : 3
+  # 55-100 : 4
+  # 101+   : 5
+  length = terminations.length
+  if length <= 1
+    numTreasures = 0
+  else if length <= 5
+    numTreasures = 1
+  else if length <= 24
+    numTreasures = 2
+  else if length <= 55
+    numTreasures = 3
+  else if length <= 100
+    numTreasures = 4
+  else
+    numTreasures = 5
+
+  world = level._world
+
+  # Where will all the treasures go?
+  terminationOffset = Math.ceil(length / numTreasures)
+
+  treasures = for i in [0...numTreasures]
+    termination = terminations[i * terminationOffset]
+    setupTreasure(world, i, termination)
+
+setupTreasure = (world, index, termination) ->
+  [ x, y ] = termination
+
+  treasure = new Treasure(index)
+
+  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+  fixtureDef.density = 1
+  fixtureDef.friction = 0.6
+  fixtureDef.restitution = 0.1
+  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
+  bodyDef = new Box2D.Dynamics.b2BodyDef()
+  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+  bodyDef.position.x = x
+  bodyDef.position.y = y
+  treasure.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+  treasure.fixture.SetUserData(treasure)
+
+  treasure
