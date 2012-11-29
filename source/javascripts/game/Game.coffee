@@ -28,9 +28,11 @@ class @Game
     # Declare this early since its accessed by getSceneManager
     @_sceneManager = sceneManager
 
+    tutorialScreen = new TutorialScreen(@, hci)
     profilePickerScreen = new ProfilePickerScreen(@, hci)
     titleScreen = new TitleScreen(@, hci)
 
+    sceneManager.addScene("tutorialScreen", tutorialScreen)
     sceneManager.addScene("profilePickerScreen", profilePickerScreen)
     sceneManager.addScene("titleScreen", titleScreen)
 
