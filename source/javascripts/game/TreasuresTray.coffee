@@ -19,3 +19,18 @@ class @TreasuresTray extends FW.ContainerProxy
     @addChild(tray)
 
     @_originalTreasures = originalTreasures
+    @_treasures = treasures
+
+  onTick: ->
+    super()
+
+    originalTreasures = @_originalTreasures
+    treasures = @_treasures
+
+    for treasure, i in treasures
+      if originalTreasures[i].isCollected()
+        targetAlpha = 1
+      else
+        targetAlpha = 0.2
+
+      treasure.alpha += (targetAlpha - treasure.alpha) / 10

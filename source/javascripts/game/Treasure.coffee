@@ -82,3 +82,9 @@ class @Treasure extends FW.ContainerProxy
     seed         = @_seed
 
     new Treasure(numTreasures, index, seed)
+
+  collected: ->
+    @_collected = true
+
+  isCollected: ->
+    @_collected

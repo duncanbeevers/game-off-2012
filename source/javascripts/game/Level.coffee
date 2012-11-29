@@ -169,7 +169,7 @@ class @Level extends FW.ContainerProxy
 
     contactListener.registerContactListener "Player", "Treasure", (impact, playerFixture, treasureFixture) ->
       treasure = treasureFixture.GetUserData()
-      treasure._collected = true
+      treasure.collected()
 
       treasureSound = FW.Math.sample([
         "sounds/Treasure1.mp3"
@@ -255,54 +255,54 @@ class @Level extends FW.ContainerProxy
     onComplete()
 
   onTick: ->
-    stage = @getStage()
+    level = @
+    stage = level.getStage()
     return unless stage
 
-    runSimulation = @_inProgress && !@_backtracking
+    world               = level._world
+    player              = level._player
+    goal                = level._goal
+    treasures           = level._treasures
+    treasuresTray       = level._treasuresTray
+    backtracking        = level._backtracking
+    playerPositionStack = level._playerPositionStack
+    everRanSimulation   = level._everRanSimulation
+    timerText           = level._timerText
+    impactsCountText    = level._impactsCountText
+
+    runSimulation = level._inProgress && !level._backtracking
     if runSimulation
-      @_everRanSimulation = true
+      level._everRanSimulation = true
       fps = createjs.Ticker.getFPS()
-      @_world.Step(1 / fps, 10, 10)
+      level._world.Step(1 / fps, 10, 10)
 
-    world         = @_world
-    player        = @_player
-    goal          = @_goal
-    treasures     = @_treasures
-    treasuresTray = @_treasuresTray
-
-    if @_backtracking
-      if @_playerPositionStack.length
-        [ player.x, player.y ] = @_playerPositionStack.pop()
+    if backtracking
+      if playerPositionStack.length
+        [ player.x, player.y ] = playerPositionStack.pop()
       else
-        @endBacktrack()
+        level.endBacktrack()
 
 
-    if @_harness
-      harness = @_harness()
+    if level._harness
+      harness = level._harness()
       playerReticleTrackMouse(player, harness)
 
-    levelTrackPlayer(@, player, harness)
+    levelTrackPlayer(level, player, harness)
     playerReticleTrackGoal(player, goal)
 
     if runSimulation
       playerTrackFixture(player)
-      playerLeaveTrack(player, @)
+      playerLeaveTrack(player, level)
       playerAccelerateTowardsTarget(player)
 
-    if @_everRanSimulation
-      updateTimer(@_timerText, @_impactsCountText, @)
+    if everRanSimulation
+      updateTimer(timerText, impactsCountText, level)
 
-    # Cull collected treasures
-    remainingTreasures = []
     for treasure in treasures
-      if treasure._collected
+      if treasure.isCollected() && treasure.fixture
         removeTreasure(world, treasure)
-      else
-        remainingTreasures.push(treasure)
 
-    @_treasures = remainingTreasures
-
-    updateTreasuresTray(treasuresTray)
+    updateTreasuresTray(treasuresTray, level)
 
     world.DrawDebugData()
 
@@ -508,7 +508,7 @@ updateTimer = (timer, impactsCountText, level) ->
   impactsCountText.scaleX += (targetScale - impactsCountText.scaleX) / ease
   impactsCountText.scaleY = impactsCountText.scaleX
 
-updateTreasuresTray = (treasuresTray) ->
+updateTreasuresTray = (treasuresTray, level) ->
   canvas = treasuresTray.getStage().canvas
   scalar = canvas.width / 12
   treasuresTray.scaleX = scalar
@@ -648,6 +648,7 @@ setupTreasure = (world, index, numTreasures, termination) ->
   treasure
 
 removeTreasure = (world, treasure) ->
+  world.DestroyBody(treasure.fixture.GetBody())
   # TODO: Fancy sparkle-out!
   treasure.visible = false
-  world.DestroyBody(treasure.fixture.GetBody())
+  treasure.fixture = undefined
