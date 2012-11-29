@@ -59,11 +59,15 @@ class @Treasure extends FW.ContainerProxy
   onTick: ->
     super()
 
-    body     = @fixture.GetBody()
-    position = body.GetPosition()
+    # Position Treasure to physics body location,
+    # if a physics fixture
+    fixture = @fixture
+    if fixture
+      body     = fixture.GetBody()
+      position = body.GetPosition()
 
-    @x = position.x
-    @y = position.y
+      @x = position.x
+      @y = position.y
 
     numTreasures = @_numTreasures
     index        = @_index
