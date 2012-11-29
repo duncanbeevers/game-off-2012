@@ -608,12 +608,12 @@ setupTreasures = (level, mazeData) ->
 
   treasures = for i in [0...numTreasures]
     termination = terminations[i * terminationOffset]
-    setupTreasure(world, i, termination)
+    setupTreasure(world, i, numTreasures, termination)
 
-setupTreasure = (world, index, termination) ->
+setupTreasure = (world, index, numTreasures, termination) ->
   [ x, y ] = termination
 
-  treasure = new Treasure(index)
+  treasure = new Treasure(index, numTreasures)
 
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1
