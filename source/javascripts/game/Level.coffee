@@ -291,11 +291,14 @@ class @Level extends FW.ContainerProxy
     if @_everRanSimulation
       updateTimer(@_timerText, @_impactsCountText, @)
 
+    remainingTreasures = []
     for treasure in treasures
-      if treasure._collected && treasure.parent
-        # TODO: Fancy sparkle-out!
-        treasure.visible = false
-        world.DestroyBody(treasure.fixture.GetBody())
+      if treasure._collected
+        removeTreasure(treasure)
+      else
+        remainingTreasures.push(treasure)
+
+    @_treasures = remainingTreasures
 
     @_world.DrawDebugData()
 
@@ -630,3 +633,8 @@ setupTreasure = (world, index, numTreasures, termination) ->
   treasure.fixture.SetUserData(treasure)
 
   treasure
+
+removeTreasure = (treasure) ->
+  # TODO: Fancy sparkle-out!
+  treasure.visible = false
+  world.DestroyBody(treasure.fixture.GetBody())
