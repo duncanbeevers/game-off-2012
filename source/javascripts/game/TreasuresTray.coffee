@@ -10,7 +10,8 @@ class @TreasuresTray extends FW.ContainerProxy
     tray.scaleY = tray.scaleX
 
     numTreasures = treasures.length
-    treasureXOffset = -numTreasures / 2
+    # treasureXOffset = -numTreasures / 2 # Center-aligned
+    treasureXOffset = 0 # Left-aligned
     for treasure, i in treasures
       tray.addChild(treasure)
       treasure.x = i + treasureXOffset

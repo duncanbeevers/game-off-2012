@@ -264,10 +264,11 @@ class @Level extends FW.ContainerProxy
       fps = createjs.Ticker.getFPS()
       @_world.Step(1 / fps, 10, 10)
 
-    world     = @_world
-    player    = @_player
-    goal      = @_goal
-    treasures = @_treasures
+    world         = @_world
+    player        = @_player
+    goal          = @_goal
+    treasures     = @_treasures
+    treasuresTray = @_treasuresTray
 
     if @_backtracking
       if @_playerPositionStack.length
@@ -291,16 +292,19 @@ class @Level extends FW.ContainerProxy
     if @_everRanSimulation
       updateTimer(@_timerText, @_impactsCountText, @)
 
+    # Cull collected treasures
     remainingTreasures = []
     for treasure in treasures
       if treasure._collected
-        removeTreasure(treasure)
+        removeTreasure(world, treasure)
       else
         remainingTreasures.push(treasure)
 
     @_treasures = remainingTreasures
 
-    @_world.DrawDebugData()
+    updateTreasuresTray(treasuresTray)
+
+    world.DrawDebugData()
 
   beginBacktrack: () ->
     @_backtracking = true
@@ -504,6 +508,15 @@ updateTimer = (timer, impactsCountText, level) ->
   impactsCountText.scaleX += (targetScale - impactsCountText.scaleX) / ease
   impactsCountText.scaleY = impactsCountText.scaleX
 
+updateTreasuresTray = (treasuresTray) ->
+  canvas = treasuresTray.getStage().canvas
+  scalar = canvas.width / 12
+  treasuresTray.scaleX = scalar
+  treasuresTray.scaleY = treasuresTray.scaleX
+  treasuresTray.x = canvas.width / 24
+  treasuresTray.y = treasuresTray.x
+
+
 createPhysicsPlayer = (world, player) ->
   fixtureDef = new Box2D.Dynamics.b2FixtureDef()
   fixtureDef.density = 1
@@ -634,7 +647,7 @@ setupTreasure = (world, index, numTreasures, termination) ->
 
   treasure
 
-removeTreasure = (treasure) ->
+removeTreasure = (world, treasure) ->
   # TODO: Fancy sparkle-out!
   treasure.visible = false
   world.DestroyBody(treasure.fixture.GetBody())
