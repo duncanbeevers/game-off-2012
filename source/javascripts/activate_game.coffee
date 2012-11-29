@@ -8,8 +8,6 @@ $ ->
       attr(width: $window.width(), height: $window.height()).
       css(left: 0, top: 0, position: 'absolute')
 
-  $(window).on "resize", onResize
-
   game = null
 
   hci = $.FW_HCI()
@@ -27,14 +25,17 @@ $ ->
 
   onPreloadComplete = ->
     preloader.hydrateLevels()
-
     $progress.hide()
+
+    begin()
+
+  begin = ->
+    $window.on("resize", onResize)
 
     onResize()
     $("#loading").hide()
 
     game = new Game($canvas[0], preloader, hci)
-
     window.game = game
 
   preloader = new Preloader(onPreloadProgress, onPreloadComplete)
