@@ -39,6 +39,51 @@ indexOf = (collection, comparator) ->
 
   result
 
+hsv2rgb = (hsv) ->
+  h = hsv.h * 180 / Math.PI
+  s = hsv.s
+  v = hsv.v
+  r = 0
+  g = 0
+  b = 0
+
+  if s < 0
+    s = 0
+  else if s > 1
+    s = 1
+
+  if v < 0
+    v = 0
+  else if v > 1
+    v = 1
+
+  h %= 360
+  if (h < 0)
+    h += 360
+
+  h /= 60;
+  i = Math.floor(h)
+  f = h - i
+  p1 = v * (1 - s)
+  p2 = v * (1 - s * f)
+  p3 = v * (1 - s * (1 - f))
+
+  map = [
+    [ v, p3, p1 ]
+    [ p2, v, p1 ]
+    [ p1, v, p3 ]
+    [ p1, p2, v ]
+    [ p3, p1, v ]
+    [ v, p1, p2 ]
+  ]
+
+  return {
+     r: map[i][0] * 255
+     g: map[i][1] * 255
+     b: map[i][2] * 255
+  }
+
 FW.Util =
   mapToArraySortedByAttribute: mapToArraySortedByAttribute
   indexOf: indexOf
+  hsv2rgb: hsv2rgb
