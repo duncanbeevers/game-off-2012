@@ -40,8 +40,8 @@ class @Level extends FW.ContainerProxy
     timerText        = setupTimerText()
     impactsCountText = setupImpactsCountText()
 
-    @_inProgress = false
-    @setupPhysics()
+    level._inProgress = false
+    level.setupPhysics()
 
     treasures = setupTreasures(level, mazeData)
     treasuresTray = new TreasuresTray(treasures)
@@ -58,22 +58,21 @@ class @Level extends FW.ContainerProxy
     levelContainer.addChild(impactsCountText)
     levelContainer.addChild(treasuresTray)
 
-    level = @
-    @setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
+    level.setupMaze mazeData, mazeContainer, player, goal, -> level.onReady()
 
-    @_game                    = game
-    @_hci                     = hci
-    @_onMazeSolved            = onMazeSolved
-    @_mazeContainer           = mazeContainer
-    @_player                  = player
-    @_goal                    = goal
-    @_impactParticleGenerator = impactParticleGenerator
-    @_countDown               = countDown
-    @_timerText               = timerText
-    @_impactsCountText        = impactsCountText
-    @_wallImpactsCount        = 0
-    @_treasures               = treasures
-    @_treasuresTray           = treasuresTray
+    level._game                    = game
+    level._hci                     = hci
+    level._onMazeSolved            = onMazeSolved
+    level._mazeContainer           = mazeContainer
+    level._player                  = player
+    level._goal                    = goal
+    level._impactParticleGenerator = impactParticleGenerator
+    level._countDown               = countDown
+    level._timerText               = timerText
+    level._impactsCountText        = impactsCountText
+    level._wallImpactsCount        = 0
+    level._treasures               = treasures
+    level._treasuresTray           = treasuresTray
 
   onReady: ->
     # @_countDown.begin()
@@ -157,12 +156,13 @@ class @Level extends FW.ContainerProxy
       world.SetDebugDraw(debugDraw)
 
     contactListener.registerContactListener "Player", "Goal", ->
-      completionTime = level.completionTime ||= createjs.Ticker.getTime(true)
+      completionTime     = level.completionTime ||= createjs.Ticker.getTime(true)
       completionDuration = level.completionTime - level.startTime
+      treasures          = level._treasures
 
       wallImpactsCount = level._wallImpactsCount
       level._inProgress = false
-      level._onMazeSolved(completionDuration, wallImpactsCount)
+      level._onMazeSolved(completionDuration, wallImpactsCount, treasures)
       level._solved = true
       createjs.SoundJS.play("sounds/Goal1.mp3", createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
       level._game.setBgmTracks(["sounds/GoalBGM1.mp3"])

@@ -3,7 +3,7 @@ settings =
   polyStarPointCountScalar: 1
   polyStarPointSize: 0.06
 
-FW.dat.GUI.addSettings(settings)
+# FW.dat.GUI.addSettings(settings)
 
 class @Treasure extends FW.ContainerProxy
   constructor: (numTreasures, index, seed) ->

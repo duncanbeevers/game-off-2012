@@ -47,7 +47,7 @@ class @Game
     sceneManager = @_sceneManager
     hci = @_hci
 
-    level = new Level @, hci, levelData, (completionTime, wallImpactsCount) ->
+    level = new Level @, hci, levelData, (completionTime, wallImpactsCount, treasures) ->
       profileLevelsData = profileData.levels ||= {}
       profileLevelData = profileLevelsData[levelData.name] ||= {}
       profileLevelData.lastCompletionTime = completionTime
