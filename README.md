@@ -1,5 +1,5 @@
-![1](http://duncanbeevers.com/mazeoid/screenshots/1.png)
-![2](http://duncanbeevers.com/mazeoid/screenshots/2.png)
+![1](http://duncanbeevers.com/mazeoid/images/screenshots/1.png)
+![2](http://duncanbeevers.com/mazeoid/images/screenshots/2.png)
 
 Tech
 =
