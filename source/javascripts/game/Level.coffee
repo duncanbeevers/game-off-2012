@@ -43,7 +43,7 @@ class @Level extends FW.ContainerProxy
     level._inProgress = false
     level.setupPhysics()
 
-    treasures = setupTreasures(level, mazeData)
+    treasures = setupTreasures(level, mazeData, true)
     treasuresTray = new TreasuresTray(treasures)
 
     mazeContainer.addChild(player)
@@ -612,7 +612,7 @@ setupImpactsCountText = ->
 
   impactsCountText
 
-setupTreasures = (level, mazeData) ->
+setupTreasures = (level, mazeData, createPhysicsBodies) ->
   terminations = mazeData.terminations
   # 0-1    : 0
   # 2-5    : 1
@@ -641,25 +641,26 @@ setupTreasures = (level, mazeData) ->
 
   treasures = for i in [0...numTreasures]
     termination = terminations[i * terminationOffset]
-    setupTreasure(world, i, numTreasures, termination)
+    setupTreasure(world, i, numTreasures, termination, createPhysicsBodies)
 
-setupTreasure = (world, index, numTreasures, termination) ->
+setupTreasure = (world, index, numTreasures, termination, createPhysicsBodies) ->
   [ x, y ] = termination
 
   seed = x + y
-  treasure = new Treasure(numTreasures, index, seed)
+  treasure = new Treasure(numTreasures, index, seed, true)
 
-  fixtureDef = new Box2D.Dynamics.b2FixtureDef()
-  fixtureDef.density = 1
-  fixtureDef.friction = 0.6
-  fixtureDef.restitution = 0.1
-  fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
-  bodyDef = new Box2D.Dynamics.b2BodyDef()
-  bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
-  bodyDef.position.x = x
-  bodyDef.position.y = y
-  treasure.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
-  treasure.fixture.SetUserData(treasure)
+  if createPhysicsBodies
+    fixtureDef = new Box2D.Dynamics.b2FixtureDef()
+    fixtureDef.density = 1
+    fixtureDef.friction = 0.6
+    fixtureDef.restitution = 0.1
+    fixtureDef.shape = new Box2D.Collision.Shapes.b2CircleShape(0.25)
+    bodyDef = new Box2D.Dynamics.b2BodyDef()
+    bodyDef.type = Box2D.Dynamics.b2Body.b2_dynamicBody
+    bodyDef.position.x = x
+    bodyDef.position.y = y
+    treasure.fixture = world.CreateBody(bodyDef).CreateFixture(fixtureDef)
+    treasure.fixture.SetUserData(treasure)
 
   treasure
 
@@ -668,3 +669,5 @@ removeTreasure = (world, treasure) ->
   # TODO: Fancy sparkle-out!
   treasure.visible = false
   treasure.fixture = undefined
+
+Level.setupTreasures = setupTreasures

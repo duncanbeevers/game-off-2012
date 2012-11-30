@@ -2,24 +2,35 @@ class @TreasuresTray extends FW.ContainerProxy
   constructor: (originalTreasures) ->
     super()
 
+    treasuresTray = @
+
+    trayContainer = new createjs.Container()
+    treasuresTray.addChild(trayContainer)
+
+    treasuresTray._trayContainer = trayContainer
+    treasuresTray.setTreasures(originalTreasures)
+
+  setTreasures: (originalTreasures) ->
+    numTreasures = originalTreasures.length
+
+    treasuresTray = @
+
+    trayContainer = treasuresTray._trayContainer
+    trayContainer.removeAllChildren()
+
     treasures = for originalTreasure in originalTreasures
       originalTreasure.clone()
 
-    tray = new createjs.Container()
-    tray.scaleX = 1 / numTreasures
-    tray.scaleY = tray.scaleX
+    treasuresTray.scaleX = 1 / numTreasures
+    treasuresTray.scaleY = treasuresTray.scaleX
 
-    numTreasures = treasures.length
-    # treasureXOffset = -numTreasures / 2 # Center-aligned
-    treasureXOffset = 0 # Left-aligned
     for treasure, i in treasures
-      tray.addChild(treasure)
-      treasure.x = i + treasureXOffset
+      trayContainer.addChild(treasure)
+      treasure.x = i
 
-    @addChild(tray)
+    treasuresTray._originalTreasures = originalTreasures
+    treasuresTray._treasures = treasures
 
-    @_originalTreasures = originalTreasures
-    @_treasures = treasures
 
   onTick: ->
     super()
