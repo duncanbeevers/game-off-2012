@@ -1,37 +1,31 @@
 class @Goal extends FW.ParticleGenerator
-  maxParticles: 30
+  maxParticles: 500
 
-  numberOfParticlesToGenerate: -> FW.Math.rand(2)
+  numberOfParticlesToGenerate: -> FW.Math.rand(5, 10)
 
   generateParticle: ->
-    src = FW.Math.sample([ "images/goal/star1.png" ])
-    new createjs.Bitmap(src)
+    shape = new createjs.Shape()
+    shape.graphics.beginFill("#000").drawRect(-0.5, -0.5, 1, 1).endFill()
+    shape
 
   initializeParticle: (particle) ->
-    bitmapWidth = 64
-    bitmapHeight = bitmapWidth
-
     particle.alpha = 1
-    particle.regX = bitmapWidth / 2
-    particle.regY = bitmapHeight / 2
-    particle.x = 0
-    particle.y = 0
 
     vec = FW.Math.random(0, FW.Math.TWO_PI)
     intensity = FW.Math.random(0.5, 1)
-    particle.xVel = Math.cos(vec) * intensity / bitmapWidth
-    particle.yVel = Math.sin(vec) * intensity / bitmapHeight
+    particle.x = Math.cos(vec) * intensity
+    particle.y = Math.sin(vec) * intensity
     particle.rotationVel = FW.Math.random(-5, 5)
     particle.rotation = FW.Math.random(360)
-    particle.scaleX = FW.Math.random(0.1, 0.3) / bitmapWidth
+    particle.scaleX = FW.Math.random(0.1, 0.3)
     particle.scaleY = particle.scaleX
 
   updateParticle: (particle) ->
     particle.alpha *= 0.92
     particle.scaleX *= 0.99
     particle.scaleY = particle.scaleX
-    particle.x += particle.xVel
-    particle.y += particle.yVel
+    particle.x += -particle.x / 10
+    particle.y += -particle.y / 10
     particle.rotation += particle.rotationVel
 
   isParticleCullable: (particle) ->
