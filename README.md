@@ -7,8 +7,10 @@ Tech
   * [Box2dWeb](https://code.google.com/p/box2dweb/) and antecedents
   * [Middleman](http://middlemanapp.com/)
   * [Pixen](http://pixenapp.com/)
+  * [jQuery](http://jquery.com/)
 
 Resources
 =
   * [All Vectors](http://www.allvectors.com/)
   * [Subtle Patterns](http://subtlepatterns.com/)
+  * [Dafont](http://www.dafont.com/)
