@@ -1,4 +1,3 @@
-//= require lib/dat.gui
 //= require activate_createjs_namespace
 //= require lib/createjs_manifest
 //= require lib/box2dweb_manifest
