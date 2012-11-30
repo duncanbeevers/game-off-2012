@@ -43,7 +43,7 @@ class @Level extends FW.ContainerProxy
     level._inProgress = false
     level.setupPhysics()
 
-    treasures = setupTreasures(level, mazeData, true)
+    treasures = setupTreasures(mazeData, level._world)
     treasuresTray = new TreasuresTray(treasures)
 
     mazeContainer.addChild(player)
@@ -612,7 +612,7 @@ setupImpactsCountText = ->
 
   impactsCountText
 
-setupTreasures = (level, mazeData, createPhysicsBodies) ->
+setupTreasures = (mazeData, world) ->
   terminations = mazeData.terminations
   # 0-1    : 0
   # 2-5    : 1
@@ -634,22 +634,20 @@ setupTreasures = (level, mazeData, createPhysicsBodies) ->
   else
     numTreasures = 5
 
-  world = level._world
-
   # Where will all the treasures go?
   terminationOffset = Math.ceil(length / numTreasures)
 
   treasures = for i in [0...numTreasures]
     termination = terminations[i * terminationOffset]
-    setupTreasure(world, i, numTreasures, termination, createPhysicsBodies)
+    setupTreasure(i, numTreasures, termination, world)
 
-setupTreasure = (world, index, numTreasures, termination, createPhysicsBodies) ->
+setupTreasure = (index, numTreasures, termination, world) ->
   [ x, y ] = termination
 
   seed = x + y
-  treasure = new Treasure(numTreasures, index, seed, true)
+  treasure = new Treasure(numTreasures, index, seed)
 
-  if createPhysicsBodies
+  if world
     fixtureDef = new Box2D.Dynamics.b2FixtureDef()
     fixtureDef.density = 1
     fixtureDef.friction = 0.6
