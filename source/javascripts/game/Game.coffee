@@ -2,11 +2,12 @@ BASE_BGM_VOLUME = 0.2
 
 class @Game
   constructor: (canvas, preloader, hci) ->
+    game = @
     createjs.Ticker.useRAF = true
     createjs.Ticker.setFPS(30)
-    @_preloader = preloader
+    game._preloader = preloader
 
-    @playBgm([
+    game.playBgm([
       "sounds/BGM1-1.mp3"
       "sounds/BGM1-2.mp3"
       "sounds/BGM1-3.mp3"
@@ -24,21 +25,24 @@ class @Game
 
     sceneManager = new SceneManager(stage)
 
-    @_hci = hci
+    game._hci = hci
     # Declare this early since its accessed by getSceneManager
-    @_sceneManager = sceneManager
+    game._sceneManager = sceneManager
 
-    tutorialScreen = new TutorialScreen(@, hci)
-    profilePickerScreen = new ProfilePickerScreen(@, hci)
-    titleScreen = new TitleScreen(@, hci)
+    tutorialScreen      = new TutorialScreen(game, hci)
+    profilePickerScreen = new ProfilePickerScreen(game, hci)
+    titleScreen         = new TitleScreen(game, hci)
+    pauseMenu           = new PauseMenu(game, hci)
 
     sceneManager.addScene("tutorialScreen", tutorialScreen)
     sceneManager.addScene("profilePickerScreen", profilePickerScreen)
     sceneManager.addScene("titleScreen", titleScreen)
+    sceneManager.addScene("pauseMenu", pauseMenu)
+
 
     sceneManager.gotoScene("profilePickerScreen")
 
-    @_titleScreen = titleScreen
+    game._titleScreen = titleScreen
 
     updater = tick: -> stage.update()
     createjs.Ticker.addListener(updater)

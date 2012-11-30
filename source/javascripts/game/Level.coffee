@@ -21,26 +21,24 @@ maxViewportMeters = 6
 
 class @Level extends FW.ContainerProxy
   constructor: (game, hci, mazeData, onMazeSolved) ->
+    level = @
+
     super()
 
-    pauseMenu = new PauseMenu(game, hci)
-    game.getSceneManager().addScene("pauseMenu", pauseMenu)
-
-    levelContainer          = @_container
+    levelContainer          = level._container
     mazeContainer           = new createjs.Container()
     player                  = new Player()
     goal                    = new Goal()
     impactParticleGenerator = new ImpactParticleGenerator()
 
-    level = @
-
-    countDown = new CountDown ->
-      level._inProgress = true
+    # The countdown timer gives us a moment to get our bearings
+    # before beginning the maze.
+    level._inProgress = false
+    countDown = new CountDown -> level._inProgress = true
 
     timerText        = setupTimerText()
     impactsCountText = setupImpactsCountText()
 
-    level._inProgress = false
     level.setupPhysics()
 
     treasures = setupTreasures(mazeData, level._world)
