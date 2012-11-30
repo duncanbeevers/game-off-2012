@@ -40,10 +40,14 @@ class @TreasuresTray extends FW.ContainerProxy
     for treasure, i in treasures
       if originalTreasures[i].isCollected()
         targetAlpha = 1
+        targetScale = 1
       else
         targetAlpha = 0.2
+        targetScale = 0.8
 
       treasure.alpha += (targetAlpha - treasure.alpha) / 10
+      treasure.scaleX += (targetScale - treasure.scaleX) / 10
+      treasure.scaleY = treasure.scaleX
 
   width: ->
     treasuresTray = @
