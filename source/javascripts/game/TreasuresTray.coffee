@@ -8,7 +8,9 @@ class @TreasuresTray extends FW.ContainerProxy
     treasuresTray.addChild(trayContainer)
 
     treasuresTray._trayContainer = trayContainer
-    treasuresTray.setTreasures(originalTreasures)
+
+    if originalTreasures
+      treasuresTray.setTreasures(originalTreasures)
 
   setTreasures: (originalTreasures) ->
     numTreasures = originalTreasures.length
@@ -20,9 +22,6 @@ class @TreasuresTray extends FW.ContainerProxy
 
     treasures = for originalTreasure in originalTreasures
       originalTreasure.clone()
-
-    treasuresTray.scaleX = 1 / numTreasures
-    treasuresTray.scaleY = treasuresTray.scaleX
 
     for treasure, i in treasures
       trayContainer.addChild(treasure)
@@ -49,3 +48,7 @@ class @TreasuresTray extends FW.ContainerProxy
   width: ->
     treasuresTray = @
     treasuresTray._treasures.length
+
+  centerRegX: ->
+    treasuresTray = @
+    treasuresTray.regX = (treasuresTray._treasures.length - 1) / 2

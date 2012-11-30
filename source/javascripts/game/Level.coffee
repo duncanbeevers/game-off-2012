@@ -518,7 +518,7 @@ updateTreasuresTray = (treasuresTray, level) ->
     targetX = canvasWidth / 2
     targetY = canvasHeight / 5
     treasuresTrayWidth = treasuresTray.width()
-    targetScale = canvasWidth / treasuresTrayWidth
+    targetScale = Math.min(canvasWidth / treasuresTrayWidth, canvasHeight / 4)
     targetRegX = (treasuresTrayWidth  - 1) / 2
   else
     targetX = canvasWidth / 24

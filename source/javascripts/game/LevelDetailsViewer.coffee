@@ -1,41 +1,63 @@
 class @LevelDetailsViewer extends FW.ContainerProxy
   constructor: ->
+    levelDetailsViewer = @
+
     super()
 
     bestText                 = TextFactory.create("")
     bestCompletionTimeText   = TextFactory.create("")
     bestWallImpactsCountText = TextFactory.create("")
+    treasuresTray            = new TreasuresTray()
 
     bestText.y                 = -36
     bestCompletionTimeText.y   = 0
     bestWallImpactsCountText.y = 36
+    treasuresTray.y            = -72
+    treasuresTray.scaleX       = 42
+    treasuresTray.scaleY       = treasuresTray.scaleX
 
-    @addChild(bestText)
-    @addChild(bestCompletionTimeText)
-    @addChild(bestWallImpactsCountText)
+    levelDetailsViewer.addChild(bestText)
+    levelDetailsViewer.addChild(bestCompletionTimeText)
+    levelDetailsViewer.addChild(bestWallImpactsCountText)
+    levelDetailsViewer.addChild(treasuresTray)
 
-    @_bestText                 = bestText
-    @_bestCompletionTimeText   = bestCompletionTimeText
-    @_bestWallImpactsCountText = bestWallImpactsCountText
+    levelDetailsViewer._bestText                 = bestText
+    levelDetailsViewer._bestCompletionTimeText   = bestCompletionTimeText
+    levelDetailsViewer._bestWallImpactsCountText = bestWallImpactsCountText
+    levelDetailsViewer._treasuresTray            = treasuresTray
 
   setLevelData: (levelData) ->
-    @_levelData = levelData
-    @updateDisplay()
+    levelDetailsViewer = @
+    levelDetailsViewer._levelData = levelData
+    treasuresTray = levelDetailsViewer._treasuresTray
+    treasures = Level.setupTreasures(levelData)
+
+    for treasure in treasures
+      treasure.collected()
+
+    treasuresTray.setTreasures(treasures)
+    treasuresTray.centerRegX()
+
+    levelDetailsViewer.updateDisplay()
 
   setProfileData: (profileData) ->
     @_profileData = profileData
     @updateDisplay()
 
   updateDisplay: ->
-    levelData   = @_levelData
-    profileData = @_profileData
+    levelDetailsViewer = @
+
+    levelData     = levelDetailsViewer._levelData
+    profileData   = levelDetailsViewer._profileData
+    treasuresTray = levelDetailsViewer._treasuresTray
 
     if levelData && profileData
-      bestText                 = @_bestText
-      bestCompletionTimeText   = @_bestCompletionTimeText
-      bestWallImpactsCountText = @_bestWallImpactsCountText
+      bestText                 = levelDetailsViewer._bestText
+      bestCompletionTimeText   = levelDetailsViewer._bestCompletionTimeText
+      bestWallImpactsCountText = levelDetailsViewer._bestWallImpactsCountText
       profileLevelsData        = profileData.levels || {}
       profileLevelData         = profileLevelsData[levelData.name]
+
       if profileLevelData
         bestCompletionTime   = profileLevelData.bestCompletionTime
         bestWallImpactsCount = profileLevelData.bestWallImpactsCount
