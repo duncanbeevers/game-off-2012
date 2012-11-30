@@ -32,12 +32,10 @@ class @LevelDetailsViewer extends FW.ContainerProxy
     treasuresTray = levelDetailsViewer._treasuresTray
     treasures = Level.setupTreasures(levelData)
 
-    for treasure in treasures
-      treasure.collected()
-
     treasuresTray.setTreasures(treasures)
     treasuresTray.centerRegX()
 
+    levelDetailsViewer._treasures = treasures
     levelDetailsViewer.updateDisplay()
 
   setProfileData: (profileData) ->
@@ -59,6 +57,11 @@ class @LevelDetailsViewer extends FW.ContainerProxy
       profileLevelData         = profileLevelsData[levelData.name]
 
       if profileLevelData
+        treasuresCollected = profileLevelData.treasuresCollected || []
+        for treasure, i in levelDetailsViewer._treasures
+          if treasuresCollected[i]
+            treasure.collected()
+
         bestCompletionTime   = profileLevelData.bestCompletionTime
         bestWallImpactsCount = profileLevelData.bestWallImpactsCount
         hitText              = TextFactory.pluralize("hit", bestWallImpactsCount)

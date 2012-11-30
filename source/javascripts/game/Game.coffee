@@ -58,6 +58,13 @@ class @Game
       previousBestWallImpactsCount = profileLevelData.bestWallImpactsCount || Infinity
       profileLevelData.bestWallImpactsCount = Math.min(previousBestWallImpactsCount, wallImpactsCount)
 
+      treasuresCollected = profileLevelData.treasuresCollected ||= []
+      for treasure, i in treasures
+        if treasure.isCollected()
+          treasuresCollected[i] = true
+        else
+          treasuresCollected[i] ||= false
+
       hci.saveProfile(profileName, profileData)
 
     sceneManager.addScene("level", level)
