@@ -3,12 +3,14 @@
 h1 id="loading"
   | Mazeoid
 div#progress
-  | bootstrapping
 div
   / canvas id="debugCanvas" width="1" height="1"
   canvas id="gameCanvas" width="1" height="1"
 
+script
+  | document.getElementById("progress").innerHTML="bootstrapping"
+
 / == javascript_include_tag "game_libs_manifest", "game_manifest", "activate_game"
 == javascript_include_tag "game_production_manifest"
 
-== image_tag "screenshots/1.png", style: "opacity:0"
+== image_tag "screenshots/1.png", style: "display:none"
