@@ -170,10 +170,7 @@ class @Level extends FW.ContainerProxy
       treasure = treasureFixture.GetUserData()
       treasure.collected()
 
-      treasureSound = FW.Math.sample([
-        "sounds/Treasure1.mp3"
-        "sounds/Treasure2.mp3"
-      ])
+      treasureSound = FW.Math.sample(["sounds/Treasure.mp3"])
       createjs.SoundJS.play(treasureSound, createjs.SoundJS.INTERRUPT_NONE, 0, 0, 0, 1, 0)
 
 
