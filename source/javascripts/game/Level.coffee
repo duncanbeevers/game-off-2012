@@ -510,11 +510,27 @@ updateTimer = (timer, impactsCountText, level) ->
 
 updateTreasuresTray = (treasuresTray, level) ->
   canvas = treasuresTray.getStage().canvas
-  scalar = canvas.width / 12
-  treasuresTray.scaleX = scalar
+  canvasWidth = canvas.width
+  canvasHeight = canvas.height
+  scalar = canvasWidth / 12
+
+  if level._solved
+    targetX = canvasWidth / 2
+    targetY = canvasHeight / 5
+    treasuresTrayWidth = treasuresTray.width()
+    targetScale = canvasWidth / treasuresTrayWidth
+    targetRegX = (treasuresTrayWidth  - 1) / 2
+  else
+    targetX = canvasWidth / 24
+    targetY = targetX
+    targetScale = scalar
+    targetRegX = 0
+
+  treasuresTray.x += (targetX - treasuresTray.x) / 10
+  treasuresTray.y += (targetY - treasuresTray.y) / 10
+  treasuresTray.scaleX += (targetScale - treasuresTray.scaleX) / 10
   treasuresTray.scaleY = treasuresTray.scaleX
-  treasuresTray.x = canvas.width / 24
-  treasuresTray.y = treasuresTray.x
+  treasuresTray.regX += (targetRegX - treasuresTray.regX) / 10
 
 
 createPhysicsPlayer = (world, player) ->

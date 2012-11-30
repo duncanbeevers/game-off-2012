@@ -34,3 +34,7 @@ class @TreasuresTray extends FW.ContainerProxy
         targetAlpha = 0.2
 
       treasure.alpha += (targetAlpha - treasure.alpha) / 10
+
+  width: ->
+    treasuresTray = @
+    treasuresTray._treasures.length
