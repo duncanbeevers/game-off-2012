@@ -71,6 +71,7 @@ class @Level extends FW.ContainerProxy
     level._wallImpactsCount        = 0
     level._treasures               = treasures
     level._treasuresTray           = treasuresTray
+    level._playerPositionStack     = [ ]
 
   onReady: ->
     # @_countDown.begin()
@@ -262,13 +263,33 @@ class @Level extends FW.ContainerProxy
     goal                = level._goal
     treasures           = level._treasures
     treasuresTray       = level._treasuresTray
-    backtracking        = level._backtracking
     playerPositionStack = level._playerPositionStack
     everRanSimulation   = level._everRanSimulation
     timerText           = level._timerText
     impactsCountText    = level._impactsCountText
 
-    runSimulation = level._inProgress && !level._backtracking
+    if level._harness
+      harness = level._harness()
+      playerReticleTrackMouse(player, harness)
+      levelTrackPlayer(level, player, harness)
+
+      if level._inProgress
+        if harness.activated
+          if !level._backtracking
+            level._mouseBacktracking = true
+            level.beginBacktrack()
+        else if level._mouseBacktracking
+          level._mouseBacktracking = false
+          level.endBacktrack()
+      else if level._solved && harness.activated
+        # Return to main title screen
+        level._game.getSceneManager().popScene()
+        return
+
+
+    backtracking = level._backtracking
+
+    runSimulation = level._inProgress && !backtracking
     if runSimulation
       level._everRanSimulation = true
       fps = createjs.Ticker.getFPS()
@@ -280,12 +301,6 @@ class @Level extends FW.ContainerProxy
       else
         level.endBacktrack()
 
-
-    if level._harness
-      harness = level._harness()
-      playerReticleTrackMouse(player, harness)
-
-    levelTrackPlayer(level, player, harness)
     playerReticleTrackGoal(player, goal)
 
     if runSimulation
@@ -445,7 +460,6 @@ playerLeaveTrack = (player, level) ->
 
   if lastDotDistance > moveDistance
     position = body.GetPosition()
-    level._playerPositionStack ||= [ ]
     level._playerPositionStack.push([ position.x, player.y ])
 
     pathGraphics = level._pathShape.graphics
